@@ -1,0 +1,61 @@
+{
+    "language": "تغییر زبان",
+    
+    "change_language": "برای اعمال تنظیمات یک بار برنامه را ببندید ",
+
+    "confirm": "تایید",
+
+    "cancel": "لغو",
+
+    "delete_config_content" : "این کانفیگ برای همیشه پاک خواهد شد.آیا مطمئن هستید؟",
+
+    "permission": "مجوز داده نشد",
+    
+     "connect":"اتصال",
+    
+     "serverdelay":"تست سرور",
+     
+     "wait":"صبر کنید...",
+    
+     "import_from_clipboard":"اصافه کردن از کلیپبرد ",
+
+     "import_from_qrcode":"qrcode اضافه کردن از",
+    
+     "vpnstatus":"وضعیت اتصال :",
+    
+     "vpnstatus_connect":"متصل",
+    
+     "vpnstatus_not_connect":"متصل نیست",
+     
+     "traffic_information":"اتصلاعات اتصال :",
+     
+     "speed":"سرعت :",
+     
+     "traffic":"ترافیک :",
+     
+     "actions":"اعمال :",
+     
+     "disconnect":"قطع اتصال",
+     
+     "ping":"تست سرور",
+     
+     "error":"خطا",
+     
+     "succesful":"موفق",
+
+     "delete" : "حذف",
+
+     "delete_selected_config" : "امکان حذف این کانفیگ وجود ندارد",
+
+     "remove": "حذف شد",
+
+     "import_sub":"گروه اشتراک اضافه شد" ,
+    
+     "import_sub_link":"اضافه کردن گروه اشتراک",
+    
+     "subscription_settings":"تنظیمات گروه اشتراک",
+    
+     "no_subscription_found":"کانفیگی یافت نشد",
+
+     "update_subscription": "بروزرسانی گروه اشنراک"
+}

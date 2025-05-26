@@ -1,0 +1,126 @@
+{
+  "language": "Change Language",
+  "@language": {
+    "description": "The current Language"
+  },
+  "change_language": "After Change You Need To Restart App",
+  "@change_language": {
+    "description": "Change current Language"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Change current Language"
+  },
+  "permission": "Permission Denied",
+  "@permission": {
+    "description": "Vpn Permission Denied"
+  },
+  "connect": "CONNECT",
+  "@connect": {
+    "description": "Start VPN Service"
+  },
+  "serverdelay": "Server Delay",
+  "@serverdelay": {
+    "description": "Get Ping Of The Selected Config"
+  },
+  "wait": "Wait...",
+  "@wait": {
+    "description": "Wait Until Server Delay Completed "
+  },
+  "import_from_clipboard": "Import from clipboard",
+  "@import_from_clipboard": {
+    "description": "Import Configs From Clipboard"
+  },
+  "import_from_qrcode": "Import from qrcode",
+  "@import_from_qrcode": {
+    "description": "Import Configs From Qrcode"
+  },
+  "vpnstatus": "VPN Status :",
+  "@vpnstatus": {
+    "description": "Show Connection State"
+  },
+  "vpnstatus_connect": "CONNECTED",
+  "@vpnstatus_connect": {
+    "description": "Connection State Connected"
+  },
+  "vpnstatus_not_connect": "NOT CONNECTED",
+  "@vpnstatus_not_connect": {
+    "description": "Connection State Not Connected"
+  },
+  "traffic_information": "Traffic Information :",
+  "@traffic_information": {
+    "description": "Show Connection Details"
+  },
+  "speed": "Speed :",
+  "@speed": {
+    "description": "Show Connection Speed"
+  },
+  "traffic": "Traffic :",
+  "@traffic": {
+    "description": "Show Connection Usage"
+  },
+  "actions": "Actions :",
+  "@actions": {
+    "description": "Show Connection Usage"
+  },
+  "disconnect": "DISCONNECT",
+  "@disconnect": {
+    "description": "Stop VPN Service"
+  },
+  "ping": "ping",
+  "@ping": {
+    "description": "Ping Title"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error Title"
+  },
+  "succesful": "Successful",
+  "@succesful": {
+    "description": "Successful Title"
+  },
+  "delete_config_content": "Config Will Remove Permanently, Are You Sure ?",
+  "@delete_config_content": {
+    "description": "content for delete a config"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "delete"
+  },
+  "delete_selected_config": "Could not delete this config",
+  "@delete_selected_config": {
+    "description": "cant delete selected config"
+  },
+  "remove": "Removed",
+  "@remove": {
+    "description": "remove config"
+  },
+  "import_sub": "Subcription Imported",
+  "@import_sub": {
+    "description": "import configs from subs"
+  },
+  "import_sub_link": "Import From Subscription ",
+  "@import_sub_link": {
+    "description": "imported configs from subs successful"
+  },
+  "subscription_settings": "Subscription Group Settings ",
+  "@subscription_settings": {
+    "description": "import configs from subs successful"
+  },
+  "no_subscription_found": "Nothing to show ",
+  "@no_subscription_found": {
+    "description": "There is No Subscription Link"
+  },
+  "update_subscription": "Update Subscriptions",
+  "@update_subscription": {
+    "description": "Update Subscriptions"
+  },
+  "coming_soon": "Future Is Not Implanted Yet ",
+  "@coming_soon": {
+    "description": "Future Is Not Implanted Yet"
+  }
+}
