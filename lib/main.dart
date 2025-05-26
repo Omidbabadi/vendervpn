@@ -19,10 +19,6 @@ void main() async {
   Hive.registerAdapter(ConfigModelAdapter());
   await Hive.openBox<UserPreferences>('userPrefs');
   await Hive.openBox<ConfigModel>('configs');
-  await Appodeal.initialize(
-    appKey: '69572c38cee6e481b7483917f82defcf9a736ee6791cc32c',
-    adTypes: [AppodealAdType.Interstitial],
-  );
   runApp(ProviderScope(child: const MyApp()));
 }
 
