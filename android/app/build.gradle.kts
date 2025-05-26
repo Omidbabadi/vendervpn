@@ -42,12 +42,3 @@ android {
 flutter {
     source = "../.."
 }
-
-dependencies {
-    implementation("com.appodeal.ads:sdk:3.5.2.0") {
-        exclude(group = "com.appodeal.ads.sdk.services", module = "adjust")
-        exclude(group = "com.appodeal.ads.sdk.services", module = "appsflyer")
-        exclude(group = "com.appodeal.ads.sdk.services", module = "firebase")
-        exclude(group = "com.appodeal.ads.sdk.services", module = "facebook_analytics")
-    }
-}
