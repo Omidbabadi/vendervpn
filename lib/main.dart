@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -13,6 +15,15 @@ import 'package:vendervpn/l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    print('Caught FlutterError: ${details.exception}');
+  };
+
+  await Appodeal.initialize(
+  appKey: "69572c38cee6e481b7483917f82defcf9a736ee6791cc32c",
+  adTypes: [AppodealAdType.Interstitial],
+  );
   await Hive.initFlutter();
 
   Hive.registerAdapter(UserPreferencesAdapter());

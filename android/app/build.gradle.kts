@@ -28,6 +28,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -41,4 +42,19 @@ android {
 
 flutter {
     source = "../.."
+}
+dependencies {
+    implementation("androidx.multidex:multidex:2.0.1")
+    implementation("com.appodeal.ads:sdk:3.5.2.0") {
+        // ad networks
+        exclude(group = "com.appodeal.ads.sdk.networks", module = "admob")
+        exclude(group = "com.applovin.mediation", module = "google-adapter")
+        exclude(group = "com.applovin.mediation", module = "google-ad-manager-adapter")
+        // services
+        exclude(group = "com.appodeal.ads.sdk.services", module = "adjust")
+        exclude(group = "com.appodeal.ads.sdk.services", module = "appsflyer")
+        exclude(group = "com.appodeal.ads.sdk.services", module = "firebase")
+        exclude(group = "com.appodeal.ads.sdk.services", module = "facebook_analytics")
+    }
+
 }
