@@ -140,6 +140,7 @@ class HomePageWidget extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) => Text('Error: $error'),
+
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }

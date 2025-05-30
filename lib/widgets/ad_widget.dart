@@ -24,7 +24,7 @@ Future<void> showAdThanConnect(Function onAdCompleted) async {
 Future<void> connectVPNThanShowAds(Function connect) async {
   connect();
   debugPrint("VPN Connected");
-  await Future.delayed(Duration(seconds: 3));
+  await Future.delayed(Duration(seconds: 1));
 
   try {
     final isAdLoaded = await Appodeal.isLoaded(AppodealAdType.Interstitial);
