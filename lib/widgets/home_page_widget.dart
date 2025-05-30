@@ -21,6 +21,7 @@ class HomePageWidget extends ConsumerWidget {
   final void Function() delay;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    const String assetName = 'assets/power_icon.svg';
     final height = MediaQuery.of(context).size.height;
     final controller = ref.watch(v2rayControllerProvider);
     final selectedConfig = ref.watch(userPrefsProvider).defaultConfig;
@@ -49,7 +50,60 @@ class HomePageWidget extends ConsumerWidget {
                   top: height / 12,
                   left: 0,
                   right: 0,
-                  child: MyCustomWidget(
+                  child: AvatarGlow(
+                    glowShape: BoxShape.circle,
+                    animate: value.state == 'CONNECTED',
+                    glowColor:
+                    value.state == 'DISCONNECTED'
+                        ? Colors.grey.shade600
+                        : const Color.fromARGB(20, 33, 255, 181),
+                    duration:
+                    value.state == 'DISCONNECTED'
+                        ? const Duration(milliseconds: 3500)
+                        : const Duration(milliseconds: 6000),
+                    repeat: true,
+                    glowCount: 4,
+                    glowRadiusFactor: 0.7,
+                    curve: Curves.easeOutQuad,
+                    child: Bounceable(
+                      curve: Curves.bounceIn,
+                      reverseCurve: Curves.bounceIn,
+                      scaleFactor: 0.9,
+                      onTap:  value.state == 'DISCONNECTED' ? () async {
+            showAdThanConnect(() async {
+            ref
+                .read(v2rayControllerProvider.notifier)
+                .connect(config: selectedConfig!);
+            });
+            } :   () =>
+            ref
+                .read(v2rayControllerProvider.notifier)
+                .disconnect(),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                        child: AnimatedContainer(
+                          padding: const EdgeInsets.fromLTRB(25, 10, 25, 25),
+                          height: 230,
+                          width: 230,
+                          duration: const Duration(milliseconds: 1200),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color:
+                            value.state == 'DISCONNECTED'
+                                ? Colors.white
+                                : const Color.fromARGB(255, 31, 226, 161),
+                            //borderRadius: BorderRadius.circular(99),
+                          ),
+                          child: SvgPicture.asset(
+                            alignment: Alignment.bottomCenter,
+                            assetName,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  /*
+                  MyCustomWidget(
                     connect: () async {
                       showAdThanConnect(() async {
                         ref
@@ -64,7 +118,10 @@ class HomePageWidget extends ConsumerWidget {
                                 .disconnect(),
                     isNotConnected: value.state == 'DISCONNECTED',
                   ),
+                  */
+
                 ),
+
                 DraggableScrollableSheet(
                   maxChildSize: 0.70,
                   initialChildSize: 0.50,
