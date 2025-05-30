@@ -54,13 +54,13 @@ class HomePageWidget extends ConsumerWidget {
                     glowShape: BoxShape.circle,
                     animate: value.state == 'CONNECTED',
                     glowColor:
-                    value.state == 'DISCONNECTED'
-                        ? Colors.grey.shade600
-                        : const Color.fromARGB(20, 33, 255, 181),
+                        value.state == 'DISCONNECTED'
+                            ? Colors.grey.shade600
+                            : const Color.fromARGB(20, 33, 255, 181),
                     duration:
-                    value.state == 'DISCONNECTED'
-                        ? const Duration(milliseconds: 3500)
-                        : const Duration(milliseconds: 6000),
+                        value.state == 'DISCONNECTED'
+                            ? const Duration(milliseconds: 3500)
+                            : const Duration(milliseconds: 6000),
                     repeat: true,
                     glowCount: 4,
                     glowRadiusFactor: 0.7,
@@ -69,16 +69,19 @@ class HomePageWidget extends ConsumerWidget {
                       curve: Curves.bounceIn,
                       reverseCurve: Curves.bounceIn,
                       scaleFactor: 0.9,
-                      onTap:  value.state == 'DISCONNECTED' ? () async {
-            showAdThanConnect(() async {
-            ref
-                .read(v2rayControllerProvider.notifier)
-                .connect(config: selectedConfig!);
-            });
-            } :   () =>
-            ref
-                .read(v2rayControllerProvider.notifier)
-                .disconnect(),
+                      onTap:
+                          value.state == 'DISCONNECTED'
+                              ? () async {
+                                connectVPNThanShowAds(() async {
+                                  ref
+                                      .read(v2rayControllerProvider.notifier)
+                                      .connect(config: selectedConfig!);
+                                });
+                              }
+                              : () =>
+                                  ref
+                                      .read(v2rayControllerProvider.notifier)
+                                      .disconnect(),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
                         child: AnimatedContainer(
@@ -89,9 +92,9 @@ class HomePageWidget extends ConsumerWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color:
-                            value.state == 'DISCONNECTED'
-                                ? Colors.white
-                                : const Color.fromARGB(255, 31, 226, 161),
+                                value.state == 'DISCONNECTED'
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 31, 226, 161),
                             //borderRadius: BorderRadius.circular(99),
                           ),
                           child: SvgPicture.asset(
@@ -101,25 +104,7 @@ class HomePageWidget extends ConsumerWidget {
                         ),
                       ),
                     ),
-                  )
-                  /*
-                  MyCustomWidget(
-                    connect: () async {
-                      showAdThanConnect(() async {
-                        ref
-                            .read(v2rayControllerProvider.notifier)
-                            .connect(config: selectedConfig!);
-                      });
-                    },
-                    disConnect:
-                        () =>
-                            ref
-                                .read(v2rayControllerProvider.notifier)
-                                .disconnect(),
-                    isNotConnected: value.state == 'DISCONNECTED',
                   ),
-                  */
-
                 ),
 
                 DraggableScrollableSheet(
@@ -156,72 +141,6 @@ class HomePageWidget extends ConsumerWidget {
       },
       error: (error, stackTrace) => Text('Error: $error'),
       loading: () => const Center(child: CircularProgressIndicator()),
-    );
-  }
-}
-
-class MyCustomWidget extends StatefulWidget {
-  const MyCustomWidget({
-    super.key,
-    required this.isNotConnected,
-    required this.connect,
-    required this.disConnect,
-  });
-  final bool isNotConnected;
-
-  final void Function() connect;
-  final void Function() disConnect;
-
-  @override
-  State<MyCustomWidget> createState() => _MyCustomWidgetState();
-}
-
-class _MyCustomWidgetState extends State<MyCustomWidget> {
-  @override
-  Widget build(BuildContext context) {
-    const String assetName = 'assets/power_icon.svg';
-    return AvatarGlow(
-      glowShape: BoxShape.circle,
-      animate: !widget.isNotConnected,
-      glowColor:
-          widget.isNotConnected
-              ? Colors.grey.shade600
-              : const Color.fromARGB(20, 33, 255, 181),
-      duration:
-          widget.isNotConnected
-              ? const Duration(milliseconds: 3500)
-              : const Duration(milliseconds: 6000),
-      repeat: true,
-      glowCount: 4,
-      glowRadiusFactor: 0.7,
-      curve: Curves.easeOutQuad,
-      child: Bounceable(
-        curve: Curves.bounceIn,
-        reverseCurve: Curves.bounceIn,
-        scaleFactor: 0.9,
-        onTap: widget.isNotConnected ? widget.connect : widget.disConnect,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: AnimatedContainer(
-            padding: const EdgeInsets.fromLTRB(25, 10, 25, 25),
-            height: 230,
-            width: 230,
-            duration: const Duration(milliseconds: 1200),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color:
-                  widget.isNotConnected
-                      ? Colors.white
-                      : const Color.fromARGB(255, 31, 226, 161),
-              //borderRadius: BorderRadius.circular(99),
-            ),
-            child: SvgPicture.asset(
-              alignment: Alignment.bottomCenter,
-              assetName,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
