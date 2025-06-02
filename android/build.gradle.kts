@@ -3,7 +3,7 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
-        maven { url = uri( "https://artifactory.appodeal.com/appodeal") }
+        
     }
 }
 

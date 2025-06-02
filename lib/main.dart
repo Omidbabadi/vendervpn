@@ -10,7 +10,6 @@ import 'package:vendervpn/theme/dark_theme.dart';
 import 'package:vendervpn/theme/light_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vendervpn/l10n/l10n.dart';
-import 'package:stack_appodeal_flutter/stack_appodeal_flutter.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 
 void main() async {
@@ -20,10 +19,6 @@ void main() async {
     print('Caught FlutterError: ${details.exception}');
   };
 
-  await Appodeal.initialize(
-  appKey: "69572c38cee6e481b7483917f82defcf9a736ee6791cc32c",
-  adTypes: [AppodealAdType.Interstitial],
-  );
   await Hive.initFlutter();
 
   Hive.registerAdapter(UserPreferencesAdapter());

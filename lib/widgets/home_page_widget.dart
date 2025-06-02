@@ -4,7 +4,6 @@ import 'package:vendervpn/riverpod/providers.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:vendervpn/widgets/ad_widget.dart';
 import 'dart:ui';
 
 import 'package:vendervpn/widgets/configs_list.dart';
@@ -71,13 +70,9 @@ class HomePageWidget extends ConsumerWidget {
                       scaleFactor: 0.9,
                       onTap:
                           value.state == 'DISCONNECTED'
-                              ? () async {
-                                connectVPNThanShowAds(() async {
-                                  ref
-                                      .read(v2rayControllerProvider.notifier)
-                                      .connect(config: selectedConfig!);
-                                });
-                              }
+                              ? () => ref
+                                  .read(v2rayControllerProvider.notifier)
+                                  .connect(config: selectedConfig!)
                               : () =>
                                   ref
                                       .read(v2rayControllerProvider.notifier)
