@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:vendervpn/home_page.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/riverpod/providers.dart';
+import 'package:vendervpn/widgets/show_snackbar.dart';
 
 class OnBoardingScreen extends ConsumerStatefulWidget {
   const OnBoardingScreen({super.key});
@@ -65,14 +66,22 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
     final isisInitialized = await UnityAds.isInitialized();
     debugPrint(isisInitialized.toString());
     if(isisInitialized){
+      if(mounted){
+        showSnackBar(context, false, title: 'isisInitialized', message:isisInitialized.toString());
+      }
       await UnityAds.showVideoAd(placementId: 'Interstitial_Android',
-      onComplete: (_) {
+      onComplete: (placementId) {
+        UnityAds.load(placementId: placementId);
+
         debugPrint('ad loaded');
         setState(() {
           _isLoading = false;
         });
       },
-        onFailed: (placemenId,error,message)=> debugPrint('Ad Failed: $error: $message')
+        onFailed: (placemenId,error,message) {
+          showSnackBar(context, false, title: placemenId,message: '$error: $message');
+          debugPrint('Ad Failed: $error: $message');
+        }
       );
     }else{
       debugPrint('Ad not reade');
