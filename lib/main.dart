@@ -1,23 +1,25 @@
 import 'dart:async';
-
+import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vendervpn/home_page.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/models/user_preferences.dart';
+import 'package:vendervpn/on_boarding_screen.dart';
 import 'package:vendervpn/theme/dark_theme.dart';
 import 'package:vendervpn/theme/light_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vendervpn/l10n/l10n.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
+import 'package:advertising_id/advertising_id.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterError.onError = (details) {
-    FlutterError.presentError(details);
-    print('Caught FlutterError: ${details.exception}');
-  };
+/*
+  String? addId = await AdvertisingId.id(true) ?? 'addId is null';
+  print(addId);
+*/
 
   await Hive.initFlutter();
 
@@ -44,7 +46,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter V2Ray',
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: SafeArea(child: const MyHomePage()),
+      home: SafeArea(child: const OnBoardingScreen()),
     );
   }
 }
