@@ -72,4 +72,9 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
     state = state.copyWith(defaultConfig: config);
     _box.put('prefs', state);
   }
+
+  void unSetDefualtConfig() {
+    state = state.copyWith(defaultConfig: null);
+    _box.put('prefs', state);
+  }
 }

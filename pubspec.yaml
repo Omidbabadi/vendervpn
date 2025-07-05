@@ -53,6 +53,7 @@ dependencies:
   flutter_hooks: ^0.21.2
   unity_ads_plugin: ^0.3.24
   advertising_id: ^2.7.1
+  lottie: ^3.3.1
  
 
 dev_dependencies:
@@ -94,13 +95,14 @@ flutter:
     - assets/darker_world_map.png
     - assets/Document - 1.svg
     - assets/Document.svg
-    - assets/More Square.svg
+    - assets/More-Square.svg
     - assets/Paper Plus - 1.svg
     - assets/Paper Plus - 2.svg
     - assets/Paper Plus.svg
     - assets/Plus.svg
     - assets/sheild.png
     - assets/power_icon.svg
+    - assets/animations/   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

@@ -122,5 +122,20 @@
   "coming_soon": "Future Is Not Implanted Yet ",
   "@coming_soon": {
     "description": "Future Is Not Implanted Yet"
+  },
+   "server_issue": "Server Issue",
+  "@coming_soon": {
+    "description": "Server Issue"
+  },
+
+   "get_servers": "fetch servers",
+  "@coming_soon": {
+    "description": "get servers from backend"
+  },
+
+   "founded_servers": "Servers Found",
+  "@coming_soon": {
+    "description": "numbers of server from server"
   }
+  
 }

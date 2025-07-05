@@ -9,26 +9,39 @@ import 'dart:ui';
 import 'package:vendervpn/widgets/configs_list.dart';
 
 class HomePageWidget extends ConsumerWidget {
-  const HomePageWidget({
-    super.key,
-    required this.connect,
-    required this.disConnect,
-    required this.delay,
-  });
-  final void Function() connect;
-  final void Function() disConnect;
-  final void Function() delay;
+  const HomePageWidget({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     const String assetName = 'assets/power_icon.svg';
+    final v2rayService = ref.read(v2rayControllerProvider.notifier);
     final height = MediaQuery.of(context).size.height;
     final controller = ref.watch(v2rayControllerProvider);
     final selectedConfig = ref.watch(userPrefsProvider).defaultConfig;
+    // final placementId = 'Interstitial_Android';
+    // final adManager = ref.read(adManagerProvier.notifier);
+    // final adState = ref.read(adManagerProvier);
+
+    Future<void> showAdBeforeConnect() async {
+      if (selectedConfig != null) {
+        debugPrint('selected Config is not null');
+
+        v2rayService.connect(config: selectedConfig);
+      } else {
+        debugPrint('selected Config is null');
+        return;
+      }
+    }
+
+    Future<void> showAdThanDisconnect() async {
+      v2rayService.disconnect();
+    }
+
     return controller.when(
       data: (v2ray) {
         final status = ref.read(v2rayControllerProvider.notifier).status;
-        final coreVrssion =
-            ref.read(v2rayControllerProvider.notifier).coreVersion;
+        // final coreVrssion =
+        //     ref.read(v2rayControllerProvider.notifier).coreVersion;
         return ValueListenableBuilder(
           valueListenable: status,
           builder: (ctx, value, child) {
@@ -42,7 +55,7 @@ class HomePageWidget extends ConsumerWidget {
                         ? 'assets/dark_mode_world_map1.png'
                         : 'assets/world _map.png',
                     fit: BoxFit.none,
-                    scale: 1.7,
+                    scale: 2.1,
                   ),
                 ),
                 Positioned(
@@ -70,19 +83,14 @@ class HomePageWidget extends ConsumerWidget {
                       scaleFactor: 0.9,
                       onTap:
                           value.state == 'DISCONNECTED'
-                              ? () => ref
-                                  .read(v2rayControllerProvider.notifier)
-                                  .connect(config: selectedConfig!)
-                              : () =>
-                                  ref
-                                      .read(v2rayControllerProvider.notifier)
-                                      .disconnect(),
+                              ? () => showAdBeforeConnect()
+                              : () => showAdThanDisconnect(),
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
                         child: AnimatedContainer(
                           padding: const EdgeInsets.fromLTRB(25, 10, 25, 25),
-                          height: 230,
-                          width: 230,
+                          height: 200,
+                          width: 200,
                           duration: const Duration(milliseconds: 1200),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,

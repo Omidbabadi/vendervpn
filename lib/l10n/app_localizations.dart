@@ -278,11 +278,29 @@ abstract class AppLocalizations {
   /// **'Update Subscriptions'**
   String get update_subscription;
 
-  /// Future Is Not Implanted Yet
+  /// numbers of server from server
   ///
   /// In en, this message translates to:
   /// **'Future Is Not Implanted Yet '**
   String get coming_soon;
+
+  /// No description provided for @server_issue.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Issue'**
+  String get server_issue;
+
+  /// No description provided for @get_servers.
+  ///
+  /// In en, this message translates to:
+  /// **'fetch servers'**
+  String get get_servers;
+
+  /// No description provided for @founded_servers.
+  ///
+  /// In en, this message translates to:
+  /// **'Servers Found'**
+  String get founded_servers;
 }
 
 class _AppLocalizationsDelegate

@@ -92,16 +92,20 @@ class V2rayService {
     required bool proxyOnly,
     List<String>? bypassSubnets,
   }) async {
-    if (await _flutterV2ray.requestPermission()) {
-      await _flutterV2ray.startV2Ray(
-        config: config,
-        remark: remark,
-        proxyOnly: proxyOnly,
-        bypassSubnets: bypassSubnets ?? [],
-        notificationDisconnectButtonName: "DISCONNECT",
-      );
-    } else {
-      throw Exception('Permission denied');
+    try {
+      if (await _flutterV2ray.requestPermission()) {
+        await _flutterV2ray.startV2Ray(
+          config: config,
+          remark: remark,
+          proxyOnly: proxyOnly,
+          bypassSubnets: bypassSubnets ?? [],
+          notificationDisconnectButtonName: "DISCONNECT",
+        );
+      } else {
+        throw Exception('Permission denied');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
     }
   }
 

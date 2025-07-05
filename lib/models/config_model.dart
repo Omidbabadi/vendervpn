@@ -90,7 +90,7 @@ class ConfigModel extends HiveObject {
     required this.dateAdded,
   }) : id = id ?? const Uuid().v4();
 
-  factory ConfigModel.fropMap(Map<String, dynamic> map) {
+  factory ConfigModel.fromMap(Map<String, dynamic> map) {
     return ConfigModel(
       configjson: map['configJson'],
       remark: map['remark'],

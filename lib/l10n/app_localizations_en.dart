@@ -101,4 +101,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coming_soon => 'Future Is Not Implanted Yet ';
+
+  @override
+  String get server_issue => 'Server Issue';
+
+  @override
+  String get get_servers => 'fetch servers';
+
+  @override
+  String get founded_servers => 'Servers Found';
 }

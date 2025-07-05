@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:vendervpn/controllers/ad_manager_controller.dart';
 import 'package:vendervpn/controllers/v2ray_controller.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/models/user_preferences.dart';
@@ -43,3 +44,7 @@ final userPrefsProvider =
           )!;
       return UserPreferencesNotifier(box, prefs);
     });
+
+final adManagerProvier = NotifierProvider<AdManagerController, AdManagerState>(
+  () => AdManagerController(),
+);

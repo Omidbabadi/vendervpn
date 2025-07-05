@@ -27,7 +27,7 @@ class ConfigsListHeaders extends ConsumerWidget {
                         width: 30,
                         height: 3,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(24),
                           color: const Color.fromARGB(255, 33, 255, 181),
                         ),
                       ),

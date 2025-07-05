@@ -3,9 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vendervpn/enums/menu_actions.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
+import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/riverpod/providers.dart';
+import 'package:vendervpn/services/api_service.dart';
 import 'package:vendervpn/widgets/home_page_widget.dart';
+import 'package:vendervpn/widgets/show_alert.dart';
 import 'package:vendervpn/widgets/show_snackbar.dart';
+import 'package:hive/hive.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
@@ -16,6 +20,9 @@ class MyHomePage extends ConsumerStatefulWidget {
 
 class _MyHomePageState extends ConsumerState<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
+  final Box<ConfigModel> configsBox = Hive.box('configs');
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -23,60 +30,93 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     _controller.dispose();
   }
 
-  void showAlert() {
-    showDialog(
+  void _changeLocale() {
+    showAlertDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: SingleChildScrollView(
-            child: ListBody(children: [TextField(controller: _controller)]),
-          ),
-          actions: [
-            FilledButton(
-              onPressed: () {
-                ref
-                    .read(v2rayControllerProvider.notifier)
-                    .importFromSubcrtion(_controller.text);
-              },
-              child: Text(AppLocalizations.of(context)!.confirm),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-          ],
-        );
-      },
+      actions: [
+        FilledButton(
+          onPressed: () {
+            ref.read(userPrefsProvider.notifier).setLanguage('en');
+          },
+          child: Text('فارسی'),
+        ),
+        FilledButton(
+          onPressed: () {
+            ref.read(userPrefsProvider.notifier).setLanguage('en');
+          },
+          child: Text('english'),
+        ),
+        FilledButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(AppLocalizations.of(context)!.cancel),
+        ),
+      ],
+      title: const Text('Choose Youre language'),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    ref.listen(v2rayControllerProvider, (previous, next) {
-      next.whenOrNull(
-        error: (err, _) {
+  Future<void> refreshConfigs() async {
+    setState(() {
+      _isLoading = !_isLoading;
+    });
+    final apiService = ApiService();
+    try {
+      final configs = await apiService.getConfigsList();
+      if (configs == null) {
+        setState(() {
+          _isLoading = !_isLoading;
+        });
+        return;
+      }
+      ;
+      if (configs.isEmpty) {
+        if (mounted) {
           showSnackBar(
             context,
             true,
-            title: AppLocalizations.of(context)!.error,
-            message: err.toString(),
+            title: 'Server Issue',
+            message: '0 Servers Found',
           );
-        },
-      );
-    });
-    //final controller = ref.watch(v2rayControllerProvider);
-    final connectedConfig = ref.watch(userPrefsProvider).defaultConfig;
-    //  final configsList = ref.watch(configsListProvider);
-    const String assetName = 'assets/Category.svg';
-    const String addIcon = 'assets/Paper Plus.svg';
-    final Brightness isDark = MediaQuery.of(context).platformBrightness;
+          setState(() {
+            _isLoading = !_isLoading;
+          });
+        }
+      }
+      if (mounted) {
+        showSnackBar(
+          context,
+          false,
+          title: 'Successful',
+          message: '${configs.length.toString()} Servers Found',
+        );
+      }
+      ref.read(userPrefsProvider.notifier).setDefauktConfig(configs[0]);
+      await configsBox.clear();
+      await configsBox.addAll(configs);
+    } catch (e) {
+      if (mounted) {
+        showSnackBar(context, true, title: 'Error', message: '$e');
+
+        setState(() {
+          _isLoading = !_isLoading;
+        });
+      }
+    }
+  }
+
+  void showAlert() {}
+
+  @override
+  Widget build(BuildContext context) {
+    const String addIcon = 'assets/More-Square.svg';
+    final isDark = ref.watch(userPrefsProvider).isDarkMode;
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
         actions: [
-          PopupMenuButton<MenuAction>(
+          PopupMenuButton<MenuActions>(
             icon: SvgPicture.asset(
               addIcon,
               height: 40,
@@ -93,27 +133,36 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
             ),
             onSelected: (value) async {
               switch (value) {
-                case MenuAction.importFromClipBoard:
+                case MenuActions.refreshServers:
                   ref
                       .read(v2rayControllerProvider.notifier)
                       .importFromClipboard();
                 //_importFromClipBoard();
                 //break;
-                case MenuAction.importFromQrCode:
+                case MenuActions.changeLanguage:
+                  _changeLocale();
                 //_importFromQrcode();
                 //  break;
 
-                case MenuAction.importSub:
+                case MenuActions.toggleTheme:
+                  ref.read(userPrefsProvider.notifier).toggleTheme();
                 //_subLinks();
                 // await showAlert();
-                case MenuAction.updateSubs:
-                //_updateSubs();
               }
             },
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
-                  value: MenuAction.importFromClipBoard,
+                  value: MenuActions.refreshServers,
+                  child: Text(
+                    'Refresh Servers',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inverseSurface,
+                    ),
+                  ),
+                ),
+                PopupMenuItem(
+                  value: MenuActions.changeLanguage,
                   child: Text(
                     AppLocalizations.of(context)!.import_from_clipboard,
                     style: TextStyle(
@@ -122,27 +171,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   ),
                 ),
                 PopupMenuItem(
-                  value: MenuAction.importFromQrCode,
+                  value: MenuActions.toggleTheme,
                   child: Text(
-                    AppLocalizations.of(context)!.import_from_qrcode,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.inverseSurface,
-                    ),
-                  ),
-                ),
-                PopupMenuItem(
-                  value: MenuAction.importSub,
-                  child: Text(
-                    AppLocalizations.of(context)!.import_sub_link,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.inverseSurface,
-                    ),
-                  ),
-                ),
-                PopupMenuItem(
-                  value: MenuAction.updateSubs,
-                  child: Text(
-                    AppLocalizations.of(context)!.coming_soon,
+                    'Enable Dark Theme',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inverseSurface,
                     ),
@@ -160,15 +191,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         backgroundColor: Colors.transparent,
         //const Color.fromARGB(255, 40, 45, 53),
       ),
-      body: HomePageWidget(
-        connect:
-            () => ref
-                .read(v2rayControllerProvider.notifier)
-                .connect(config: connectedConfig!),
-        delay: () => ref.read(v2rayControllerProvider.notifier).getDelay(),
-        disConnect:
-            () => ref.read(v2rayControllerProvider.notifier).disconnect(),
-      ),
+      body: HomePageWidget(),
     );
   }
 }
