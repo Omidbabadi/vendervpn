@@ -92,7 +92,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           message: '${configs.length.toString()} Servers Found',
         );
       }
-      ref.read(userPrefsProvider.notifier).setDefauktConfig(configs[0]);
+      ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
       await configsBox.clear();
       await configsBox.addAll(configs);
     } catch (e) {
@@ -122,9 +122,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               height: 40,
               width: 40,
               colorFilter: ColorFilter.mode(
-                isDark == Brightness.dark
-                    ? const Color.fromARGB(255, 0, 255, 179)
-                    : Colors.black,
+                const Color.fromARGB(255, 0, 255, 179),
                 BlendMode.srcIn,
               ),
             ),
@@ -134,18 +132,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
             onSelected: (value) async {
               switch (value) {
                 case MenuActions.refreshServers:
-                  ref
-                      .read(v2rayControllerProvider.notifier)
-                      .importFromClipboard();
-                //_importFromClipBoard();
-                //break;
+                  refreshConfigs();
+                  //_importFromClipBoard();
+                  break;
                 case MenuActions.changeLanguage:
                   _changeLocale();
-                //_importFromQrcode();
-                //  break;
+                  //_importFromQrcode();
+                  break;
 
                 case MenuActions.toggleTheme:
                   ref.read(userPrefsProvider.notifier).toggleTheme();
+                  break;
                 //_subLinks();
                 // await showAlert();
               }

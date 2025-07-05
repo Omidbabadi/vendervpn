@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/riverpod/providers.dart';
+import 'package:vendervpn/services/api_service.dart';
 import 'package:vendervpn/widgets/configs_list_headers.dart';
 import 'package:vendervpn/widgets/list_tile_trailing.dart';
+import 'package:vendervpn/widgets/show_snackbar.dart';
 //import 'package:flutter/foundation.dart';
 
 class ConfigsListView extends ConsumerWidget {
@@ -13,11 +15,49 @@ class ConfigsListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Future<void> _getConfigs() async {
+      final apiService = ApiService();
+
+      try {
+        final configs = await apiService.getConfigsList();
+        if (configs == null) return;
+        if (configs.isEmpty && context.mounted) {
+          showSnackBar(
+            context,
+            true,
+            title: 'Server Issue',
+            message: '0 Servers Found',
+          );
+        }
+        if (context.mounted) {
+          ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
+          showSnackBar(
+            context,
+            false,
+            title: AppLocalizations.of(context)!.founded_servers,
+            message: "${configs.length} servers found",
+          );
+        }
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    }
+
     final list = ref.watch(configsListProvider);
     final selectedConfig = ref.watch(userPrefsProvider).defaultConfig;
 
     final status = ref.read(v2rayControllerProvider.notifier).status;
     void onDelete(String id) {
+      if (selectedConfig!.id == id) {
+        showSnackBar(
+          context,
+          true,
+          title: 'Forbidden Action',
+          message: 'This Config is set as selected, You cant delete it',
+        );
+        return;
+      }
+
       ref.read(configsListProvider.notifier).removeConfig(id);
       final ConfigModel config = ConfigModel(
         configjson: '',
@@ -28,7 +68,7 @@ class ConfigsListView extends ConsumerWidget {
         uri: '',
         dateAdded: '',
       );
-      ref.read(userPrefsProvider.notifier).setDefauktConfig(config);
+      ref.read(userPrefsProvider.notifier).setDefaultConfig(config);
     }
 
     return ValueListenableBuilder(
@@ -36,8 +76,11 @@ class ConfigsListView extends ConsumerWidget {
       builder: (context, value, child) {
         if (list.isEmpty) {
           return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 0, 255, 179),
+            ),
             onPressed: () {
-              // TODO: implant api service get configs here
+              _getConfigs();
             },
             child: Text(AppLocalizations.of(context)!.get_servers),
           );
@@ -106,14 +149,14 @@ class ConfigsListView extends ConsumerWidget {
                           const CircleAvatar(
                             child: Icon(Icons.cloud_download_rounded),
                           ),
-                          Text('${value.download} kb/s'),
-                          Text('${value.downloadSpeed} kb/s'),
+                          Text('${value.download / 100} kb/s'),
+                          Text('${value.downloadSpeed / 100} kb/s'),
                           const Padding(
                             padding: EdgeInsets.all(8.0),
                             child: VerticalDivider(width: 3),
                           ),
-                          Text('${value.upload} kb/s'),
-                          Text('${value.uploadSpeed} kb/s'),
+                          Text('${value.upload / 100} kb/s'),
+                          Text('${value.uploadSpeed / 100} kb/s'),
                           const CircleAvatar(
                             child: Icon(Icons.cloud_upload_rounded),
                           ),
@@ -135,10 +178,12 @@ class ConfigsListView extends ConsumerWidget {
                 child: ListTile(
                   trailing: ListTileTraling(
                     onShare: () {},
-                    onDelete:
-                        () => ref
-                            .read(configsListProvider.notifier)
-                            .removeConfig(list[configsIndex].id),
+                    onDelete: () {
+                      onDelete(list[configsIndex].id);
+                    },
+                    //() => ref
+                    //  .read(configsListProvider.notifier)
+                    // .removeConfig(list[configsIndex].id),
                   ),
                   leading: Container(
                     width: 5,
@@ -153,7 +198,7 @@ class ConfigsListView extends ConsumerWidget {
                   onTap:
                       () => ref
                           .read(userPrefsProvider.notifier)
-                          .setDefauktConfig(list[configsIndex]),
+                          .setDefaultConfig(list[configsIndex]),
 
                   title: Text(
                     list[configsIndex].remark,

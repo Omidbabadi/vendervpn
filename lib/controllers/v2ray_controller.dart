@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:hive/hive.dart';
 import 'package:vendervpn/models/config_model.dart';
+import 'package:vendervpn/services/api_service.dart';
 import 'package:vendervpn/services/v2ray_service.dart';
 import 'package:vendervpn/riverpod/providers.dart';
 import 'package:uuid/uuid.dart';
@@ -10,70 +12,28 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
-final Map<String, dynamic> dnsServers = {
-  "hosts": {
-    "domain:googleapis.cn": "googleapis.com",
-    "dns.alidns.com": [
-      "223.5.5.5",
-      "223.6.6.6",
-      "2400:3200::1",
-      "2400:3200:baba::1",
-    ],
-    "one.one.one.one": [
-      "1.1.1.1",
-      "1.0.0.1",
-      "2606:4700:4700::1111",
-      "2606:4700:4700::1001",
-    ],
-    "dot.pub": ["1.12.12.12", "120.53.53.53"],
-    "dns.google": [
-      "8.8.8.8",
-      "8.8.4.4",
-      "2001:4860:4860::8888",
-      "2001:4860:4860::8844",
-    ],
-    "dns.quad9.net": [
-      "9.9.9.9",
-      "149.112.112.112",
-      "2620:fe::fe",
-      "2620:fe::9",
-    ],
-    "common.dot.dns.yandex.net": [
-      "77.88.8.8",
-      "77.88.8.1",
-      "2a02:6b8::feed:0ff",
-      "2a02:6b8:0:1::feed:0ff",
-    ],
-    "out.flutterdevs.click": "5.78.58.33",
-  },
-  "servers": [
-    "1.1.1.1",
-    {
-      "address": "1.1.1.1",
-      "domains": ["domain:googleapis.cn", "domain:gstatic.com"],
-    },
-    {
-      "address": "223.5.5.5",
-      "domains": [
-        "domain:alidns.com",
-        "domain:doh.pub",
-        "domain:dot.pub",
-        "domain:360.cn",
-        "domain:onedns.net",
-        "geosite:cn",
-      ],
-      "expectIPs": ["geoip:cn"],
-      "skipFallback": true,
-    },
-  ],
-};
-
 class V2rayController extends AsyncNotifier<V2rayService> {
   @override
   Future<V2rayService> build() async {
     final service = await V2rayService.create();
+
     ref.onDispose(service.dispose);
     return service;
+  }
+
+  Future<void> getConfigsFromServer() async {
+    final Box<ConfigModel> configsBox = Hive.box('configs');
+
+    final apiService = ApiService();
+    try {
+      final configs = await apiService.getConfigsList();
+      if (configs == null) return;
+      ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
+      await configsBox.clear();
+      await configsBox.addAll(configs);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   Future<void> connect({required ConfigModel config}) async {

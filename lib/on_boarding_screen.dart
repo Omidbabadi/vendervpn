@@ -108,7 +108,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
           message: '${configs.length.toString()} Servers Found',
         );
       }
-      ref.read(userPrefsProvider.notifier).setDefauktConfig(configs[0]);
+      ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
       await configsBox.clear();
       await configsBox.addAll(configs);
       if (mounted) {

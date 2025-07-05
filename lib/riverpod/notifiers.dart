@@ -68,7 +68,7 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
     _box.put('prefs', state);
   }
 
-  void setDefauktConfig(ConfigModel config) {
+  void setDefaultConfig(ConfigModel config) {
     state = state.copyWith(defaultConfig: config);
     _box.put('prefs', state);
   }
