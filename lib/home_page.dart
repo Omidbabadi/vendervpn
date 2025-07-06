@@ -36,7 +36,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
       actions: [
         FilledButton(
           onPressed: () {
-            ref.read(userPrefsProvider.notifier).setLanguage('en');
+            ref.read(userPrefsProvider.notifier).setLanguage('fa');
           },
           child: Text('فارسی'),
         ),
@@ -111,7 +111,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     const String addIcon = 'assets/More-Square.svg';
-    final isDark = ref.watch(userPrefsProvider).isDarkMode;
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,

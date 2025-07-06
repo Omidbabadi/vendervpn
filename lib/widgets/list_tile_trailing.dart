@@ -4,10 +4,10 @@ class ListTileTraling extends StatelessWidget {
   const ListTileTraling({
     super.key,
     required this.onDelete,
-    required this.onShare,
+    //  required this.onShare,
   });
   final void Function() onDelete;
-  final void Function() onShare;
+  // final void Function() onShare;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +30,11 @@ class ListTileTraling extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             color: Colors.white,
           ),
+          /*
           child: IconButton(
             onPressed: onShare,
             icon: const Icon(Icons.share, color: Colors.black),
-          ),
+          ),*/
         ),
       ],
     );

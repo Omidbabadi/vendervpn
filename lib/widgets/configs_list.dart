@@ -59,30 +59,25 @@ class ConfigsListView extends ConsumerWidget {
       }
 
       ref.read(configsListProvider.notifier).removeConfig(id);
-      final ConfigModel config = ConfigModel(
-        configjson: '',
-        importedFrom: '',
-        remark: '',
-        port: 0,
-        address: '',
-        uri: '',
-        dateAdded: '',
-      );
-      ref.read(userPrefsProvider.notifier).setDefaultConfig(config);
     }
 
     return ValueListenableBuilder(
       valueListenable: status,
       builder: (context, value, child) {
         if (list.isEmpty) {
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 0, 255, 179),
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 0, 255, 179),
+                ),
+                onPressed: () {
+                  _getConfigs();
+                },
+                child: Text(AppLocalizations.of(context)!.get_servers),
+              ),
             ),
-            onPressed: () {
-              _getConfigs();
-            },
-            child: Text(AppLocalizations.of(context)!.get_servers),
           );
         }
         return ListView.builder(
@@ -177,7 +172,7 @@ class ConfigsListView extends ConsumerWidget {
                 ),
                 child: ListTile(
                   trailing: ListTileTraling(
-                    onShare: () {},
+                    // onShare: () {},
                     onDelete: () {
                       onDelete(list[configsIndex].id);
                     },

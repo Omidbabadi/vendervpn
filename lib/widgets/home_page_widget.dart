@@ -13,6 +13,8 @@ class HomePageWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = ref.watch(userPrefsProvider).isDarkMode;
+
     const String assetName = 'assets/power_icon.svg';
     final v2rayService = ref.read(v2rayControllerProvider.notifier);
     final height = MediaQuery.of(context).size.height;
@@ -51,7 +53,7 @@ class HomePageWidget extends ConsumerWidget {
                   height: 480,
                   width: double.infinity,
                   child: Image.asset(
-                    MediaQuery.of(context).platformBrightness == Brightness.dark
+                    isDark
                         ? 'assets/dark_mode_world_map1.png'
                         : 'assets/world _map.png',
                     fit: BoxFit.none,
