@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:hive/hive.dart';
-import 'package:uuid/uuid.dart';
 import 'package:vendervpn/home_page.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/riverpod/providers.dart';
 import 'package:vendervpn/services/api_service.dart';
@@ -42,15 +41,10 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
         _lottieContorller.repeat();
       }
     });
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (configsBox.isNotEmpty) {
+      /*if (configsBox.isNotEmpty) {
         if (mounted) {
-          showSnackBar(
-            context,
-            true,
-            title: 'Server Issue',
-            message: '0 Servers Found',
-          );
           setState(() {
             _isLoding = !_isLoding;
           });
@@ -59,7 +53,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
             MaterialPageRoute(builder: (context) => const MyHomePage()),
           );
         }
-      }
+      }*/
     });
   }
 
@@ -77,7 +71,30 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
       });
     }
     final apiService = ApiService();
-
+    final adService = ref.read(adManagerProvier.notifier);
+    final adState = ref.watch(adManagerProvier);
+    if(!adState.initialized){
+     await adService.initAdMob();
+    }
+    adService.showAd();
+    //adService.loadInterstitialAd();
+    if(adState.interstitialLoaded){
+      debugPrint('ad loaded');
+     // adService.showInterstitialAd();
+      if (mounted) {
+        setState(() {
+          _isLoding = !_isLoding;
+        });
+      }
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        _isLoding = !_isLoding;
+      });
+    }
+    debugPrint('ad didnt loaded');
+    return;
     try {
       final configs = await apiService.getConfigsList();
       if (configs == null) return;
@@ -86,8 +103,8 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
           showSnackBar(
             context,
             true,
-            title: 'Server Issue',
-            message: '0 Servers Found',
+            title: AppLocalizations.of(context)!.server_issue,
+            message: '0 ${AppLocalizations.of(context)!.founded_servers}',
           );
           setState(() {
             _isLoding = !_isLoding;
@@ -102,8 +119,9 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
         showSnackBar(
           context,
           false,
-          title: 'Successful',
-          message: '${configs.length.toString()} Servers Found',
+          title: AppLocalizations.of(context)!.succesful,
+          message:
+              '${configs.length.toString()} ${AppLocalizations.of(context)!.founded_servers}',
         );
       }
       ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
@@ -117,13 +135,18 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
       }
     } catch (e) {
       if (mounted) {
-        showSnackBar(context, true, title: 'Error', message: '$e');
+        showSnackBar(
+          context,
+          true,
+          title: AppLocalizations.of(context)!.error,
+          message: '$e',
+        );
 
         setState(() {
           _isLoding = !_isLoding;
         });
 
-        Navigator.pushReplacement(
+         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MyHomePage()),
         );
@@ -131,58 +154,14 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
     }
   }
 
-  Future<void> _connectAndShowAd() async {
-    setState(() {
-      _isLoding = true;
-    });
-    final link =
-        'ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpWZVZzUmpQWEpoWE41Y2dkYWNERTZS@5.78.58.33:13123/?outline=1';
-
-    final V2RayURL v2rayURL = FlutterV2ray.parseFromURL(link);
-
-    final config = ConfigModel(
-      importedFrom: 'server',
-      id: const Uuid().v4(),
-      configjson: v2rayURL.getFullConfiguration(),
-      remark: v2rayURL.remark,
-      port: v2rayURL.port,
-      address: v2rayURL.address,
-      uri: v2rayURL.url,
-      dateAdded: DateTime.now().toIso8601String(),
-    );
-    final v2rayService = ref.read(v2rayControllerProvider.notifier);
-    //v2rayService.disconnect();
-    //await v2rayService.connect(config: config);
-
-    if (mounted) {
-      showSnackBar(
-        context,
-        false,
-        title: 'Loading Servers',
-        message: 'Please Wait While We Getting Data From Server',
-      );
-    }
-    await Future.delayed(Duration(seconds: 15));
-
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MyHomePage()),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height;
-    final width = MediaQuery.sizeOf(context).width;
     final v2rayState = ref.watch(v2rayControllerProvider);
 
     return Scaffold(
       body: Center(
         child: Container(
-          // width: 300,
-          // height: 450,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
           child: Stack(
             children: [
@@ -239,14 +218,14 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
                                       ? const CircularProgressIndicator(
                                         color: Colors.white,
                                       )
-                                      : const Text(
-                                        'Next',
+                                      : Text(
+                                        AppLocalizations.of(context)!.next,
                                         style: TextStyle(color: Colors.white),
                                       ),
                             );
                       },
                       error: (e, st) {
-                        return const Text('Error');
+                        return Text(AppLocalizations.of(context)!.error);
                       },
                       loading: () {
                         return FilledButton(

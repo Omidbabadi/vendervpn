@@ -70,7 +70,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         });
         return;
       }
-      ;
+
       if (configs.isEmpty) {
         if (mounted) {
           showSnackBar(
@@ -82,7 +82,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           setState(() {
             _isLoading = !_isLoading;
           });
-        }
+        }return;
       }
       if (mounted) {
         showSnackBar(
@@ -140,7 +140,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   break;
 
                 case MenuActions.toggleTheme:
-                  ref.read(userPrefsProvider.notifier).toggleTheme();
+                   ref
+                     .read(v2rayControllerProvider.notifier)
+                  .importFromClipboard();
+                 // ref.read(userPrefsProvider.notifier).toggleTheme();
                   break;
                 //_subLinks();
                 // await showAlert();
@@ -151,7 +154,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 PopupMenuItem(
                   value: MenuActions.refreshServers,
                   child: Text(
-                    'Refresh Servers',
+                    AppLocalizations.of(context)!.get_servers,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inverseSurface,
                     ),
@@ -160,7 +163,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 PopupMenuItem(
                   value: MenuActions.changeLanguage,
                   child: Text(
-                    AppLocalizations.of(context)!.import_from_clipboard,
+                    AppLocalizations.of(context)!.language,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inverseSurface,
                     ),
@@ -169,7 +172,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 PopupMenuItem(
                   value: MenuActions.toggleTheme,
                   child: Text(
-                    'Enable Dark Theme',
+                    AppLocalizations.of(context)!.change_theme,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inverseSurface,
                     ),

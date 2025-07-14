@@ -124,18 +124,33 @@
     "description": "Future Is Not Implanted Yet"
   },
    "server_issue": "Server Issue",
-  "@coming_soon": {
+  "@server_issue": {
     "description": "Server Issue"
   },
 
    "get_servers": "fetch servers",
-  "@coming_soon": {
+  "@get_servers": {
     "description": "get servers from backend"
   },
 
    "founded_servers": "Servers Found",
-  "@coming_soon": {
+  "@founded_servers": {
     "description": "numbers of server from server"
+  },
+
+  "change_theme": "Toggle theme",
+  "@change_theme": {
+    "description": "toggle dark/light theme"
+  },
+
+  "next": "Next",
+  "@next": {
+    "description": "next button"
+  },
+
+  "forbidden": "Forbidden Action",
+  "@change_theme": {
+    "description": "Forbidden"
   }
-  
+
 }

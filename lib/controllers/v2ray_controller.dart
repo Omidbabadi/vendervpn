@@ -37,6 +37,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
   }
 
   Future<void> connect({required ConfigModel config}) async {
+    final adService = ref.read(adManagerProvier.notifier);
     final ConfigModel connectWith = ConfigModel(
       configjson: config.configjson,
       remark: config.remark,
@@ -55,7 +56,9 @@ class V2rayController extends AsyncNotifier<V2rayService> {
         proxyOnly: false,
         bypassSubnets: [],
       );
+
       state = AsyncData(state.requireValue);
+      Future.delayed(Duration(seconds: 3));
     } catch (e, st) {
       debugPrint('in provider');
 

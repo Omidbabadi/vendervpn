@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
-import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/riverpod/providers.dart';
 import 'package:vendervpn/services/api_service.dart';
-import 'package:vendervpn/widgets/configs_list_headers.dart';
 import 'package:vendervpn/widgets/list_tile_trailing.dart';
 import 'package:vendervpn/widgets/show_snackbar.dart';
 //import 'package:flutter/foundation.dart';
@@ -15,7 +13,7 @@ class ConfigsListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Future<void> _getConfigs() async {
+    Future<void> getConfigs() async {
       final apiService = ApiService();
 
       try {
@@ -25,8 +23,8 @@ class ConfigsListView extends ConsumerWidget {
           showSnackBar(
             context,
             true,
-            title: 'Server Issue',
-            message: '0 Servers Found',
+            title: AppLocalizations.of(context)!.server_issue,
+            message: '0 ${AppLocalizations.of(context)!.founded_servers}',
           );
         }
         if (context.mounted) {
@@ -34,26 +32,26 @@ class ConfigsListView extends ConsumerWidget {
           showSnackBar(
             context,
             false,
-            title: AppLocalizations.of(context)!.founded_servers,
-            message: "${configs.length} servers found",
+            title: AppLocalizations.of(context)!.succesful,
+            message:
+                "${configs.length} ${AppLocalizations.of(context)!.founded_servers}",
           );
         }
       } catch (e) {
         debugPrint(e.toString());
       }
     }
-
-    final list = ref.watch(configsListProvider);
+    final list = ref.read(configsListProvider);
     final selectedConfig = ref.watch(userPrefsProvider).defaultConfig;
 
-    final status = ref.read(v2rayControllerProvider.notifier).status;
+    final status = ref.watch(v2rayControllerProvider.notifier).status;
     void onDelete(String id) {
       if (selectedConfig!.id == id) {
         showSnackBar(
           context,
           true,
-          title: 'Forbidden Action',
-          message: 'This Config is set as selected, You cant delete it',
+          title: AppLocalizations.of(context)!.forbidden,
+          message: AppLocalizations.of(context)!.delete_selected_config,
         );
         return;
       }
@@ -61,10 +59,11 @@ class ConfigsListView extends ConsumerWidget {
       ref.read(configsListProvider.notifier).removeConfig(id);
     }
 
+
     return ValueListenableBuilder(
       valueListenable: status,
       builder: (context, value, child) {
-        if (list.isEmpty) {
+        /*if (list.isEmpty) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(32.0),
@@ -73,13 +72,13 @@ class ConfigsListView extends ConsumerWidget {
                   backgroundColor: const Color.fromARGB(255, 0, 255, 179),
                 ),
                 onPressed: () {
-                  _getConfigs();
+                  getConfigs();
                 },
                 child: Text(AppLocalizations.of(context)!.get_servers),
               ),
             ),
           );
-        }
+        }*/
         return ListView.builder(
           controller: scrollController,
           itemCount: list.length + 1,
@@ -105,8 +104,8 @@ class ConfigsListView extends ConsumerWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       value.state == 'DISCONNECTED'
-                          ? 'Not Secure'
-                          : 'CONNECTED',
+                          ? AppLocalizations.of(context)!.vpnstatus_not_connect
+                          : AppLocalizations.of(context)!.vpnstatus_connect,
                       textAlign: TextAlign.center,
                       style: Theme.of(
                         context,
@@ -144,14 +143,20 @@ class ConfigsListView extends ConsumerWidget {
                           const CircleAvatar(
                             child: Icon(Icons.cloud_download_rounded),
                           ),
-                          Text('${value.download / 100} kb/s'),
-                          Text('${value.downloadSpeed / 100} kb/s'),
+                          Text('${value.download } kb/s',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                         // Text('${value.downloadSpeed / 1000} mb/s'),
                           const Padding(
                             padding: EdgeInsets.all(8.0),
                             child: VerticalDivider(width: 3),
                           ),
-                          Text('${value.upload / 100} kb/s'),
-                          Text('${value.uploadSpeed / 100} kb/s'),
+                          Text('${value.upload} kb/s',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          //Text('${value.uploadSpeed / 1000} kb/s'),
                           const CircleAvatar(
                             child: Icon(Icons.cloud_upload_rounded),
                           ),
@@ -171,7 +176,7 @@ class ConfigsListView extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: ListTile(
-                  trailing: ListTileTraling(
+                /* trailing: ListTileTraling(
                     // onShare: () {},
                     onDelete: () {
                       onDelete(list[configsIndex].id);
@@ -179,10 +184,11 @@ class ConfigsListView extends ConsumerWidget {
                     //() => ref
                     //  .read(configsListProvider.notifier)
                     // .removeConfig(list[configsIndex].id),
-                  ),
+                  ),*/
                   leading: Container(
                     width: 5,
                     decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
                       color:
                           selectedConfig != null &&
                                   list[configsIndex].id == selectedConfig.id
@@ -206,7 +212,7 @@ class ConfigsListView extends ConsumerWidget {
                     ),
                   ),
                   subtitle: Text(
-                    list[configsIndex].address,
+                    '${list[configsIndex].address}:${list[configsIndex].port}',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(

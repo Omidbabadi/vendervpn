@@ -278,29 +278,47 @@ abstract class AppLocalizations {
   /// **'Update Subscriptions'**
   String get update_subscription;
 
-  /// numbers of server from server
+  /// Future Is Not Implanted Yet
   ///
   /// In en, this message translates to:
   /// **'Future Is Not Implanted Yet '**
   String get coming_soon;
 
-  /// No description provided for @server_issue.
+  /// Server Issue
   ///
   /// In en, this message translates to:
   /// **'Server Issue'**
   String get server_issue;
 
-  /// No description provided for @get_servers.
+  /// get servers from backend
   ///
   /// In en, this message translates to:
   /// **'fetch servers'**
   String get get_servers;
 
-  /// No description provided for @founded_servers.
+  /// numbers of server from server
   ///
   /// In en, this message translates to:
   /// **'Servers Found'**
   String get founded_servers;
+
+  /// Forbidden
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle theme'**
+  String get change_theme;
+
+  /// next button
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @forbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Forbidden Action'**
+  String get forbidden;
 }
 
 class _AppLocalizationsDelegate

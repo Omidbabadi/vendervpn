@@ -1,98 +1,130 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/riverpod/providers.dart';
-import 'package:unity_ads_plugin/unity_ads_plugin.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdManagerController extends Notifier<AdManagerState> {
+  late InterstitialAd? _interstitialAd;
+  late BannerAd? _bannerAd;
+
   @override
   AdManagerState build() {
-    _initUnityAds();
     return const AdManagerState.initial();
   }
 
-  Future<void> _initUnityAds() async {
-    //TO-DO: add ios game id
-    await UnityAds.init(
-      testMode: false,
-      gameId: '5867671',
-      firebaseTestLabMode: FirebaseTestLabMode.disableAds,
-      onComplete: () {
-        state = state.copyWith(initialzed: true);
-      },
-      onFailed: (error, message) {
-        state = state.copyWith(error: '$error: $message');
-      },
-    );
+  Future<void> initAdMob() async {
+    //if (!state.initialized) return;
+    await MobileAds.instance
+        .initialize()
+        .then((InitializationStatus status) {
+          debugPrint('AD mobo init succssesful');
+          state = state.copyWith(initialized: true);
+        })
+        .catchError((e) {
+          state = state.copyWith(error: e.toString());
+          debugPrint('#ATTENTION: ${state.error}');
+        });
   }
 
-  Future<void> loadUnityAd(String placementId) async {
-    debugPrint('loadUnityAd called');
-    await UnityAds.load(
-      placementId: placementId,
-      onComplete: (placementId) {
-        state = state.copyWith(adLoaded: true);
-        debugPrint(state.adLoaded.toString());
-      },
-      onFailed: (placementId, error, errorMessage) {
-        debugPrint(state.adLoaded.toString());
-
-        state = state.copyWith(
-          error: '$error: $errorMessage with this placementId: $placementId',
-        );
-      },
+  Future<void> loadInterstitialAd() async  {
+    if (!state.initialized) {
+      state = state.copyWith(error: 'not initialized');
+      debugPrint(state.error);
+    }
+    await InterstitialAd.load(
+      adUnitId: 'ca-app-pub-3940256099942544/5224354917',
+      //adUnitId: 'ca-app-pub-3785233012063626/6389192603',
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          state = state.copyWith(interstitialLoaded: true);
+          debugPrint('AD loaded');
+        },
+        onAdFailedToLoad: (error) {
+          state = state.copyWith(error: ' ${error.code} ${error.message}');
+          debugPrint('#####AdLoad Failed#####\n#########');
+          debugPrint(state.error);
+        },
+      ),
     );
   }
+  void showAd(){
+    if(!state.initialized){
+      debugPrint('#info: ad mob not init');
+      return;
+    }
+    InterstitialAd.load(adUnitId: 'ca-app-pub-3940256099942544/5224354917',
+        request: AdRequest(),
 
-  Future<void> showUnityVideoAd(String placementId) async {
-    debugPrint('showUnityVideoAd');
-    await UnityAds.showVideoAd(
-      placementId: placementId,
-      onComplete: (placementId) {
-        state = state.copyWith(adCompleted: true, adLoaded: false);
-        loadUnityAd(placementId);
-      },
-      onFailed:
-          (placemenId, error, message) =>
-              state = state.copyWith(
-                adLoaded: false,
-                error: '$error: $message with this placementId: $placementId',
-              ),
-    );
+        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad){
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad){
+              ad.dispose();
+              _interstitialAd = ad;
+              state = state.copyWith(interstitialLoaded: false);
+              debugPrint('ad Dissmised');
+
+            }
+          );
+        }, onAdFailedToLoad: (err){
+          debugPrint(err.message);
+        }));
+  }
+  void showInterstitialAd() {
+    if (_interstitialAd != null) {
+      debugPrint('show ad method Started');
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          state = state.copyWith(interstitialLoaded: false);
+          debugPrint('ad Dissmised');
+          loadInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          state = state.copyWith(error: error.message);
+          debugPrint('ad failed to show');
+        },
+      );
+    } else {
+      debugPrint('Ad not loaded');
+    }
   }
 }
 
 class AdManagerState {
-  final bool initialzed;
-  final bool adLoaded;
+  final bool initialized;
+  final bool interstitialLoaded;
   final bool adCompleted;
   final bool adSkipped;
   final String? error;
 
   const AdManagerState({
-    required this.initialzed,
-    required this.adLoaded,
+    required this.initialized,
+    required this.interstitialLoaded,
     required this.adCompleted,
     required this.adSkipped,
     this.error,
   });
 
   const AdManagerState.initial()
-    : initialzed = false,
-      adLoaded = false,
+    : initialized = false,
+      interstitialLoaded = false,
       adCompleted = false,
       adSkipped = false,
       error = null;
 
   AdManagerState copyWith({
-    bool? initialzed,
-    bool? adLoaded,
+    bool? initialized,
+    bool? interstitialLoaded,
     bool? adCompleted,
     bool? adSkipped,
     String? error,
   }) {
     return AdManagerState(
-      initialzed: initialzed ?? this.initialzed,
-      adLoaded: adLoaded ?? this.adLoaded,
+      initialized: initialized ?? this.initialized,
+      interstitialLoaded: interstitialLoaded ?? this.interstitialLoaded,
       adCompleted: adCompleted ?? this.adCompleted,
       adSkipped: adSkipped ?? this.adSkipped,
       error: error,

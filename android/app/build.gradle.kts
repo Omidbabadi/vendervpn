@@ -45,6 +45,7 @@ flutter {
 }
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
+    implementation("com.google.android.gms:play-services-ads:22.6.0")
 
 
 }

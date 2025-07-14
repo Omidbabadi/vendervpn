@@ -110,4 +110,13 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get founded_servers => 'Servers Found';
+
+  @override
+  String get change_theme => 'Toggle theme';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get forbidden => 'Forbidden Action';
 }

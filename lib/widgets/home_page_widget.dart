@@ -27,8 +27,22 @@ class HomePageWidget extends ConsumerWidget {
     Future<void> showAdBeforeConnect() async {
       if (selectedConfig != null) {
         debugPrint('selected Config is not null');
+         v2rayService.connect(config: selectedConfig);
 
-        v2rayService.connect(config: selectedConfig);
+        final adService = ref.read(adManagerProvier.notifier);
+        final adState = ref.watch(adManagerProvier);
+
+        if(!adState.initialized){
+          debugPrint('ad mob in home Page');
+          await adService.initAdMob();
+        }
+        adService.loadInterstitialAd();
+
+        if(adState.interstitialLoaded){
+          debugPrint('${adState.interstitialLoaded}');
+          adService.showInterstitialAd();
+        }
+
       } else {
         debugPrint('selected Config is null');
         return;
@@ -36,11 +50,20 @@ class HomePageWidget extends ConsumerWidget {
     }
 
     Future<void> showAdThanDisconnect() async {
-      v2rayService.disconnect();
+      final adService = ref.read(adManagerProvier.notifier);
+      final adState = ref.watch(adManagerProvier);
+      if(adState.interstitialLoaded){
+        adService.showInterstitialAd();
+
+      }v2rayService.disconnect();
+
     }
 
     return controller.when(
       data: (v2ray) {
+        bool systemThemeIsDark =
+            MediaQuery.of(context).platformBrightness == Brightness.dark;
+
         final status = ref.read(v2rayControllerProvider.notifier).status;
         // final coreVrssion =
         //     ref.read(v2rayControllerProvider.notifier).coreVersion;
@@ -53,7 +76,7 @@ class HomePageWidget extends ConsumerWidget {
                   height: 480,
                   width: double.infinity,
                   child: Image.asset(
-                    isDark
+                    isDark || systemThemeIsDark
                         ? 'assets/dark_mode_world_map1.png'
                         : 'assets/world _map.png',
                     fit: BoxFit.none,
@@ -120,13 +143,7 @@ class HomePageWidget extends ConsumerWidget {
                     return Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
-                        //Theme.of(context).colorScheme.onBackground,
-                        // Color.fromARGB(
-                        //   255,
-                        //   40,
-                        //   45,
-                        //   53,
-                        // ),
+
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(35),
                           topRight: Radius.circular(35),
