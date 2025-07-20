@@ -37,12 +37,15 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         FilledButton(
           onPressed: () {
             ref.read(userPrefsProvider.notifier).setLanguage('fa');
+            Navigator.of(context).pop();
           },
           child: Text('فارسی'),
         ),
         FilledButton(
           onPressed: () {
             ref.read(userPrefsProvider.notifier).setLanguage('en');
+                        Navigator.of(context).pop();
+
           },
           child: Text('english'),
         ),
@@ -53,7 +56,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           child: Text(AppLocalizations.of(context)!.cancel),
         ),
       ],
-      title: const Text('Choose Youre language'),
+      title:  Text(AppLocalizations.of(context)!.change_language_title),
     );
   }
 
@@ -106,18 +109,16 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     }
   }
 
-  void showAlert() {}
-
   @override
   Widget build(BuildContext context) {
-    const String addIcon = 'assets/More-Square.svg';
+    const String moreIcon = 'assets/More-Square.svg';
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
         actions: [
           PopupMenuButton<MenuActions>(
             icon: SvgPicture.asset(
-              addIcon,
+              moreIcon,
               height: 40,
               width: 40,
               colorFilter: ColorFilter.mode(
@@ -132,21 +133,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               switch (value) {
                 case MenuActions.refreshServers:
                   refreshConfigs();
-                  //_importFromClipBoard();
+               
                   break;
                 case MenuActions.changeLanguage:
                   _changeLocale();
-                  //_importFromQrcode();
+                  
                   break;
 
                 case MenuActions.toggleTheme:
-                   ref
-                     .read(v2rayControllerProvider.notifier)
-                  .importFromClipboard();
-                 // ref.read(userPrefsProvider.notifier).toggleTheme();
+                 ref.read(userPrefsProvider.notifier).toggleTheme();
                   break;
-                //_subLinks();
-                // await showAlert();
+                
               }
             },
             itemBuilder: (context) {

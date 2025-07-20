@@ -50,11 +50,10 @@ dependencies:
   blurrycontainer: ^2.1.0
   http: ^1.4.0
   toastification: ^3.0.2
-  #flutter_hooks: ^0.21.2
   advertising_id: ^2.7.1
   lottie: ^3.3.1
-  google_mobile_ads: ^4.0.0
- 
+  unity_ads_plugin: ^0.3.26
+  
 
 dev_dependencies:
   flutter_test:

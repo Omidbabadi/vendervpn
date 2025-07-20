@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/riverpod/providers.dart';
 import 'package:vendervpn/services/api_service.dart';
-import 'package:vendervpn/widgets/list_tile_trailing.dart';
 import 'package:vendervpn/widgets/show_snackbar.dart';
-//import 'package:flutter/foundation.dart';
 
 class ConfigsListView extends ConsumerWidget {
   final ScrollController scrollController;
@@ -41,48 +39,28 @@ class ConfigsListView extends ConsumerWidget {
         debugPrint(e.toString());
       }
     }
-    final list = ref.read(configsListProvider);
+    final list = ref.watch(configsListProvider);
     final selectedConfig = ref.watch(userPrefsProvider).defaultConfig;
 
     final status = ref.watch(v2rayControllerProvider.notifier).status;
-    void onDelete(String id) {
-      if (selectedConfig!.id == id) {
-        showSnackBar(
-          context,
-          true,
-          title: AppLocalizations.of(context)!.forbidden,
-          message: AppLocalizations.of(context)!.delete_selected_config,
-        );
-        return;
-      }
-
-      ref.read(configsListProvider.notifier).removeConfig(id);
-    }
-
 
     return ValueListenableBuilder(
       valueListenable: status,
       builder: (context, value, child) {
-        /*if (list.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 0, 255, 179),
-                ),
-                onPressed: () {
-                  getConfigs();
-                },
-                child: Text(AppLocalizations.of(context)!.get_servers),
-              ),
-            ),
-          );
-        }*/
+
         return ListView.builder(
           controller: scrollController,
           itemCount: list.length + 1,
           itemBuilder: (ctx, index) {
+            if(
+              list.isEmpty
+            ){
+              return Center (
+                child: FilledButton(onPressed: ()async{
+                 await getConfigs();
+                }, child: Text( AppLocalizations.of(context)!.get_servers)),
+              );
+            }
             int configsIndex = index - 1;
             if (index == 0) {
               return Column(
@@ -228,3 +206,15 @@ class ConfigsListView extends ConsumerWidget {
     );
   }
 }
+
+        /*if (list.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 0, 255, 179),
+                ),
+                onPressed: () {
+                  getConfigs();
+                }*/

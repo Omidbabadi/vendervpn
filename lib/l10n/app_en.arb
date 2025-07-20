@@ -3,8 +3,8 @@
   "@language": {
     "description": "The current Language"
   },
-  "change_language": "After Change You Need To Restart App",
-  "@change_language": {
+  "change_language_title": "Please Choose Your Preferred Language",
+  "@change_language_title": {
     "description": "Change current Language"
   },
   "confirm": "Confirm",

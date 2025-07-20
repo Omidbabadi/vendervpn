@@ -12,7 +12,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get language => 'تغییر زبان';
 
   @override
-  String get change_language => 'برای اعمال تنظیمات یک بار برنامه را ببندید ';
+  String get change_language_title => 'لطفا زبان خود را انتخاب کنید ';
 
   @override
   String get confirm => 'تایید';
@@ -72,8 +72,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get succesful => 'موفق';
 
   @override
-  String get delete_config_content =>
-      'این کانفیگ برای همیشه پاک خواهد شد.آیا مطمئن هستید؟';
+  String get delete_config_content => 'این کانفیگ برای همیشه پاک خواهد شد.آیا مطمئن هستید؟';
 
   @override
   String get delete => 'حذف';

@@ -1,96 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vendervpn/riverpod/providers.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-
+import 'package:unity_ads_plugin/unity_ads_plugin.dart';
+import 'package:flutter/foundation.dart';
 class AdManagerController extends Notifier<AdManagerState> {
-  late InterstitialAd? _interstitialAd;
-  late BannerAd? _bannerAd;
-
   @override
-  AdManagerState build() {
-    return const AdManagerState.initial();
-  }
+  AdManagerState build() => const AdManagerState.initial();
 
-  Future<void> initAdMob() async {
-    //if (!state.initialized) return;
-    await MobileAds.instance
-        .initialize()
-        .then((InitializationStatus status) {
-          debugPrint('AD mobo init succssesful');
-          state = state.copyWith(initialized: true);
-        })
-        .catchError((e) {
-          state = state.copyWith(error: e.toString());
-          debugPrint('#ATTENTION: ${state.error}');
-        });
-  }
-
-  Future<void> loadInterstitialAd() async  {
-    if (!state.initialized) {
-      state = state.copyWith(error: 'not initialized');
-      debugPrint(state.error);
-    }
-    await InterstitialAd.load(
-      adUnitId: 'ca-app-pub-3940256099942544/5224354917',
-      //adUnitId: 'ca-app-pub-3785233012063626/6389192603',
-      request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          _interstitialAd = ad;
-          state = state.copyWith(interstitialLoaded: true);
-          debugPrint('AD loaded');
-        },
-        onAdFailedToLoad: (error) {
-          state = state.copyWith(error: ' ${error.code} ${error.message}');
-          debugPrint('#####AdLoad Failed#####\n#########');
-          debugPrint(state.error);
-        },
-      ),
-    );
-  }
-  void showAd(){
-    if(!state.initialized){
-      debugPrint('#info: ad mob not init');
-      return;
-    }
-    InterstitialAd.load(adUnitId: 'ca-app-pub-3940256099942544/5224354917',
-        request: AdRequest(),
-
-        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad){
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad){
-              ad.dispose();
-              _interstitialAd = ad;
-              state = state.copyWith(interstitialLoaded: false);
-              debugPrint('ad Dissmised');
-
-            }
-          );
-        }, onAdFailedToLoad: (err){
-          debugPrint(err.message);
-        }));
-  }
-  void showInterstitialAd() {
-    if (_interstitialAd != null) {
-      debugPrint('show ad method Started');
-      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (ad) {
-          ad.dispose();
-          state = state.copyWith(interstitialLoaded: false);
-          debugPrint('ad Dissmised');
-          loadInterstitialAd();
-        },
-        onAdFailedToShowFullScreenContent: (ad, error) {
-          ad.dispose();
-          state = state.copyWith(error: error.message);
-          debugPrint('ad failed to show');
-        },
-      );
-    } else {
-      debugPrint('Ad not loaded');
+  Future<void> initUnityAds() async {
+    if(state.initialized) return;
+    if(AdManagerState.addUnitId == 'Platform is not Supported') return;
+    try{
+      await UnityAds.init(gameId: AdManagerState.addUnitId);
+      state = state.copyWith(initialized: true);
+      debugPrint('Unity Ads Initialized');
+    }catch(e){
+      
+      state = state.copyWith(error: e.toString());
+      debugPrint(state.error!);
     }
   }
+
+  Future<void> loadInterstitial() async {
+    await UnityAds.load(placementId: AdManagerState.interstitialId,onComplete: (placementId){
+      state = state.copyWith(interstitialLoaded: true);
+      debugPrint('Interstitial Loaded');
+    },onFailed: (placementId, error, message){
+
+      state = state.copyWith(interstitialLoaded: false,
+      error: message);
+      debugPrint("Load Interstitial Failed:\nPlacementId: $placementId Message: $message");
+
+    }
+    ); if(!state.interstitialLoaded) return;
+
+  }
+   Future<void> showIntAd() async {
+    if(!state.interstitialLoaded) {
+      await loadInterstitial();
+      
+    }
+        UnityAds.showVideoAd(
+            placementId: AdManagerState.interstitialId,
+            onStart: (placementId) {
+              
+              debugPrint('Video Ad $placementId started');},
+            onClick: (placementId) => debugPrint('Video Ad $placementId click'),
+            onSkipped: (placementId) {
+              state = state.copyWith(adSkipped: true);
+              debugPrint('Video Ad $placementId skipped');},
+            onComplete: (placementId) async {
+              state = state.copyWith(adCompleted: true,interstitialLoaded: false);
+              await loadInterstitial();
+            },
+            onFailed: (placementId, error, message) async {
+              await loadInterstitial();
+            });
+      }
+
+
 }
 
 class AdManagerState {
@@ -99,14 +66,18 @@ class AdManagerState {
   final bool adCompleted;
   final bool adSkipped;
   final String? error;
+  
+ // final String placementId;
 
   const AdManagerState({
     required this.initialized,
     required this.interstitialLoaded,
     required this.adCompleted,
     required this.adSkipped,
+    //required this.placementId,
     this.error,
   });
+  
 
   const AdManagerState.initial()
     : initialized = false,
@@ -130,4 +101,24 @@ class AdManagerState {
       error: error,
     );
   }
+
+   static String get addUnitId {
+        if (defaultTargetPlatform == TargetPlatform.android) {
+          return '5867671';
+        }
+        if (defaultTargetPlatform == TargetPlatform.iOS) {
+          return '5867670';
+        }
+        return 'Platform is not Supported';
+      }
+
+      static String get interstitialId {
+        if (defaultTargetPlatform == TargetPlatform.android) {
+          return 'Interstitial_Android';
+        }
+        if (defaultTargetPlatform == TargetPlatform.iOS) {
+          return 'Interstitial_iOS';
+        }
+        return '';
+      }
 }

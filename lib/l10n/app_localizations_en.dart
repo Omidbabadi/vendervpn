@@ -12,7 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Change Language';
 
   @override
-  String get change_language => 'After Change You Need To Restart App';
+  String get change_language_title => 'Please Choose Your Preferred Language';
 
   @override
   String get confirm => 'Confirm';
@@ -72,8 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get succesful => 'Successful';
 
   @override
-  String get delete_config_content =>
-      'Config Will Remove Permanently, Are You Sure ?';
+  String get delete_config_content => 'Config Will Remove Permanently, Are You Sure ?';
 
   @override
   String get delete => 'Delete';

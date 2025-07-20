@@ -37,7 +37,9 @@ class V2rayController extends AsyncNotifier<V2rayService> {
   }
 
   Future<void> connect({required ConfigModel config}) async {
+    //state = AsyncLoading();
     final adService = ref.read(adManagerProvier.notifier);
+    final adState = ref.watch(adManagerProvier);
     final ConfigModel connectWith = ConfigModel(
       configjson: config.configjson,
       remark: config.remark,
@@ -56,9 +58,19 @@ class V2rayController extends AsyncNotifier<V2rayService> {
         proxyOnly: false,
         bypassSubnets: [],
       );
+      if(!adState.adSkipped){
+        await adService.initUnityAds();
+      }
+      if(!adState.interstitialLoaded){
+        await adService.loadInterstitial();
+      }
+      await adService.showIntAd();
+      if(!adState.adCompleted){
+        debugPrint('ad not completed');
+      }
 
       state = AsyncData(state.requireValue);
-      Future.delayed(Duration(seconds: 3));
+      
     } catch (e, st) {
       debugPrint('in provider');
 
@@ -68,7 +80,12 @@ class V2rayController extends AsyncNotifier<V2rayService> {
   }
 
   Future<void> disconnect() async {
+    final adService = ref.read(adManagerProvier.notifier);
+    final adState = ref.watch(adManagerProvier);
     try {
+      if(adState.interstitialLoaded){
+      await  adService.showIntAd();  
+      }
       state.requireValue.disconnect();
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -90,6 +107,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
   }
 
   ValueNotifier<V2RayStatus> get status => state.requireValue.status;
+  
   String? get coreVersion => state.requireValue.coreVersion;
 
   Future importFromClipboard() async {

@@ -41,20 +41,6 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
         _lottieContorller.repeat();
       }
     });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      /*if (configsBox.isNotEmpty) {
-        if (mounted) {
-          setState(() {
-            _isLoding = !_isLoding;
-          });
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MyHomePage()),
-          );
-        }
-      }*/
-    });
   }
 
   @override
@@ -71,30 +57,6 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
       });
     }
     final apiService = ApiService();
-    final adService = ref.read(adManagerProvier.notifier);
-    final adState = ref.watch(adManagerProvier);
-    if(!adState.initialized){
-     await adService.initAdMob();
-    }
-    adService.showAd();
-    //adService.loadInterstitialAd();
-    if(adState.interstitialLoaded){
-      debugPrint('ad loaded');
-     // adService.showInterstitialAd();
-      if (mounted) {
-        setState(() {
-          _isLoding = !_isLoding;
-        });
-      }
-      return;
-    }
-    if (mounted) {
-      setState(() {
-        _isLoding = !_isLoding;
-      });
-    }
-    debugPrint('ad didnt loaded');
-    return;
     try {
       final configs = await apiService.getConfigsList();
       if (configs == null) return;
@@ -182,8 +144,6 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
                         debugPrint('lotte failed with error: $error');
                         return Text('$error');
                       },
-                      //width: 250,
-                      //height: 180,
                       fit: BoxFit.fill,
                       repeat: true,
                       animate: true,

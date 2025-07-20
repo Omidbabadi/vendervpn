@@ -20,43 +20,28 @@ class HomePageWidget extends ConsumerWidget {
     final height = MediaQuery.of(context).size.height;
     final controller = ref.watch(v2rayControllerProvider);
     final selectedConfig = ref.watch(userPrefsProvider).defaultConfig;
-    // final placementId = 'Interstitial_Android';
-    // final adManager = ref.read(adManagerProvier.notifier);
-    // final adState = ref.read(adManagerProvier);
 
     Future<void> showAdBeforeConnect() async {
       if (selectedConfig != null) {
-        debugPrint('selected Config is not null');
+        
          v2rayService.connect(config: selectedConfig);
 
-        final adService = ref.read(adManagerProvier.notifier);
-        final adState = ref.watch(adManagerProvier);
-
-        if(!adState.initialized){
-          debugPrint('ad mob in home Page');
-          await adService.initAdMob();
-        }
-        adService.loadInterstitialAd();
-
-        if(adState.interstitialLoaded){
-          debugPrint('${adState.interstitialLoaded}');
-          adService.showInterstitialAd();
-        }
-
-      } else {
-        debugPrint('selected Config is null');
-        return;
       }
     }
 
     Future<void> showAdThanDisconnect() async {
-      final adService = ref.read(adManagerProvier.notifier);
-      final adState = ref.watch(adManagerProvier);
-      if(adState.interstitialLoaded){
-        adService.showInterstitialAd();
-
-      }v2rayService.disconnect();
-
+      // final adService = ref.read(adManagerProvier.notifier);
+      // final adState = ref.watch(adManagerProvier);
+      // if(adState.interstitialLoaded){
+      //  await  adService.showIntAd();
+      //  v2rayService.disconnect();
+      // } else if(!adState.interstitialLoaded){
+      //   await adService.loadInterstitial();
+      //   await  adService.showIntAd();
+      //   v2rayService.disconnect();
+      // }else{v2rayService.disconnect();}
+      
+v2rayService.disconnect();
     }
 
     return controller.when(
@@ -136,7 +121,7 @@ class HomePageWidget extends ConsumerWidget {
                 ),
 
                 DraggableScrollableSheet(
-                  maxChildSize: 0.70,
+                 // maxChildSize: 0.70,
                   initialChildSize: 0.50,
                   minChildSize: 0.50,
                   builder: (context, controller) {
