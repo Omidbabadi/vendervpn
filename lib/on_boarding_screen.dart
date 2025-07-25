@@ -25,12 +25,11 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
 
   @override
   void initState() {
-    if(configsBox.isNotEmpty){
+    if (configsBox.isNotEmpty) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MyHomePage()),
       );
-      
     }
     super.initState();
     _loadingAnimation = AnimationController(vsync: this);
@@ -48,7 +47,6 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
         _lottieContorller.repeat();
       }
     });
-    
   }
 
   @override
@@ -57,6 +55,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
     _lottieContorller.dispose();
     super.dispose();
   }
+
   Future<void> _getConfigs() async {
     if (mounted) {
       setState(() {
@@ -115,7 +114,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
           _isLoding = !_isLoding;
         });
 
-         Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MyHomePage()),
         );
