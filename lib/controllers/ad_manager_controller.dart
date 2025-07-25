@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import 'package:flutter/foundation.dart';
+import 'package:vendervpn/riverpod/providers.dart';
 class AdManagerController extends Notifier<AdManagerState> {
   @override
   AdManagerState build() => const AdManagerState.initial();
@@ -34,23 +35,37 @@ class AdManagerController extends Notifier<AdManagerState> {
     ); if(!state.interstitialLoaded) return;
 
   }
-   Future<void> showIntAd() async {
+   Future<void> showIntAd() async {   
     if(!state.interstitialLoaded) {
+      debugPrint('${!state.interstitialLoaded}');
       await loadInterstitial();
-      
-    }
-        UnityAds.showVideoAd(
+    } 
+    final vpnStatus = ref.read(v2rayControllerProvider.notifier).status.value.state;
+    final v2rayService = ref.read(v2rayControllerProvider.notifier);
+    final bool isConnected = vpnStatus == 'CONNECTED';
+        await UnityAds.showVideoAd(
             placementId: AdManagerState.interstitialId,
             onStart: (placementId) {
               
               debugPrint('Video Ad $placementId started');},
             onClick: (placementId) => debugPrint('Video Ad $placementId click'),
-            onSkipped: (placementId) {
+            onSkipped: (placementId) async {
+                              await loadInterstitial();
+
+              if(!isConnected){
+                v2rayService.disconnect();
+              }
               state = state.copyWith(adSkipped: true);
-              debugPrint('Video Ad $placementId skipped');},
+              debugPrint('Video Ad $placementId skipped');
+              },
             onComplete: (placementId) async {
+                              await loadInterstitial();
+              if(!isConnected){
+                v2rayService.disconnect();
+                
+              }
+              debugPrint('Video Ad $placementId completed');
               state = state.copyWith(adCompleted: true,interstitialLoaded: false);
-              await loadInterstitial();
             },
             onFailed: (placementId, error, message) async {
               await loadInterstitial();

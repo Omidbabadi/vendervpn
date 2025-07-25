@@ -30,17 +30,7 @@ class HomePageWidget extends ConsumerWidget {
     }
 
     Future<void> showAdThanDisconnect() async {
-      // final adService = ref.read(adManagerProvier.notifier);
-      // final adState = ref.watch(adManagerProvier);
-      // if(adState.interstitialLoaded){
-      //  await  adService.showIntAd();
-      //  v2rayService.disconnect();
-      // } else if(!adState.interstitialLoaded){
-      //   await adService.loadInterstitial();
-      //   await  adService.showIntAd();
-      //   v2rayService.disconnect();
-      // }else{v2rayService.disconnect();}
-      
+
 v2rayService.disconnect();
     }
 

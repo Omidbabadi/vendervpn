@@ -57,8 +57,8 @@ class V2rayController extends AsyncNotifier<V2rayService> {
         remark: connectWith.remark,
         proxyOnly: false,
         bypassSubnets: [],
-      );
-      if(!adState.adSkipped){
+      ); state = AsyncData(state.requireValue);
+      if(!adState.initialized){
         await adService.initUnityAds();
       }
       if(!adState.interstitialLoaded){
@@ -69,7 +69,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
         debugPrint('ad not completed');
       }
 
-      state = AsyncData(state.requireValue);
+     
       
     } catch (e, st) {
       debugPrint('in provider');
