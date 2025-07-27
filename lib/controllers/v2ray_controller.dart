@@ -37,9 +37,9 @@ class V2rayController extends AsyncNotifier<V2rayService> {
   }
 
   Future<void> connect({required ConfigModel config}) async {
-    //state = AsyncLoading();
+    state = AsyncLoading();
     final adService = ref.read(adManagerProvier.notifier);
-    final adState = ref.watch(adManagerProvier);
+    final adState = ref.read(adManagerProvier);
     final ConfigModel connectWith = ConfigModel(
       configjson: config.configjson,
       remark: config.remark,
@@ -58,17 +58,18 @@ class V2rayController extends AsyncNotifier<V2rayService> {
         proxyOnly: false,
         bypassSubnets: [],
       );
-      state = AsyncData(state.requireValue);
-      if (!adState.initialized) {
+      await Future.delayed(Duration(seconds: 3));
+      if (adState.initialized == false) {
         await adService.initUnityAds();
       }
-      if (!adState.interstitialLoaded) {
+      if (adState.interstitialLoaded == false) {
         await adService.loadInterstitial();
       }
       await adService.showIntAd();
-      if (!adState.adCompleted) {
+      if (!adState.adCompleted == false) {
         debugPrint('ad not completed');
       }
+      state = AsyncData(state.requireValue);
     } catch (e, st) {
       debugPrint(e.toString());
       state = AsyncError(e, st);
