@@ -14,6 +14,10 @@ class ConfigModelNotifier extends StateNotifier<List<ConfigModel>> {
     state = _box.values.toList();
   }
 
+  void reLoadeConfigs() {
+    state = _box.values.toList();
+  }
+
   void addConfig(ConfigModel newConfig) async {
     await _box.add(newConfig);
     state = _box.values.toList();

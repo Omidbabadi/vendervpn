@@ -8,7 +8,10 @@
   ];
   idx.extensions = [
     
-  ];
+  
+ "Dart-Code.dart-code"
+ "Dart-Code.flutter"
+ "Google.arb-editor"];
   idx.previews = {
       enable = true;
     previews = {

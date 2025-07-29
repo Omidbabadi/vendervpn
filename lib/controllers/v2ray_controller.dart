@@ -22,6 +22,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
   }
 
   Future<void> getConfigsFromServer() async {
+    state = AsyncLoading();
     final Box<ConfigModel> configsBox = Hive.box('configs');
 
     final apiService = ApiService();
@@ -31,8 +32,12 @@ class V2rayController extends AsyncNotifier<V2rayService> {
       ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
       await configsBox.clear();
       await configsBox.addAll(configs);
+      final configsList = ref.read(configsListProvider.notifier);
+     configsList.reLoadeConfigs();
+      state = AsyncData(state.requireValue);
     } catch (e) {
       debugPrint(e.toString());
+      state = AsyncData(state.requireValue);
     }
   }
 
@@ -58,7 +63,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
         proxyOnly: false,
         bypassSubnets: [],
       );
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: 5));
       if (adState.initialized == false) {
         await adService.initUnityAds();
       }
@@ -78,7 +83,10 @@ class V2rayController extends AsyncNotifier<V2rayService> {
 
   Future<void> disconnect() async {
     try {
+      state = AsyncLoading();
+      await Future.delayed(Duration(seconds: 5));
       state.requireValue.disconnect();
+      state = AsyncData(state.requireValue);
     } catch (e, st) {
       state = AsyncError(e, st);
     }

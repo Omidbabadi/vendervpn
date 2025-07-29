@@ -57,5 +57,16 @@
     
      "no_subscription_found":"کانفیگی یافت نشد",
 
-     "update_subscription": "بروزرسانی گروه اشنراک"
-}
+     "update_subscription": "بروزرسانی گروه اشنراک",
+     
+     "server_issue": "خطای سرور",
+
+     "get_servers": "بروزرسانی سرور ها",
+     
+     "founded_servers": "بروزرسانی انجام شد",
+
+     "change_theme": "تغییر پوسته",
+
+     "next": "ادامه"
+     
+    }

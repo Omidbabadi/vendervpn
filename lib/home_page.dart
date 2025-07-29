@@ -1,3 +1,5 @@
+//TO-Do: impelant connected country flag
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -98,6 +100,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
       ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
       await configsBox.clear();
       await configsBox.addAll(configs);
+      final configsList = ref.read(configsListProvider.notifier);
+      configsList.reLoadeConfigs();
+
     } catch (e) {
       if (mounted) {
         showSnackBar(context, true, title: 'Error', message: '$e');

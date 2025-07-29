@@ -72,8 +72,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get succesful => 'موفق';
 
   @override
-  String get delete_config_content =>
-      'این کانفیگ برای همیشه پاک خواهد شد.آیا مطمئن هستید؟';
+  String get delete_config_content => 'این کانفیگ برای همیشه پاک خواهد شد.آیا مطمئن هستید؟';
 
   @override
   String get delete => 'حذف';

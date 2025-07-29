@@ -39,26 +39,28 @@ class ConfigsListView extends ConsumerWidget {
         debugPrint(e.toString());
       }
     }
+
     final list = ref.watch(configsListProvider);
     final selectedConfig = ref.watch(userPrefsProvider).defaultConfig;
+    final v2rayService = ref.read(v2rayControllerProvider.notifier);
 
     final status = ref.watch(v2rayControllerProvider.notifier).status;
 
     return ValueListenableBuilder(
       valueListenable: status,
       builder: (context, value, child) {
-
         return ListView.builder(
           controller: scrollController,
           itemCount: list.length + 1,
           itemBuilder: (ctx, index) {
-            if(
-              list.isEmpty
-            ){
-              return Center (
-                child: FilledButton(onPressed: ()async{
-                 await getConfigs();
-                }, child: Text( AppLocalizations.of(context)!.get_servers)),
+            if (list.isEmpty) {
+              return Center(
+                child: FilledButton(
+                  onPressed: () async {
+                    await getConfigs();
+                  },
+                  child: Text(AppLocalizations.of(context)!.get_servers),
+                ),
               );
             }
             int configsIndex = index - 1;
@@ -121,16 +123,18 @@ class ConfigsListView extends ConsumerWidget {
                           const CircleAvatar(
                             child: Icon(Icons.cloud_download_rounded),
                           ),
-                          Text('${value.download } kb/s',
+                          Text(
+                            '${value.download} kb/s',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
-                         // Text('${value.downloadSpeed / 1000} mb/s'),
+                          // Text('${value.downloadSpeed / 1000} mb/s'),
                           const Padding(
                             padding: EdgeInsets.all(8.0),
                             child: VerticalDivider(width: 3),
                           ),
-                          Text('${value.upload} kb/s',
+                          Text(
+                            '${value.upload} kb/s',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
@@ -154,7 +158,7 @@ class ConfigsListView extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: ListTile(
-                /* trailing: ListTileTraling(
+                  /* trailing: ListTileTraling(
                     // onShare: () {},
                     onDelete: () {
                       onDelete(list[configsIndex].id);
@@ -174,10 +178,14 @@ class ConfigsListView extends ConsumerWidget {
                               : Colors.grey[300],
                     ),
                   ),
-                  onTap:
-                      () => ref
-                          .read(userPrefsProvider.notifier)
-                          .setDefaultConfig(list[configsIndex]),
+                  onTap: () {
+                    if(status.value.state == "CONNECTED"){
+                      v2rayService.disconnect();
+                    }
+                    () => ref
+                        .read(userPrefsProvider.notifier)
+                        .setDefaultConfig(list[configsIndex]);
+                  },
 
                   title: Text(
                     list[configsIndex].remark,

@@ -72,8 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get succesful => 'Successful';
 
   @override
-  String get delete_config_content =>
-      'Config Will Remove Permanently, Are You Sure ?';
+  String get delete_config_content => 'Config Will Remove Permanently, Are You Sure ?';
 
   @override
   String get delete => 'Delete';

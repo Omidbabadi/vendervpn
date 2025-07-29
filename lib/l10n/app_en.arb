@@ -119,10 +119,6 @@
   "@update_subscription": {
     "description": "Update Subscriptions"
   },
-  "coming_soon": "Future Is Not Implanted Yet ",
-  "@coming_soon": {
-    "description": "Future Is Not Implanted Yet"
-  },
    "server_issue": "Server Issue",
   "@server_issue": {
     "description": "Server Issue"
@@ -146,11 +142,5 @@
   "next": "Next",
   "@next": {
     "description": "next button"
-  },
-
-  "forbidden": "Forbidden Action",
-  "@change_theme": {
-    "description": "Forbidden"
   }
-
 }

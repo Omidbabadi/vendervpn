@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import 'package:flutter/foundation.dart';
@@ -59,6 +58,7 @@ class AdManagerController extends Notifier<AdManagerState> {
       },
       onClick: (placementId) => debugPrint('Video Ad $placementId click'),
       onSkipped: (placementId) async {
+        await Future.delayed(const Duration(seconds: 3));
         await loadInterstitial();
 
         if (!isConnected) {
@@ -68,6 +68,7 @@ class AdManagerController extends Notifier<AdManagerState> {
         debugPrint('Video Ad $placementId skipped');
       },
       onComplete: (placementId) async {
+        await Future.delayed(const Duration(seconds: 3));
         await loadInterstitial();
         if (!isConnected) {
           v2rayService.disconnect();
@@ -76,6 +77,7 @@ class AdManagerController extends Notifier<AdManagerState> {
         state = state.copyWith(adCompleted: true, interstitialLoaded: false);
       },
       onFailed: (placementId, error, message) async {
+        await Future.delayed(const Duration(seconds: 3));
         await loadInterstitial();
       },
     );
