@@ -25,12 +25,12 @@ class HomePageWidget extends ConsumerWidget {
 
     Future<void> showAdBeforeConnect() async {
       if (selectedConfig != null) {
-        v2rayService.connect(config: selectedConfig);
+        await v2rayService.connect(config: selectedConfig);
       }
     }
 
     Future<void> showAdThanDisconnect() async {
-      ref.read(adManagerProvier.notifier).showIntAd();
+     await v2rayService.disconnect();
     }
 
     return controller.when(
@@ -88,8 +88,8 @@ class HomePageWidget extends ConsumerWidget {
                         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
                         child: AnimatedContainer(
                           padding: const EdgeInsets.fromLTRB(25, 10, 25, 25),
-                          height: 200,
-                          width: 200,
+                          height: 160,
+                          width: 160,
                           duration: const Duration(milliseconds: 1200),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,

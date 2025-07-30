@@ -73,9 +73,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
         await adService.loadInterstitial();
       }
       await adService.showIntAd();
-      if (!adState.adCompleted == false) {
-        debugPrint('ad not completed');
-      }
+      
       state = AsyncData(state.requireValue);
     } catch (e, st) {
       debugPrint(e.toString());
@@ -84,9 +82,24 @@ class V2rayController extends AsyncNotifier<V2rayService> {
   }
 
   Future<void> disconnect() async {
+    final adService = ref.read(adManagerProvier.notifier);
+    final adState = ref.read(adManagerProvier);
     try {
       state = AsyncLoading();
       await Future.delayed(Duration(seconds: 5));
+      if (adState.initialized == false) {
+        debugPrint('initializing ads in disconnect');
+        await adService.initUnityAds();
+      }
+
+      if (adState.interstitialLoaded == false) {
+        debugPrint('loading interstitial in disconnect');
+        await adService.loadInterstitial();
+      }
+      await adService.showIntAd();
+      if (!adState.adCompleted == false) {
+        debugPrint('ad not completed');
+      }
       state.requireValue.disconnect();
       state = AsyncData(state.requireValue);
     } catch (e, st) {

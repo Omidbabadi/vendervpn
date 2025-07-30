@@ -46,11 +46,6 @@ class AdManagerController extends Notifier<AdManagerState> {
       debugPrint('${!state.interstitialLoaded}');
       await loadInterstitial();
     }
-    final vpnStatus =
-        ref.read(v2rayControllerProvider.notifier).status.value.state;
-    final v2rayService = ref.read(v2rayControllerProvider.notifier);
-    final bool isConnected = vpnStatus == 'CONNECTED';
-    debugPrint(isConnected.toString());
     await UnityAds.showVideoAd(
       placementId: AdManagerState.interstitialId,
       onStart: (placementId) {
@@ -61,18 +56,13 @@ class AdManagerController extends Notifier<AdManagerState> {
         await Future.delayed(const Duration(seconds: 3));
         await loadInterstitial();
 
-        if (!isConnected) {
-          v2rayService.disconnect();
-        }
         state = state.copyWith(adSkipped: true);
         debugPrint('Video Ad $placementId skipped');
       },
       onComplete: (placementId) async {
         await Future.delayed(const Duration(seconds: 3));
         await loadInterstitial();
-        if (!isConnected) {
-          v2rayService.disconnect();
-        }
+        
         debugPrint('Video Ad $placementId completed');
         state = state.copyWith(adCompleted: true, interstitialLoaded: false);
       },
