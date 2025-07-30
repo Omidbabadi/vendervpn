@@ -99,23 +99,17 @@ class AppLocalizationsFa extends AppLocalizations {
   String get update_subscription => 'بروزرسانی گروه اشنراک';
 
   @override
-  String get coming_soon => 'Future Is Not Implanted Yet ';
+  String get server_issue => 'خطای سرور';
 
   @override
-  String get server_issue => 'Server Issue';
+  String get get_servers => 'بروزرسانی سرور ها';
 
   @override
-  String get get_servers => 'fetch servers';
+  String get founded_servers => 'بروزرسانی انجام شد';
 
   @override
-  String get founded_servers => 'Servers Found';
+  String get change_theme => 'تغییر پوسته';
 
   @override
-  String get change_theme => 'Toggle theme';
-
-  @override
-  String get next => 'Next';
-
-  @override
-  String get forbidden => 'Forbidden Action';
+  String get next => 'ادامه';
 }

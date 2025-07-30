@@ -99,9 +99,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get update_subscription => 'Update Subscriptions';
 
   @override
-  String get coming_soon => 'Future Is Not Implanted Yet ';
-
-  @override
   String get server_issue => 'Server Issue';
 
   @override
@@ -115,7 +112,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get next => 'Next';
-
-  @override
-  String get forbidden => 'Forbidden Action';
 }

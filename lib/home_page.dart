@@ -46,8 +46,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         FilledButton(
           onPressed: () {
             ref.read(userPrefsProvider.notifier).setLanguage('en');
-                        Navigator.of(context).pop();
-
+            Navigator.of(context).pop();
           },
           child: Text('english'),
         ),
@@ -58,7 +57,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           child: Text(AppLocalizations.of(context)!.cancel),
         ),
       ],
-      title:  Text(AppLocalizations.of(context)!.change_language_title),
+      title: Text(AppLocalizations.of(context)!.change_language_title),
     );
   }
 
@@ -87,7 +86,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           setState(() {
             _isLoading = !_isLoading;
           });
-        }return;
+        }
+        return;
       }
       if (mounted) {
         showSnackBar(
@@ -100,9 +100,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
       ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
       await configsBox.clear();
       await configsBox.addAll(configs);
-      final configsList = ref.read(configsListProvider.notifier);
-      configsList.reLoadeConfigs();
-
+      ref.read(configsListProvider.notifier).reLoadeConfigs();
     } catch (e) {
       if (mounted) {
         showSnackBar(context, true, title: 'Error', message: '$e');
@@ -137,18 +135,20 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
             onSelected: (value) async {
               switch (value) {
                 case MenuActions.refreshServers:
-                  refreshConfigs();
-               
+                  // refreshConfigs();
+                  await ref
+                      .read(v2rayControllerProvider.notifier)
+                      .getConfigsFromServer();
+
                   break;
                 case MenuActions.changeLanguage:
                   _changeLocale();
-                  
+
                   break;
 
                 case MenuActions.toggleTheme:
-                 ref.read(userPrefsProvider.notifier).toggleTheme();
+                  ref.read(userPrefsProvider.notifier).toggleTheme();
                   break;
-                
               }
             },
             itemBuilder: (context) {
@@ -187,7 +187,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         centerTitle: true,
         title: Text(
           'V  E  N  D  E  R  V  P  N',
-          style: TextStyle(color: Theme.of(context).colorScheme.inverseSurface),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.inverseSurface,
+          ),
         ),
         backgroundColor: Colors.transparent,
         //const Color.fromARGB(255, 40, 45, 53),

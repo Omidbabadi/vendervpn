@@ -275,12 +275,6 @@ abstract class AppLocalizations {
   /// **'Update Subscriptions'**
   String get update_subscription;
 
-  /// Future Is Not Implanted Yet
-  ///
-  /// In en, this message translates to:
-  /// **'Future Is Not Implanted Yet '**
-  String get coming_soon;
-
   /// Server Issue
   ///
   /// In en, this message translates to:
@@ -299,7 +293,7 @@ abstract class AppLocalizations {
   /// **'Servers Found'**
   String get founded_servers;
 
-  /// Forbidden
+  /// toggle dark/light theme
   ///
   /// In en, this message translates to:
   /// **'Toggle theme'**
@@ -310,12 +304,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
-
-  /// No description provided for @forbidden.
-  ///
-  /// In en, this message translates to:
-  /// **'Forbidden Action'**
-  String get forbidden;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

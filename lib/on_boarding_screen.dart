@@ -125,6 +125,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height;
+    //TO-DO: replace with status in controller
     final v2rayState = ref.watch(v2rayControllerProvider);
 
     return Scaffold(

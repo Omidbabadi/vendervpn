@@ -22,6 +22,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
   }
 
   Future<void> getConfigsFromServer() async {
+    if (state.requireValue.status.value.state == "CONNECTED") return;
     state = AsyncLoading();
     final Box<ConfigModel> configsBox = Hive.box('configs');
 
@@ -32,8 +33,9 @@ class V2rayController extends AsyncNotifier<V2rayService> {
       ref.read(userPrefsProvider.notifier).setDefaultConfig(configs[0]);
       await configsBox.clear();
       await configsBox.addAll(configs);
-      final configsList = ref.read(configsListProvider.notifier);
-     configsList.reLoadeConfigs();
+      await Future.delayed(Duration(seconds: 1));
+      debugPrint(configsBox.length.toString());
+      ref.read(configsListProvider.notifier).reLoadeConfigs();
       state = AsyncData(state.requireValue);
     } catch (e) {
       debugPrint(e.toString());

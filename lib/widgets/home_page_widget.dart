@@ -30,7 +30,7 @@ class HomePageWidget extends ConsumerWidget {
     }
 
     Future<void> showAdThanDisconnect() async {
-      v2rayService.disconnect();
+      ref.read(adManagerProvier.notifier).showIntAd();
     }
 
     return controller.when(

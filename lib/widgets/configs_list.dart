@@ -54,12 +54,17 @@ class ConfigsListView extends ConsumerWidget {
           itemCount: list.length + 1,
           itemBuilder: (ctx, index) {
             if (list.isEmpty) {
-              return Center(
-                child: FilledButton(
-                  onPressed: () async {
-                    await getConfigs();
-                  },
-                  child: Text(AppLocalizations.of(context)!.get_servers),
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: FilledButton(
+                    onPressed: () async {
+                      await ref
+                          .read(v2rayControllerProvider.notifier)
+                          .getConfigsFromServer();
+                    },
+                    child: Text(AppLocalizations.of(context)!.get_servers),
+                  ),
                 ),
               );
             }
@@ -158,15 +163,6 @@ class ConfigsListView extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: ListTile(
-                  /* trailing: ListTileTraling(
-                    // onShare: () {},
-                    onDelete: () {
-                      onDelete(list[configsIndex].id);
-                    },
-                    //() => ref
-                    //  .read(configsListProvider.notifier)
-                    // .removeConfig(list[configsIndex].id),
-                  ),*/
                   leading: Container(
                     width: 5,
                     decoration: BoxDecoration(
@@ -179,12 +175,14 @@ class ConfigsListView extends ConsumerWidget {
                     ),
                   ),
                   onTap: () {
-                    if(status.value.state == "CONNECTED"){
+                    if (status.value.state == "CONNECTED") {
                       v2rayService.disconnect();
                     }
-                    () => ref
+                    ref
                         .read(userPrefsProvider.notifier)
                         .setDefaultConfig(list[configsIndex]);
+
+                    v2rayService.connect(config: selectedConfig!);
                   },
 
                   title: Text(
@@ -214,15 +212,3 @@ class ConfigsListView extends ConsumerWidget {
     );
   }
 }
-
-        /*if (list.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 0, 255, 179),
-                ),
-                onPressed: () {
-                  getConfigs();
-                }*/
