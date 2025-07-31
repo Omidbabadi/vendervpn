@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:vendervpn/home_page.dart';
+import 'package:vendervpn/screens/home_screen.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/riverpod/providers.dart';
@@ -28,7 +28,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
     if (configsBox.isNotEmpty) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MyHomePage()),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     }
     super.initState();
@@ -79,7 +79,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
           });
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const MyHomePage()),
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         }
       }
@@ -98,7 +98,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MyHomePage()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     } catch (e) {
@@ -116,7 +116,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen>
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MyHomePage()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     }

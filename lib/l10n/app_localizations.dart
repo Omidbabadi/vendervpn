@@ -304,6 +304,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// click on connect button without selecting a config
+  ///
+  /// In en, this message translates to:
+  /// **'Please Select A Configs First'**
+  String get select_config;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

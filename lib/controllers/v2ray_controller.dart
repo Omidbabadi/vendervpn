@@ -43,7 +43,36 @@ class V2rayController extends AsyncNotifier<V2rayService> {
     }
   }
 
-  Future<void> connect({required ConfigModel config}) async {
+  Future<void> reSetVpn({required ConfigModel config}) async {
+    state = AsyncLoading();
+    state.requireValue.disconnect();
+    final ConfigModel connectWith = ConfigModel(
+      configjson: config.configjson,
+      remark: config.remark,
+      port: config.port,
+      address: config.address,
+      uri: config.uri,
+      importedFrom: config.importedFrom,
+      id: config.id,
+      dateAdded: config.dateAdded,
+    );
+
+    await state.requireValue.connect(
+      config: connectWith.configjson,
+      remark: connectWith.remark,
+      proxyOnly: false,
+      bypassSubnets: [],
+    );
+    await Future.delayed(Duration(seconds: 2));
+
+    if (state.requireValue.status.value.state == "CONNECTED") {
+      state = AsyncData(state.requireValue);
+    } else {
+      debugPrint(state.requireValue.status.value.state);
+    }
+  }
+
+  Future<void> showAdThanConnect({required ConfigModel config}) async {
     state = AsyncLoading();
     final adService = ref.read(adManagerProvier.notifier);
     final adState = ref.read(adManagerProvier);
@@ -73,7 +102,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
         await adService.loadInterstitial();
       }
       await adService.showIntAd();
-      
+
       state = AsyncData(state.requireValue);
     } catch (e, st) {
       debugPrint(e.toString());
@@ -81,7 +110,7 @@ class V2rayController extends AsyncNotifier<V2rayService> {
     }
   }
 
-  Future<void> disconnect() async {
+  Future<void> showAdThanDisconncet() async {
     final adService = ref.read(adManagerProvier.notifier);
     final adState = ref.read(adManagerProvier);
     try {

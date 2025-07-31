@@ -13,15 +13,14 @@ import 'package:vendervpn/widgets/show_alert.dart';
 import 'package:vendervpn/widgets/show_snackbar.dart';
 import 'package:hive/hive.dart';
 
-class MyHomePage extends ConsumerStatefulWidget {
-  const MyHomePage({super.key});
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends ConsumerState<MyHomePage> {
-  final TextEditingController _controller = TextEditingController();
+class _MyHomePageState extends ConsumerState<HomeScreen> {
   final Box<ConfigModel> configsBox = Hive.box('configs');
 
   bool _isLoading = false;
@@ -29,7 +28,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _controller.dispose();
   }
 
   void _changeLocale() {

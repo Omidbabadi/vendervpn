@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/riverpod/providers.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'dart:ui';
 
 import 'package:vendervpn/widgets/configs_list.dart';
+import 'package:vendervpn/widgets/show_snackbar.dart';
 
 class HomePageWidget extends ConsumerWidget {
   const HomePageWidget({super.key});
@@ -25,12 +27,20 @@ class HomePageWidget extends ConsumerWidget {
 
     Future<void> showAdBeforeConnect() async {
       if (selectedConfig != null) {
-        await v2rayService.connect(config: selectedConfig);
+        await v2rayService.showAdThanConnect(config: selectedConfig);
+      } else {
+        showSnackBar(
+          context,
+          true,
+          title: AppLocalizations.of(context)!.error,
+          message: AppLocalizations.of(context)!.select_config,
+        );
+        return;
       }
     }
 
     Future<void> showAdThanDisconnect() async {
-     await v2rayService.disconnect();
+      await v2rayService.showAdThanDisconncet();
     }
 
     return controller.when(

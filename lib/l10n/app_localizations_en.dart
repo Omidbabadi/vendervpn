@@ -112,4 +112,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get select_config => 'Please Select A Configs First';
 }

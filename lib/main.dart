@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:vendervpn/home_page.dart';
+import 'package:vendervpn/screens/home_screen.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/models/user_preferences.dart';
-import 'package:vendervpn/on_boarding_screen.dart';
+import 'package:vendervpn/screens/on_boarding_screen.dart';
 import 'package:vendervpn/riverpod/providers.dart';
 import 'package:vendervpn/theme/dark_theme.dart';
 import 'package:vendervpn/theme/light_theme.dart';
@@ -44,7 +44,7 @@ class MyApp extends ConsumerWidget {
       title: 'Vender VPN',
       theme: !userPrefs.isDarkMode ? lightTheme : darkTheme,
       darkTheme: darkTheme,
-      home: const MyHomePage(),
+      home: const OnBoardingScreen(),
     );
   }
 }

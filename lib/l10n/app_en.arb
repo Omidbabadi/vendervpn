@@ -142,5 +142,9 @@
   "next": "Next",
   "@next": {
     "description": "next button"
+  },
+  "select_config": "Please Select A Configs First",
+  "@select_config": {
+    "description": "click on connect button without selecting a config"
   }
 }

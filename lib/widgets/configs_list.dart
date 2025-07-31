@@ -175,14 +175,12 @@ class ConfigsListView extends ConsumerWidget {
                     ),
                   ),
                   onTap: () {
-                    
                     ref
                         .read(userPrefsProvider.notifier)
                         .setDefaultConfig(list[configsIndex]);
 
-                 if (status.value.state == "CONNECTED") {
-                      v2rayService.disconnect();
-                         v2rayService.connect(config: selectedConfig!);
+                    if (status.value.state == "CONNECTED") {
+                      v2rayService.reSetVpn(config: selectedConfig!);
                     }
                   },
 
