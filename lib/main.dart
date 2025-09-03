@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:vendervpn/enums/lottie_animation_state.dart';
+import 'package:vendervpn/lottie/info_screen.dart';
 import 'package:vendervpn/screens/home_screen.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/models/user_preferences.dart';
@@ -44,7 +46,7 @@ class MyApp extends ConsumerWidget {
       title: 'Vender VPN',
       theme: !userPrefs.isDarkMode ? lightTheme : darkTheme,
       darkTheme: darkTheme,
-      home: const OnBoardingScreen(),
+      home:  StatusScreen(status: Status.connecting,),
     );
   }
 }

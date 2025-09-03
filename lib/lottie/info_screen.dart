@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-
-enum Status { loading, success, error, idle }
+import 'package:vendervpn/enums/lottie_animation_state.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 
 class StatusScreen extends StatelessWidget {
   const StatusScreen({super.key, required this.status, this.message});
@@ -11,31 +11,41 @@ class StatusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<Status, String> animations = {
-      Status.loading: 'assets/loading.json',
-      Status.success: 'assets/success.json',
-      Status.error: 'assets/error.json',
-      Status.idle: 'assets/idle.json',
+      Status.loading: 'assets/animations/Ellipes.json',
+      Status.success: 'assets/animations/Funny-Cloud.json',
+      Status.error: 'assets/animations/Error.json',
+      Status.connecting: 'assets/animations/Rocket-lottie-Animation.json',
     };
     // TODO: localize these texts
     final Map<Status, String> texts = {
-      Status.loading: 'Loading',
-      Status.success: 'Success',
-      Status.error: 'Error',
-      Status.idle: 'Idle',
+      Status.loading: AppLocalizations.of(context)!.loading,
+      Status.success: AppLocalizations.of(context)!.succesful,
+      Status.error: AppLocalizations.of(context)!.error,
+      Status.connecting: 'connecting',
     };
 
-    return Scaffold(body: Center(child: Padding(padding: EdgeInsets.all(24)
-    ,child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,children: [
-        Lottie.asset(animations[status]!,
-        width: 200,height: 200,
-        repeat: status == Status.loading
-        ),const SizedBox(
-          height:20
-        ),Text(texts[status]!,
-        textAlign: TextAlign.center,
-        )
-      ],
-    )),),);
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset(
+                animations[status]!,
+                width: 200,
+                height: 200,
+                repeat: true,
+              ),
+              const SizedBox(height: 20),
+              Text(texts[status]!, textAlign: TextAlign.center),
+              const SizedBox(height: 20),
+              if (message != null) Text(message!),
+              
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

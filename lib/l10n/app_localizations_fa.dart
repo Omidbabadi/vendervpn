@@ -115,4 +115,10 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get select_config => 'لطفا ابتدا یک سرور را انتخاب کنید';
+
+  @override
+  String get loading_title => 'Loading...';
+
+  @override
+  String get loading_content => 'در حال بارگذاری...لطفا صبر کنید';
 }

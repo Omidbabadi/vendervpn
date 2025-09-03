@@ -310,6 +310,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please Select A Configs First'**
   String get select_config;
+
+  /// text for loading state title
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading_title;
+
+  /// text for loading state content
+  ///
+  /// In en, this message translates to:
+  /// **'Please Wait a Moment'**
+  String get loading_content;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

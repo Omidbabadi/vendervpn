@@ -1,19 +1,23 @@
-//TO-Do: impelant user Ip and connected Ip
+//TODO: impelant configs location flag
+
+//TODO: impelant ping configs
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vendervpn/l10n/app_localizations.dart';
-import 'package:vendervpn/riverpod/providers.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:vendervpn/enums/lottie_animation_state.dart';
 import 'dart:ui';
 
+import 'package:vendervpn/l10n/app_localizations.dart';
+import 'package:vendervpn/lottie/info_screen.dart';
+import 'package:vendervpn/riverpod/providers.dart';
 import 'package:vendervpn/widgets/configs_list.dart';
 import 'package:vendervpn/widgets/show_snackbar.dart';
 
-class HomePageWidget extends ConsumerWidget {
-  const HomePageWidget({super.key});
+class HomeScreenWidget extends ConsumerWidget {
+  const HomeScreenWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,8 +53,10 @@ class HomePageWidget extends ConsumerWidget {
             MediaQuery.of(context).platformBrightness == Brightness.dark;
 
         final status = ref.read(v2rayControllerProvider.notifier).status;
+
         // final coreVrssion =
         //     ref.read(v2rayControllerProvider.notifier).coreVersion;
+
         return ValueListenableBuilder(
           valueListenable: status,
           builder: (ctx, value, child) {
@@ -145,9 +151,16 @@ class HomePageWidget extends ConsumerWidget {
           },
         );
       },
-      error: (error, stackTrace) => Text('Error: $error'),
+      error: (error, stackTrace) {
+        return StatusScreen(
+          status: Status.error,
+          message: error.toString(),
+        );
+      },
 
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () {
+        return StatusScreen(status: Status.loading,message: AppLocalizations.of(context)!.loading_content,);
+      },
     );
   }
 }

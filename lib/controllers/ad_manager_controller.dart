@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import 'package:flutter/foundation.dart';
-import 'package:vendervpn/riverpod/providers.dart';
 
 class AdManagerController extends Notifier<AdManagerState> {
   @override
@@ -72,6 +71,9 @@ class AdManagerController extends Notifier<AdManagerState> {
       },
     );
   }
+
+  Future<void> showBannerAd() async {}
+
 }
 
 class AdManagerState {

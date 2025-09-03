@@ -115,4 +115,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get select_config => 'Please Select A Configs First';
+
+  @override
+  String get loading_title => 'Loading...';
+
+  @override
+  String get loading_content => 'Please Wait a Moment';
 }

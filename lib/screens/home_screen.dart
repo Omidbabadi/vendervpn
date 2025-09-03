@@ -1,4 +1,3 @@
-//TO-Do: impelant connected country flag
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +7,7 @@ import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/models/config_model.dart';
 import 'package:vendervpn/riverpod/providers.dart';
 import 'package:vendervpn/services/api_service.dart';
-import 'package:vendervpn/widgets/home_page_widget.dart';
+import 'package:vendervpn/widgets/home_screen_widget.dart';
 import 'package:vendervpn/widgets/show_alert.dart';
 import 'package:vendervpn/widgets/show_snackbar.dart';
 import 'package:hive/hive.dart';
@@ -185,14 +184,12 @@ class _MyHomePageState extends ConsumerState<HomeScreen> {
         centerTitle: true,
         title: Text(
           'V  E  N  D  E  R  V  P  N',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.inverseSurface,
-          ),
+          style: TextStyle(color: Theme.of(context).colorScheme.inverseSurface),
         ),
         backgroundColor: Colors.transparent,
         //const Color.fromARGB(255, 40, 45, 53),
       ),
-      body: HomePageWidget(),
+      body: HomeScreenWidget(),
     );
   }
 }
