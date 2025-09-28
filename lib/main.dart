@@ -1,28 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:vendervpn/oldversion/enums/lottie_animation_state.dart';
-import 'package:vendervpn/oldversion/lottie/info_screen.dart';
-import 'package:vendervpn/oldversion/models/config_model.dart';
-import 'package:vendervpn/oldversion/models/user_preferences.dart';
-import 'package:vendervpn/oldversion/riverpod/providers.dart';
-import 'package:vendervpn/oldversion/theme/dark_theme.dart';
-import 'package:vendervpn/oldversion/theme/light_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vendervpn/l10n/l10n.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 
 import 'core/services/injection_container.dart';
+import 'src/dashboard/presention/widgets/connection_button.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
-  await Hive.initFlutter();
-
-  Hive.registerAdapter(UserPreferencesAdapter());
-  Hive.registerAdapter(ConfigModelAdapter());
-  await Hive.openBox<UserPreferences>('userPrefs');
-  await Hive.openBox<ConfigModel>('configs');
   runApp(ProviderScope(child: const MyApp()));
 }
 
@@ -31,12 +18,9 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userPrefs = ref.watch(userPrefsProvider);
-    final locale = userPrefs.languageCode;
-
     return MaterialApp(
       supportedLocales: L10n.all,
-      locale: Locale(locale),
+      locale: Locale('en'),
       localizationsDelegates: [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -44,9 +28,7 @@ class MyApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       title: 'Vender VPN',
-      theme: !userPrefs.isDarkMode ? lightTheme : darkTheme,
-      darkTheme: darkTheme,
-      home: StatusScreen(status: Status.loading),
+      home: ConnectionButton(),
     );
   }
 }
