@@ -6,6 +6,8 @@ import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/src/configs/domain/usecases/get_configs.dart';
 
+import '../../../../../core/services/injection_container.dart';
+
 part 'configs_adapter.g.dart';
 part 'configs_state.dart';
 
@@ -13,6 +15,7 @@ part 'configs_state.dart';
 class ConfigsAdapter extends _$ConfigsAdapter {
   @override
   ConfigsState build([GlobalKey? familyKey]) {
+    _getConfigs = sl<GetConfigs>();
     return ConfigsInitial();
   }
 

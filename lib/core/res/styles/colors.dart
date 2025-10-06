@@ -9,8 +9,8 @@ abstract class Colours {
   static const Color darkThemePrimaryTextColor = Color(0xffF4F1DE);
 
   static const Color lightThemePrimaryColor = Color(0xFF0E1116);
-  static const Color darkThemeSecondaryColor = Color(0xFF382633);
-  static const Color grayColor = Color(0xff50514F);
+  static const Color darkThemeSecondaryColor = Color(0xFFDAD4EF);
+  static const Color grayColor = Color(0xff9DA3A4);
   static const Color connectedColor = Color.fromARGB(20, 33, 255, 181);
   static const Color warningColor = Color(0xffED7D3A);
   static Color classicAdabtiveTextColor(BuildContext context) =>

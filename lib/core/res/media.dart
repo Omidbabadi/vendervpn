@@ -2,6 +2,7 @@ abstract class Media {
   static const basePath = 'assets';
   static const animationBasePath = 'assets/animations';
 
+  static const powerIcon = '$basePath/power_icon.svg';
   static const errorAnimation = '$animationBasePath/Error.json';
   static const loadingAnimation = '$animationBasePath/Ellipes.json';
   static const connectionAnimation =

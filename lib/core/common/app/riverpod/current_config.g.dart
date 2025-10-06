@@ -1,27 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'current_configs_list.dart';
+part of 'current_config.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentConfigsListHash() =>
-    r'059ae75a5cca702d2a9d2c0c653d5a0b9e14b73c';
+String _$currentConfigHash() => r'ae2f06529f0a8e90b761ee8f616658855075ed5c';
 
-/// See also [CurrentConfigsList].
-@ProviderFor(CurrentConfigsList)
-final currentConfigsListProvider =
-    NotifierProvider<CurrentConfigsList, List<Config>>.internal(
-  CurrentConfigsList.new,
-  name: r'currentConfigsListProvider',
+/// See also [CurrentConfig].
+@ProviderFor(CurrentConfig)
+final currentConfigProvider = NotifierProvider<CurrentConfig, Config?>.internal(
+  CurrentConfig.new,
+  name: r'currentConfigProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$currentConfigsListHash,
+      : _$currentConfigHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$CurrentConfigsList = Notifier<List<Config>>;
+typedef _$CurrentConfig = Notifier<Config?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

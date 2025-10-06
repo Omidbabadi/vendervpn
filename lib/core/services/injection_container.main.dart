@@ -9,7 +9,7 @@ Future<void> init() async {
 }
 
 Future<void> _cacheInit() async {
-  final pref = SharedPreferences.getInstance();
+  final pref = await SharedPreferences.getInstance();
   sl
     ..registerLazySingleton(() => CacheHelper(sl()))
     ..registerLazySingleton(() => pref);
@@ -17,7 +17,6 @@ Future<void> _cacheInit() async {
 
 Future<void> _configsInit() async {
   final client = Client().setProject('68cfc3210015c46501bd').setSession('');
-  print(client.endPoint);
 
   sl
     ..registerLazySingleton(() => GetConfigs(sl()))
@@ -26,17 +25,17 @@ Future<void> _configsInit() async {
       () => ConfigsRemoteDatasrcImpl(sl()),
     )
     ..registerLazySingleton(() => client);
-  final list = await GetConfigs(sl()).call();
-  print(list);
+
 }
 
 Future<void> _v2rayInit() async {
-  final stateController = StreamController<V2RayState>.broadcast();
-  final v2ray = FlutterV2ray(
-    onStatusChanged: (s) {
-      stateController.add(V2RayStateModel.fromV2rayStatus(s));
-    },
-  );
+  final status = ValueNotifier<V2RayStatus>(V2RayStatus());
+  final v2ray = FlutterV2ray(onStatusChanged: (s) {
+    status.value = s;
+  });
+  await v2ray.initializeV2Ray();
+  final per = await v2ray.requestPermission();
+  if (!per) return;
   sl
     ..registerLazySingleton(() => Connect(sl()))
     ..registerLazySingleton(() => Disconnect(sl()))
@@ -46,9 +45,9 @@ Future<void> _v2rayInit() async {
     ..registerLazySingleton<ConnectionDatasrc>(
       () => ConnectionDatasrcImpl(
         sl<FlutterV2ray>(),
-        sl<StreamController<V2RayState>>(),
+        sl<ValueNotifier<V2RayStatus>>(),
       ),
     )
     ..registerLazySingleton(() => v2ray)
-    ..registerLazySingleton(() => stateController);
+    ..registerLazySingleton(() => status);
 }

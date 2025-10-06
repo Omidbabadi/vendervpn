@@ -1,12 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
-
-import '../../../../core/common/entities/v2ray_state.dart';
 
 abstract class ConnectionDatasrc {
   const ConnectionDatasrc();
-  void dispose();
+
   Future<bool> initializeV2Ray();
   Future<void> connect(
     String config,
@@ -16,23 +15,15 @@ abstract class ConnectionDatasrc {
     List<String>? blockedApps,
   );
   void disconnect();
-  
-  Stream<V2RayState> get connectionStatus;
+
+  ValueNotifier<V2RayStatus> get connectionStatus;
 }
 
 class ConnectionDatasrcImpl implements ConnectionDatasrc {
-  const ConnectionDatasrcImpl(
-    this._flutterV2ray,
-    this._connectionStatusController,
-  );
+  const ConnectionDatasrcImpl(this._flutterV2ray, this._status);
 
   final FlutterV2ray _flutterV2ray;
-  final StreamController<V2RayState> _connectionStatusController;
-
-  @override
-  void dispose() {
-    _connectionStatusController.close();
-  }
+  final ValueNotifier<V2RayStatus> _status;
 
   @override
   Future<bool> initializeV2Ray() async {
@@ -52,6 +43,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     List<String>? bypassSubnets,
     List<String>? blockedApps,
   ) async {
+    debugPrint(config);
     await _flutterV2ray.startV2Ray(
       remark: remark,
       config: config,
@@ -61,11 +53,15 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
       notificationDisconnectButtonName: 'Disconnect $remark',
     );
   }
+
   @override
   void disconnect() {
     _flutterV2ray.stopV2Ray();
   }
 
   @override
-  Stream<V2RayState> get connectionStatus => _connectionStatusController.stream;
+  ValueNotifier<V2RayStatus> get connectionStatus {
+    print(_status.value.state);
+    return _status;
+  }
 }

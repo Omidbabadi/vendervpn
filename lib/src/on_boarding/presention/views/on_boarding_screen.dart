@@ -10,6 +10,7 @@ class OnBoardingScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(configsAdapterProvider());
-    return const OnBoardingScreenInfo();
+    return Scaffold(
+      body: const OnBoardingScreenInfo.first());
   }
 }

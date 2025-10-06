@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
@@ -47,12 +49,7 @@ class ConnectionRepoImpl implements ConnectionRepo {
   }
 
   @override
-  Stream<V2RayState> get connectionStatus => _datasrc.connectionStatus;
-
-  @override
-  void dispose() {
-    _datasrc.dispose();
-  }
+  ValueNotifier<V2RayStatus> get connectionStatus => _datasrc.connectionStatus;
 
   @override
   void disconnect() {

@@ -6,11 +6,12 @@ part 'current_configs_list.g.dart';
 @Riverpod(keepAlive: true)
 class CurrentConfigsList extends _$CurrentConfigsList {
   @override
-  List<Config>? build() {
-    return null;
+  List<Config> build() {
+    return [];
   }
 
   void setConfigs(List<Config> configs) {
     if (state != configs) state = configs;
   }
+
 }

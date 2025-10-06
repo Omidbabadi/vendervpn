@@ -27,7 +27,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
           (url.rows).map((e) {
             final config = e.data['url'] as String;
             final V2RayURL parser = FlutterV2ray.parseFromURL(config);
-            final fullJson = parser.fullConfiguration.toString();
+            final fullJson = parser.getFullConfiguration();
             return ConfigModel(
               configjson: fullJson,
               importedFrom: 's',
@@ -39,6 +39,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
               id: 'id',
             );
           }).toList();
+          print(data);
       return data;
     } catch (e) {
       throw ServerException(

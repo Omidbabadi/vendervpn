@@ -5,7 +5,7 @@ import 'package:vendervpn/l10n/l10n.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 
 import 'core/services/injection_container.dart';
-import 'src/dashboard/presention/widgets/connection_button.dart';
+import 'core/services/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
+    return MaterialApp.router(
       supportedLocales: L10n.all,
       locale: Locale('en'),
       localizationsDelegates: [
@@ -28,7 +28,7 @@ class MyApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       title: 'Vender VPN',
-      home: ConnectionButton(),
+      routerConfig: router,
     );
   }
 }
