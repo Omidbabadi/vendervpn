@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_v2ray/model/v2ray_status.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 
 import '../errors/failures.dart';
 

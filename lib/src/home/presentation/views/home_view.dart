@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:vendervpn/core/extensions/context_ext.dart';
 
 import 'widgets/connected_config.dart';
 import 'widgets/connection_button.dart';
+import 'widgets/network_stats.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -11,12 +13,13 @@ class HomeView extends StatelessWidget {
     return Stack(
       children: [
         Positioned(
-          //TODO: top: height / 12,
-          top: 80,
+     
+          top: context.height / 3,
           left: 0,
           right: 0,
           child: ConnectionButton(),
         ),
+        Positioned(left: 0, right: 0, top: 20, child: NetworkStats()),
         Positioned(
           bottom: 10,
           right: 0,

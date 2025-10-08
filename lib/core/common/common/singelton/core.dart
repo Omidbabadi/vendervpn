@@ -5,21 +5,21 @@ class Cache {
 
   static final instance = Cache._internal();
 
-  String? _id;
+  String? _url;
 
   final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
 
-  String? get id => _id;
+  String? get url => _url;
 
   void setThemeMode(ThemeMode theme) {
     themeModeNotifier.value = theme;
   }
 
-  void setId(String? id) {
-    _id = id;
+  void setUrl(String? id) {
+    _url = id;
   }
 
   void reset() {
-    setId(null);
+    setUrl(null);
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 
 class ConfigModel extends Config {

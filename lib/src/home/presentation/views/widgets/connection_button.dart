@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/res/media.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';

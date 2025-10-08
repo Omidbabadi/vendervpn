@@ -209,6 +209,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.8"
+  country_flags:
+    dependency: "direct main"
+    description:
+      name: country_flags
+      sha256: "9226e95993a6225f746f8ad84e07ff492ce8bfa130bb141426473bcc2a6927ed"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.1"
   crypto:
     dependency: transitive
     description:
@@ -376,14 +384,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_v2ray:
+  flutter_v2ray_client:
     dependency: "direct main"
     description:
-      name: flutter_v2ray
-      sha256: "09dce3b4b58ea6a4220409d948a4d92a6eb3416184e6512ec0f5773fd48e5ab0"
+      name: flutter_v2ray_client
+      sha256: acb30e94aa2a03f73672be698994f0c6ed424aacb7bdc125df45ca87d37cbf2d
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.10"
+    version: "1.1.0"
   flutter_web_auth_2:
     dependency: transitive
     description:
@@ -501,6 +509,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  jovial_misc:
+    dependency: transitive
+    description:
+      name: jovial_misc
+      sha256: "4301011027d87b8b919cb862db84071a34448eadbb32cc8d40fe505424dfe69a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.2"
+  jovial_svg:
+    dependency: transitive
+    description:
+      name: jovial_svg
+      sha256: "08dd24b800d48796c9c0227acb96eb00c6cacccb1d7de58d79fc924090049868"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.28"
   js:
     dependency: transitive
     description:

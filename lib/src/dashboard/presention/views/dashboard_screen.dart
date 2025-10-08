@@ -12,6 +12,9 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: widget.child);
+    return Scaffold(
+      appBar: AppBar(title: const Text('Vender VPN')),
+      body: widget.child,
+    );
   }
 }

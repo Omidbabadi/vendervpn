@@ -1,5 +1,5 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
 
@@ -26,7 +26,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
       final data =
           (url.rows).map((e) {
             final config = e.data['url'] as String;
-            final V2RayURL parser = FlutterV2ray.parseFromURL(config);
+            final V2RayURL parser = V2ray.parseFromURL(config);
             final fullJson = parser.getFullConfiguration();
             return ConfigModel(
               configjson: fullJson,
@@ -39,7 +39,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
               id: 'id',
             );
           }).toList();
-          print(data);
+      print(data[0].configjson);
       return data;
     } catch (e) {
       throw ServerException(

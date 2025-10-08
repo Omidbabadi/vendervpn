@@ -8,13 +8,13 @@ class CacheHelper {
   const CacheHelper(this._pref);
   final SharedPreferences _pref;
 
-  static const _idKey = 'id';
+  static const _urlKey = 'id';
   static const _isFirstTimer = 'is_first_timer';
   static const _themeMode = 'theme_mode';
 
   Future<void> cacheId(String id) async {
-    await _pref.setString(_idKey, id);
-    Cache.instance.setId(id);
+    await _pref.setString(_urlKey, id);
+    Cache.instance.setUrl(id);
   }
 
   Future<void> cacheIsFirstTimer(bool firstTime) async {
@@ -27,7 +27,7 @@ class CacheHelper {
   }
 
   bool get firstTimer => _pref.getBool(_isFirstTimer) ?? true;
-  String? get id => _pref.getString(_idKey);
+  String? get id => _pref.getString(_urlKey);
   ThemeMode get themeMode =>
       _pref.getString(_themeMode)?.stringToTheme ?? ThemeMode.system;
 }

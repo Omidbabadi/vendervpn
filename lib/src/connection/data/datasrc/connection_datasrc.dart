@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 
 abstract class ConnectionDatasrc {
   const ConnectionDatasrc();
@@ -22,12 +22,12 @@ abstract class ConnectionDatasrc {
 class ConnectionDatasrcImpl implements ConnectionDatasrc {
   const ConnectionDatasrcImpl(this._flutterV2ray, this._status);
 
-  final FlutterV2ray _flutterV2ray;
+  final V2ray _flutterV2ray;
   final ValueNotifier<V2RayStatus> _status;
 
   @override
   Future<bool> initializeV2Ray() async {
-    await _flutterV2ray.initializeV2Ray(
+    await _flutterV2ray.initialize(
       notificationIconResourceType: 'mipmap',
       notificationIconResourceName: 'ic_launcher',
     );
