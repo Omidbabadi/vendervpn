@@ -1,12 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 import 'package:vendervpn/src/connection/data/datasrc/connection_datasrc.dart';
 import 'package:vendervpn/src/connection/domain/repo/connection_repo.dart';
-
 
 class ConnectionRepoImpl implements ConnectionRepo {
   const ConnectionRepoImpl(this._datasrc);

@@ -1,5 +1,5 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
 

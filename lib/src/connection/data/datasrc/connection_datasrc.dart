@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:flutter_v2ray/flutter_v2ray.dart';
 
 abstract class ConnectionDatasrc {
   const ConnectionDatasrc();
