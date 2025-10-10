@@ -1,9 +1,11 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
 
 import '../../../../core/common/entities/config.dart';
+import '../../../../core/services/injection_container.dart';
 
 abstract class ConfigsRemoteDatasrc {
   Future<List<Config>> getConfigs();
@@ -15,6 +17,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
   @override
   Future<List<Config>> getConfigs() async {
     final TablesDB tablesDB = TablesDB(_client);
+    final id = sl<CacheHelper>().id;
     try {
       final url = await tablesDB.listRows(
         databaseId: '68cfc4e70012fb5e5417',
@@ -26,7 +29,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
       final data =
           (url.rows).map((e) {
             final config = e.data['url'] as String;
-            final V2RayURL parser = V2ray.parseFromURL(config);
+            final V2RayURL parser = FlutterV2ray.parseFromURL(config);
             final fullJson = parser.getFullConfiguration();
             return ConfigModel(
               configjson: fullJson,
@@ -36,11 +39,12 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
               address: parser.address,
               uri: parser.url,
               dateAdded: DateTime.now().toString(),
-              id: 'id',
+              id: e.$id,
+              country: e.data['country'] as String,
+              isSelected: id == e.$id,
             );
           }).toList();
-      print(data[0].configjson);
-      return data;
+      return data.cast<Config>();
     } catch (e) {
       throw ServerException(
         message: 'Getting Configs From Server Failed',

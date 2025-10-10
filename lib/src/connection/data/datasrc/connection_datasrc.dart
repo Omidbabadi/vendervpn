@@ -22,12 +22,12 @@ abstract class ConnectionDatasrc {
 class ConnectionDatasrcImpl implements ConnectionDatasrc {
   const ConnectionDatasrcImpl(this._flutterV2ray, this._status);
 
-  final V2ray _flutterV2ray;
+  final FlutterV2ray _flutterV2ray;
   final ValueNotifier<V2RayStatus> _status;
 
   @override
   Future<bool> initializeV2Ray() async {
-    await _flutterV2ray.initialize(
+    await _flutterV2ray.initializeV2Ray(
       notificationIconResourceType: 'mipmap',
       notificationIconResourceName: 'ic_launcher',
     );

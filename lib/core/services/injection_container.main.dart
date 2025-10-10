@@ -30,10 +30,13 @@ Future<void> _configsInit() async {
 
 Future<void> _v2rayInit() async {
   final status = ValueNotifier<V2RayStatus>(V2RayStatus());
-  final v2ray = V2ray(onStatusChanged: (s) {
+  final v2ray = FlutterV2ray(onStatusChanged: (s) {
     status.value = s;
   });
-  await v2ray.initialize();
+  await v2ray.initializeV2Ray(
+      notificationIconResourceType: 'mipmap',
+      notificationIconResourceName: 'ic_launcher',
+    );
   final per = await v2ray.requestPermission();
   if (!per) return;
   sl
@@ -44,7 +47,7 @@ Future<void> _v2rayInit() async {
     ..registerLazySingleton<ConnectionRepo>(() => ConnectionRepoImpl(sl()))
     ..registerLazySingleton<ConnectionDatasrc>(
       () => ConnectionDatasrcImpl(
-        sl<V2ray>(),
+        sl<FlutterV2ray>(),
         sl<ValueNotifier<V2RayStatus>>(),
       ),
     )

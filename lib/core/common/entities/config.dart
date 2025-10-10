@@ -1,4 +1,4 @@
- class Config {
+class Config {
   final String configjson;
 
   final String importedFrom;
@@ -17,6 +17,8 @@
 
   final String? country;
 
+  final bool isSelected;
+
   const Config({
     required this.configjson,
     required this.importedFrom,
@@ -26,6 +28,7 @@
     required this.uri,
     required this.dateAdded,
     required this.id,
+    required this.isSelected,
     this.country,
   });
 
@@ -37,5 +40,7 @@
       remark = 'Test String',
       uri = 'Test String',
       dateAdded = 'Test String',
-      id = 'Test String',country = 'Test String';
+      id = 'Test String',
+      isSelected = false,
+      country = 'Test String';
 }

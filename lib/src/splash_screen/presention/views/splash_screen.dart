@@ -32,9 +32,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         context.go(HomeView.path);
       }
       if (next is ConfigsError) {
-        debugPrint('error');
+        debugPrint(next.message);
       }
     });
-    return Scaffold(body: const AppLogo());
+    return Scaffold(
+      
+      body: Center(child: const AppLogo()));
   }
 }

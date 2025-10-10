@@ -11,6 +11,11 @@ class CacheHelper {
   static const _urlKey = 'id';
   static const _isFirstTimer = 'is_first_timer';
   static const _themeMode = 'theme_mode';
+  static const _permissionKey = 'permission_key';
+
+  Future<void> cachePermission(bool permission) async {
+    await _pref.setBool(_permissionKey, permission);
+  }
 
   Future<void> cacheId(String id) async {
     await _pref.setString(_urlKey, id);
@@ -25,6 +30,8 @@ class CacheHelper {
     await _pref.setString(_themeMode, theme.themeStringValue);
     Cache.instance.setThemeMode(theme);
   }
+
+  bool get permission => _pref.getBool(_permissionKey) ?? false;
 
   bool get firstTimer => _pref.getBool(_isFirstTimer) ?? true;
   String? get id => _pref.getString(_urlKey);

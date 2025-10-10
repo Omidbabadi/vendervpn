@@ -10,6 +10,7 @@ class ConfigModel extends Config {
     required super.uri,
     required super.dateAdded,
     required super.id,
+    required super.isSelected,
     super.country,
   });
 
@@ -23,6 +24,7 @@ class ConfigModel extends Config {
         uri: 'Test String',
         dateAdded: 'Test String',
         id: 'Test String',
+        isSelected: false,
         country: 'Test String',
       );
 
@@ -36,6 +38,7 @@ class ConfigModel extends Config {
     String? dateAdded,
     String? id,
     String? country,
+    bool? isSelected,
   }) => ConfigModel(
     configjson: configjson ?? this.configjson,
     importedFrom: importedFrom ?? this.importedFrom,
@@ -45,7 +48,7 @@ class ConfigModel extends Config {
     uri: uri ?? this.uri,
     dateAdded: dateAdded ?? this.dateAdded,
     id: id ?? this.id,
+    isSelected: isSelected ?? this.isSelected,
     country: country ?? this.country,
   );
-
 }

@@ -15,9 +15,9 @@ class NetworkStats extends ConsumerWidget {
 
       builder: (context, value, child) {
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Container(
-            height: 100,
+            height: 80,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: const Color.fromARGB(255, 193, 255, 242),

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 
-class ConnectionStatus extends StatelessWidget {
-  const ConnectionStatus({super.key});
+import '../../../../../core/res/styles/colors.dart';
+
+class ConnectionIndicator extends StatelessWidget {
+  const ConnectionIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,20 @@ class ConnectionStatus extends StatelessWidget {
       valueListenable: status,
 
       builder: (context, value, child) {
-        return Text(value.state);
+        return Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            color:
+                value.state == "CONNECTED"
+                    ? const Color.fromARGB(255, 33, 255, 181)
+                    : Colours.grayColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(value.state, textAlign: TextAlign.center),
+          ),
+        );
       },
     );
   }

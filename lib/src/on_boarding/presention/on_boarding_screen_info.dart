@@ -9,7 +9,7 @@ class OnBoardingScreenInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(clipBehavior: Clip.none,
-    alignment: AlignmentGeometry.center,
+    alignment: AlignmentDirectional.center,
     children: [],
     );
   }

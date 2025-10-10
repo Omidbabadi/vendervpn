@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:vendervpn/core/common/app/cache_helper.dart';
+import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/src/configs/domain/usecases/get_configs.dart';
@@ -20,12 +22,25 @@ class ConfigsAdapter extends _$ConfigsAdapter {
   }
 
   late GetConfigs _getConfigs;
-
+  final _cacheHelper = sl<CacheHelper>();
   Future<void> getConfigs() async {
     state = const ConfigsLoading();
     final result = await _getConfigs.call();
     result.fold((l) => state = ConfigsError(l.message), (r) {
       ref.read(currentConfigsListProvider.notifier).setConfigs(r);
+      final cachedConfig = r.firstWhere(
+        (config) {
+          return config.id == _cacheHelper.id;
+        },
+        orElse: () {
+          return r[0];
+        },
+      );
+
+      ref
+          .read(currentConfigProvider.notifier)
+          .getCachedSelctedConfig(cachedConfig);
+
       state = ConfigsLoaded(r);
     });
   }

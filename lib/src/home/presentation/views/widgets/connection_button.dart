@@ -39,12 +39,14 @@ class ConnectionButton extends ConsumerWidget {
           curve: Curves.easeOutQuad,
           child: Bounceable(
             onTap: () async {
-              debugPrint(value.state);
-
-              await adapter.startConnection();
+              if (value.state == "CONNECTED") {
+                adapter.stopConnection();
+              } else {
+                await adapter.startConnection();
+              }
             },
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
               child: AnimatedContainer(
                 padding: const EdgeInsets.fromLTRB(25, 10, 25, 25),
                 height: 160,
@@ -54,7 +56,7 @@ class ConnectionButton extends ConsumerWidget {
                   color:
                       value.state == "CONNECTED"
                           ? Colours.connectedColor
-                          : Colours.grayColor,
+                          : Colours.lightBackgroundColor,
                   shape: BoxShape.circle,
                 ),
                 child: SvgPicture.asset(
