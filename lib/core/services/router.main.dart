@@ -11,11 +11,6 @@ final router = GoRouter(
       path: '/',
       builder: (_, __) {
         return const SplashScreen();
-
-        // final firstTimer = sl<CacheHelper>().firstTimer;
-        // if (firstTimer) {
-        //   return const OnBoardingScreen();
-        // }
       },
     ),
     
@@ -30,12 +25,12 @@ final router = GoRouter(
             return const HomeView();
           },
         ),
-        GoRoute(
-          path: ConfigsList.path,
-          builder: (_, __) {
-            return const ConfigsList();
-          },
-        ),
+        // GoRoute(
+        //   path: ConfigsList.path,
+        //   builder: (_, __) {
+        //     return const ConfigsList();
+        //   },
+        // ),
       ],
     ),
   ],
