@@ -24,9 +24,7 @@ class CurrentTheme extends _$CurrentTheme {
   }
 
    void _onThemeChanged() {
-    if (state != _notifier.value) {
       state = _notifier.value;
-    }
   }
 
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
+import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/extensions/text_style_ext.dart';
 import 'package:vendervpn/core/res/styles/text.dart';
 
@@ -14,12 +15,9 @@ class ConfigTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedConfig = ref.watch(currentConfigProvider);
-
+   ref.watch(currentThemeProvider);
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        
-        horizontal: 9
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 9),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
@@ -44,10 +42,10 @@ class ConfigTile extends ConsumerWidget {
               () => ref
                   .read(currentConfigProvider.notifier)
                   .setCurrentConfig(config),
-      
+
           title: Text(
             config.remark,
-      
+
             maxLines: 1,
             overflow: TextOverflow.fade,
             style: TextStyles.paragraphSubTextRegular.adaptiveColor(context),

@@ -47,8 +47,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               );
               return config;
             }).toList();
-        if (configList.isEmpty)
+        if (configList.isEmpty){
+
           ref.read(configsAdapterProvider().notifier).getConfigs();
+        }
 
         ref.read(currentConfigsListProvider.notifier).setConfigs(configList);
         context.go(HomeView.path);

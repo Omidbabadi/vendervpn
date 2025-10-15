@@ -18,7 +18,7 @@ Future<void> _cacheInit() async {
 
 Future<void> _unityAdsInit() async {
   final adService = UnityAdsService();
-  await adService.initialize(gameId: '5867671');
+  await adService.initialize(gameId: '5867671',);
   sl
     ..registerLazySingleton(() => ShowInterstitial(sl()))
     ..registerLazySingleton<UnityAdsRepo>(() => UnityAdsRepoImpl(sl()))

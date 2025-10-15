@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:unity_ads_plugin/unity_ads_plugin.dart';
+import 'package:vendervpn/core/extensions/theme_mode_ext.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
+import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/res/styles/colors.dart';
 
+import '../../../../core/services/injection_container.dart';
 import '../../../../core/widgets/bottom_appbar.dart';
 import '../utils/dashboard_utils.dart';
 
@@ -29,7 +31,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(connectionAdapterProvider(), (previous, next) {
+    ref.listen(currentThemeProvider, (previous, next) {
       if (next is ConnectionStateConnected) {}
     });
     final currentTheme = ref.watch(currentThemeProvider);
@@ -45,8 +47,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       appBar: AppBar(
         actions: [
           IconButton.filled(
+            color: Colours.connectedColor,
             onPressed: () {
               ref.read(currentThemeProvider.notifier).toggleTheme(currentTheme);
+              ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(
+                  content: Text('Theme Changed: ${currentTheme.themeStringValue}'),
+                ),
+              );
+            
             },
             icon: Icon(
               _getThemeIcon(),
@@ -60,7 +69,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         bottom: AppBarBottom(),
       ),
       key: DashboardUtils.scaffoldKey,
-      body: widget.child,
+      body: Column(
+        children: [sl<UnityAdsService>().showBannerAd('Banner_Android'),
+          Expanded(child: widget.child),
+        ],
+      ),
     );
   }
 }

@@ -62,7 +62,11 @@ List<Map<String, dynamic>> get configs {
   bool get permission => _pref.getBool(_permissionKey) ?? false;
 
   bool get firstTimer => _pref.getBool(_isFirstTimer) ?? true;
+
+
   String? get id => _pref.getString(_urlKey);
+
+  
   ThemeMode get themeMode =>
       _pref.getString(_themeMode)?.stringToTheme ?? ThemeMode.system;
 }
