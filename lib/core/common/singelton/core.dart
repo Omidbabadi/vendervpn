@@ -9,6 +9,14 @@ class Cache {
 
   final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
 
+  Map<String, String> _map = {};
+
+  Map<String, String> get map => _map;
+
+  void setMap(Map<String, String> map) {
+    _map = map;
+  }
+
   String? get url => _url;
 
   void setThemeMode(ThemeMode theme) {

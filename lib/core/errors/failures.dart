@@ -19,6 +19,11 @@ class ServerFailure extends Failure {
     : this(message: e.message, statusCode: e.statusCode);
 }
 
+class UnityAdsFailure extends Failure {
+  const UnityAdsFailure({required super.message}) : super(statusCode: 2);
+  UnityAdsFailure.fromException(UnityException e) : this(message: e.message);
+}
+
 class CacheFailure extends Failure {
   const CacheFailure({required super.message}) : super(statusCode: 3);
   CacheFailure.fromException(CacheException e) : this(message: e.message);

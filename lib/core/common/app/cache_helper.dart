@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vendervpn/core/common/common/singelton/core.dart';
+import 'package:vendervpn/core/common/singelton/core.dart';
 import 'package:vendervpn/core/extensions/string_ext.dart';
 import 'package:vendervpn/core/extensions/theme_mode_ext.dart';
 
@@ -8,10 +10,26 @@ class CacheHelper {
   const CacheHelper(this._pref);
   final SharedPreferences _pref;
 
-  static const _urlKey = 'id';
+  static const _urlKey = 'url';
   static const _isFirstTimer = 'is_first_timer';
   static const _themeMode = 'theme_mode';
   static const _permissionKey = 'permission_key';
+  static const _vpnStateKey = 'vpn_state_key';
+  static const _configs = 'configs';
+
+  Future<void> cacheVpnState(String state) async {
+    await _pref.setString(_vpnStateKey, state);
+  }
+
+  String? get vpnState => _pref.getString(_vpnStateKey) ?? 'DISCONNECTED';
+
+  Future<void> cacheConfigs(List<Map<String, String>> configs) async {
+    final config =
+        configs.map((e) {
+          return json.encode(e);
+        }).toList();
+    await _pref.setStringList(_configs, config);
+  }
 
   Future<void> cachePermission(bool permission) async {
     await _pref.setBool(_permissionKey, permission);
@@ -30,6 +48,16 @@ class CacheHelper {
     await _pref.setString(_themeMode, theme.themeStringValue);
     Cache.instance.setThemeMode(theme);
   }
+
+List<Map<String, dynamic>> get configs {
+  final configs = _pref.getStringList(_configs);
+  if (configs == null) return [];
+
+  return configs.map((e) {
+    return Map<String, dynamic>.from(json.decode(e));
+  }).toList();
+}
+
 
   bool get permission => _pref.getBool(_permissionKey) ?? false;
 

@@ -6,6 +6,7 @@ Future<void> init() async {
   await _cacheInit();
   await _v2rayInit();
   await _configsInit();
+  await _unityAdsInit();
 }
 
 Future<void> _cacheInit() async {
@@ -13,6 +14,16 @@ Future<void> _cacheInit() async {
   sl
     ..registerLazySingleton(() => CacheHelper(sl()))
     ..registerLazySingleton(() => pref);
+}
+
+Future<void> _unityAdsInit() async {
+  final adService = UnityAdsService();
+  await adService.initialize(gameId: '5867671');
+  sl
+    ..registerLazySingleton(() => ShowInterstitial(sl()))
+    ..registerLazySingleton<UnityAdsRepo>(() => UnityAdsRepoImpl(sl()))
+    ..registerLazySingleton<UnityAdsDatasrc>(() => UnityAdsDatasrcImpl(sl()))
+    ..registerLazySingleton(() => adService);
 }
 
 Future<void> _configsInit() async {
@@ -25,18 +36,19 @@ Future<void> _configsInit() async {
       () => ConfigsRemoteDatasrcImpl(sl()),
     )
     ..registerLazySingleton(() => client);
-
 }
 
 Future<void> _v2rayInit() async {
   final status = ValueNotifier<V2RayStatus>(V2RayStatus());
-  final v2ray = FlutterV2ray(onStatusChanged: (s) {
-    status.value = s;
-  });
+  final v2ray = FlutterV2ray(
+    onStatusChanged: (s) {
+      status.value = s;
+    },
+  );
   await v2ray.initializeV2Ray(
-      notificationIconResourceType: 'mipmap',
-      notificationIconResourceName: 'ic_launcher',
-    );
+    notificationIconResourceType: 'mipmap',
+    notificationIconResourceName: 'ic_launcher',
+  );
   final per = await v2ray.requestPermission();
   if (!per) return;
   sl

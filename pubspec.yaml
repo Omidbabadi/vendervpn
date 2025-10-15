@@ -56,6 +56,7 @@ dependencies:
   flutter_svg: ^2.2.1
   country_flags: ^4.0.1
   flutter_v2ray: ^1.0.10
+  countries_world_map: ^ 1.3.0
   
 
 dev_dependencies:
@@ -87,6 +88,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/
+    - assets/world_map.png
     - assets/animations/   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

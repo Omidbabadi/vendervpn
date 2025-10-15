@@ -1,43 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/extensions/context_ext.dart';
+import 'package:vendervpn/core/res/media.dart';
+import 'package:vendervpn/core/services/injection_container.dart';
+import 'package:vendervpn/src/home/presentation/views/widgets/configs_list.dart';
 
-import 'widgets/connected_config.dart';
+import '../../../../core/common/singelton/unity_ads_core.dart';
 import 'widgets/connection_button.dart';
-import 'widgets/connection_status.dart';
-import 'widgets/network_stats.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends ConsumerWidget {
   const HomeView({super.key});
   static const path = '/home';
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(currentThemeProvider);
     return Stack(
-      alignment: AlignmentDirectional.center,
       children: [
-        
-        Positioned(
-          left: 0,
-          right: 0,
-          top: context.height / 3.2,
-          child: ConnectionButton(),
-        ),
-        Positioned(top: 10, left: 0, right: 0, child: NetworkStats()),
-        Positioned(
-          top: context.height / 1.75,
-          width: 160,
-          child: ConnectionIndicator(),
+        SizedBox(
+          height: context.height / 2,
+          width: context.width,
+          child: Image.asset(
+            context.isDarkMode ? Media.darkModeMap : Media.lightModeMap,
+            fit: BoxFit.fitHeight,
+          ),
         ),
 
         Positioned(
           left: 0,
           right: 0,
-          bottom: 0,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ConnectedConfigContainer(),
-          ),
+          top: context.height / 10,
+          child: ConnectionButton(),
         ),
-        
+        ConfigsList(),
+        Positioned(
+          top: 0,
+          child: sl<UnityAdsService>().showBannerAd('Banner_Android')
+        ),
       ],
     );
   }

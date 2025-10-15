@@ -43,7 +43,6 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     List<String>? bypassSubnets,
     List<String>? blockedApps,
   ) async {
-    debugPrint(config);
     await _flutterV2ray.startV2Ray(
       remark: remark,
       config: config,
@@ -61,7 +60,6 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
 
   @override
   ValueNotifier<V2RayStatus> get connectionStatus {
-    print(_status.value.state);
     return _status;
   }
 }

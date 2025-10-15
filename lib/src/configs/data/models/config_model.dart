@@ -1,4 +1,5 @@
 import 'package:vendervpn/core/common/entities/config.dart';
+import 'package:vendervpn/core/extensions/bool_ext.dart';
 
 class ConfigModel extends Config {
   const ConfigModel({
@@ -27,6 +28,20 @@ class ConfigModel extends Config {
         isSelected: false,
         country: 'Test String',
       );
+
+  Map<String, String> toMap(ConfigModel config) {
+    return {
+      'uri': config.uri,
+      'country': config.country! ,
+      'remark': config.remark,
+      'id': config.id,
+      'isSelected': config.isSelected.stringValue,
+      'port': '${config.port}',
+      'address': config.address,
+      'dateAdded': config.dateAdded,
+      'importedFrom': config.importedFrom,
+    };
+  }
 
   ConfigModel copyWith({
     String? configjson,

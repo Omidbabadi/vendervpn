@@ -8,6 +8,7 @@ import '../../../../core/common/entities/config.dart';
 import '../../../../core/services/injection_container.dart';
 
 abstract class ConfigsRemoteDatasrc {
+  const ConfigsRemoteDatasrc();
   Future<List<Config>> getConfigs();
 }
 
@@ -18,6 +19,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
   Future<List<Config>> getConfigs() async {
     final TablesDB tablesDB = TablesDB(_client);
     final id = sl<CacheHelper>().id;
+    final List<Map<String, String>> cacheConfig = [];
     try {
       final url = await tablesDB.listRows(
         databaseId: '68cfc4e70012fb5e5417',
@@ -31,7 +33,19 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
             final config = e.data['url'] as String;
             final V2RayURL parser = FlutterV2ray.parseFromURL(config);
             final fullJson = parser.getFullConfiguration();
-            return ConfigModel(
+            // final configs = {
+            //   'url': config,
+            //   'country': country,
+            //   'remark': parser.remark,
+            //   'id': e.$id,
+            //   'port': parser.port.toString(),
+            //   'address': parser.address,
+            //   'uri': parser.url,
+            //   'dateAdded': DateTime.now().toString(),
+            //   'isSelected': (id == e.$id).toString(),
+            // };
+
+            final configModel = ConfigModel(
               configjson: fullJson,
               importedFrom: 's',
               remark: parser.remark,
@@ -43,7 +57,12 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
               country: e.data['country'] as String,
               isSelected: id == e.$id,
             );
+            final configs = configModel.toMap(configModel);
+            cacheConfig.add(configs);
+            return configModel;
           }).toList();
+
+      sl<CacheHelper>().cacheConfigs(cacheConfig);
       return data.cast<Config>();
     } catch (e) {
       throw ServerException(

@@ -6,7 +6,7 @@ part of 'connection_adapter.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$connectionAdapterHash() => r'68f0860b36e5f3f8a730e08d021386ca7e28432b';
+String _$connectionAdapterHash() => r'ed62ea15215c4f7de66e64285f7214b29dc0a1d6';
 
 /// Copied from Dart SDK
 class _SystemHash {

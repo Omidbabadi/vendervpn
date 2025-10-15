@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vendervpn/src/dashboard/presention/views/dashboard_screen.dart';
 import 'package:vendervpn/src/home/presentation/views/home_view.dart';
-import 'package:vendervpn/src/home/presentation/views/widgets/configs_list.dart';
 import 'package:vendervpn/src/splash_screen/presention/views/splash_screen.dart';
+
 
 
 part  'router.main.dart';

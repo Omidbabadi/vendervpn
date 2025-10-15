@@ -10,10 +10,11 @@ final router = GoRouter(
     GoRoute(
       path: '/',
       builder: (_, __) {
+
         return const SplashScreen();
       },
     ),
-    
+
     ShellRoute(
       builder: (context, state, child) {
         return DashboardScreen(state: state, child: child);
@@ -25,12 +26,6 @@ final router = GoRouter(
             return const HomeView();
           },
         ),
-        // GoRoute(
-        //   path: ConfigsList.path,
-        //   builder: (_, __) {
-        //     return const ConfigsList();
-        //   },
-        // ),
       ],
     ),
   ],

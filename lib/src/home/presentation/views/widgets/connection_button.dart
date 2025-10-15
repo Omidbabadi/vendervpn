@@ -1,24 +1,24 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:vendervpn/core/res/media.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
+import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../../../core/services/injection_container.dart';
 
 class ConnectionButton extends ConsumerWidget {
   const ConnectionButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final adapter = ref.read(connectionAdapterProvider().notifier);
-    final status = sl<ValueNotifier<V2RayStatus>>();
+    final adapter = ref.watch(connectionAdapterProvider().notifier);
+    final status = adapter.status;
     return ValueListenableBuilder<V2RayStatus>(
       valueListenable: status,
       builder: (_, value, child) {
@@ -46,22 +46,36 @@ class ConnectionButton extends ConsumerWidget {
               }
             },
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+              filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
               child: AnimatedContainer(
                 padding: const EdgeInsets.fromLTRB(25, 10, 25, 25),
-                height: 160,
-                width: 160,
+                height: 100,
+                width: 100,
                 duration: const Duration(milliseconds: 1200),
                 decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: CoreUtils.adabtiveColor(
+                        context,
+                        lightModeColor: Colours.darkBackgroundColor,
+                        darkModeColor: Colours.lightBackgroundColor,
+                      ),
+                      blurRadius: 5,
+                      blurStyle: BlurStyle.outer,
+                    ),
+                  ],
                   color:
                       value.state == "CONNECTED"
                           ? Colours.connectedColor
                           : Colours.lightBackgroundColor,
                   shape: BoxShape.circle,
                 ),
-                child: SvgPicture.asset(
-                  alignment: Alignment.bottomCenter,
-                  Media.powerIcon,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: SvgPicture.asset(
+                    alignment: Alignment.bottomCenter,
+                    Media.powerIcon,
+                  ),
                 ),
               ),
             ),

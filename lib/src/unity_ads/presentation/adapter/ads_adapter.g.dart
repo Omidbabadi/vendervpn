@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'configs_adapter.dart';
+part of 'ads_adapter.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$configsAdapterHash() => r'9ed12f658047fbda34505777db92253f52d17302';
+String _$adsAdapterHash() => r'5b7574f60f594b34115fee49e40aac99663fe405';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,36 +29,35 @@ class _SystemHash {
   }
 }
 
-abstract class _$ConfigsAdapter
-    extends BuildlessAutoDisposeNotifier<ConfigsState> {
+abstract class _$AdsAdapter extends BuildlessAutoDisposeNotifier<AdsState> {
   late final GlobalKey<State<StatefulWidget>>? familyKey;
 
-  ConfigsState build([
+  AdsState build([
     GlobalKey<State<StatefulWidget>>? familyKey,
   ]);
 }
 
-/// See also [ConfigsAdapter].
-@ProviderFor(ConfigsAdapter)
-const configsAdapterProvider = ConfigsAdapterFamily();
+/// See also [AdsAdapter].
+@ProviderFor(AdsAdapter)
+const adsAdapterProvider = AdsAdapterFamily();
 
-/// See also [ConfigsAdapter].
-class ConfigsAdapterFamily extends Family<ConfigsState> {
-  /// See also [ConfigsAdapter].
-  const ConfigsAdapterFamily();
+/// See also [AdsAdapter].
+class AdsAdapterFamily extends Family<AdsState> {
+  /// See also [AdsAdapter].
+  const AdsAdapterFamily();
 
-  /// See also [ConfigsAdapter].
-  ConfigsAdapterProvider call([
+  /// See also [AdsAdapter].
+  AdsAdapterProvider call([
     GlobalKey<State<StatefulWidget>>? familyKey,
   ]) {
-    return ConfigsAdapterProvider(
+    return AdsAdapterProvider(
       familyKey,
     );
   }
 
   @override
-  ConfigsAdapterProvider getProviderOverride(
-    covariant ConfigsAdapterProvider provider,
+  AdsAdapterProvider getProviderOverride(
+    covariant AdsAdapterProvider provider,
   ) {
     return call(
       provider.familyKey,
@@ -77,30 +76,30 @@ class ConfigsAdapterFamily extends Family<ConfigsState> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'configsAdapterProvider';
+  String? get name => r'adsAdapterProvider';
 }
 
-/// See also [ConfigsAdapter].
-class ConfigsAdapterProvider
-    extends AutoDisposeNotifierProviderImpl<ConfigsAdapter, ConfigsState> {
-  /// See also [ConfigsAdapter].
-  ConfigsAdapterProvider([
+/// See also [AdsAdapter].
+class AdsAdapterProvider
+    extends AutoDisposeNotifierProviderImpl<AdsAdapter, AdsState> {
+  /// See also [AdsAdapter].
+  AdsAdapterProvider([
     GlobalKey<State<StatefulWidget>>? familyKey,
   ]) : this._internal(
-          () => ConfigsAdapter()..familyKey = familyKey,
-          from: configsAdapterProvider,
-          name: r'configsAdapterProvider',
+          () => AdsAdapter()..familyKey = familyKey,
+          from: adsAdapterProvider,
+          name: r'adsAdapterProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$configsAdapterHash,
-          dependencies: ConfigsAdapterFamily._dependencies,
+                  : _$adsAdapterHash,
+          dependencies: AdsAdapterFamily._dependencies,
           allTransitiveDependencies:
-              ConfigsAdapterFamily._allTransitiveDependencies,
+              AdsAdapterFamily._allTransitiveDependencies,
           familyKey: familyKey,
         );
 
-  ConfigsAdapterProvider._internal(
+  AdsAdapterProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -113,8 +112,8 @@ class ConfigsAdapterProvider
   final GlobalKey<State<StatefulWidget>>? familyKey;
 
   @override
-  ConfigsState runNotifierBuild(
-    covariant ConfigsAdapter notifier,
+  AdsState runNotifierBuild(
+    covariant AdsAdapter notifier,
   ) {
     return notifier.build(
       familyKey,
@@ -122,10 +121,10 @@ class ConfigsAdapterProvider
   }
 
   @override
-  Override overrideWith(ConfigsAdapter Function() create) {
+  Override overrideWith(AdsAdapter Function() create) {
     return ProviderOverride(
       origin: this,
-      override: ConfigsAdapterProvider._internal(
+      override: AdsAdapterProvider._internal(
         () => create()..familyKey = familyKey,
         from: from,
         name: null,
@@ -138,14 +137,13 @@ class ConfigsAdapterProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ConfigsAdapter, ConfigsState>
-      createElement() {
-    return _ConfigsAdapterProviderElement(this);
+  AutoDisposeNotifierProviderElement<AdsAdapter, AdsState> createElement() {
+    return _AdsAdapterProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is ConfigsAdapterProvider && other.familyKey == familyKey;
+    return other is AdsAdapterProvider && other.familyKey == familyKey;
   }
 
   @override
@@ -157,19 +155,19 @@ class ConfigsAdapterProvider
   }
 }
 
-mixin ConfigsAdapterRef on AutoDisposeNotifierProviderRef<ConfigsState> {
+mixin AdsAdapterRef on AutoDisposeNotifierProviderRef<AdsState> {
   /// The parameter `familyKey` of this provider.
   GlobalKey<State<StatefulWidget>>? get familyKey;
 }
 
-class _ConfigsAdapterProviderElement
-    extends AutoDisposeNotifierProviderElement<ConfigsAdapter, ConfigsState>
-    with ConfigsAdapterRef {
-  _ConfigsAdapterProviderElement(super.provider);
+class _AdsAdapterProviderElement
+    extends AutoDisposeNotifierProviderElement<AdsAdapter, AdsState>
+    with AdsAdapterRef {
+  _AdsAdapterProviderElement(super.provider);
 
   @override
   GlobalKey<State<StatefulWidget>>? get familyKey =>
-      (origin as ConfigsAdapterProvider).familyKey;
+      (origin as AdsAdapterProvider).familyKey;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -18,6 +18,14 @@ class CacheException extends Equatable implements Exception {
   List<Object?> get props => [message];
 }
 
+class UnityException extends Equatable implements Exception {
+  const UnityException({required this.message});
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class ConnectionException extends Equatable implements Exception {
   const ConnectionException({required this.message});
   final String message;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../common/common/singelton/core.dart';
+import '../common/singelton/core.dart';
 
 
 extension ContextExt on BuildContext {

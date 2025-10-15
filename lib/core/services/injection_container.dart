@@ -12,10 +12,15 @@ import 'package:vendervpn/src/connection/data/datasrc/connection_datasrc.dart';
 import 'package:vendervpn/src/connection/domain/repo/connection_repo.dart';
 import 'package:vendervpn/src/connection/domain/usecase/connect.dart';
 import 'package:appwrite/appwrite.dart';
+import 'package:vendervpn/src/unity_ads/data/datascr/unity_ads_datasrc.dart';
+import 'package:vendervpn/src/unity_ads/data/repo/unity_ads_impl.dart';
+import 'package:vendervpn/src/unity_ads/domain/repo/unity_ads_repo.dart';
+import 'package:vendervpn/src/unity_ads/domain/usecase/show_interstitial.dart';
 import '../../src/configs/data/repo/configs_repo_impl.dart';
 import '../../src/connection/data/repo/connection_repo_impl.dart';
 import '../../src/connection/domain/usecase/disconnect.dart';
 import '../../src/connection/domain/usecase/get_vpn_state.dart';
 import '../../src/connection/domain/usecase/initialize_v2ay.dart';
+import '../common/singelton/unity_ads_core.dart';
 
 part 'injection_container.main.dart';

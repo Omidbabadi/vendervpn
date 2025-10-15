@@ -5,7 +5,14 @@ extension StringExt on String {
     return switch (toLowerCase()) {
       'dark' => ThemeMode.dark,
       'light' => ThemeMode.light,
-      _ => ThemeMode.system
+      _ => ThemeMode.system,
+    };
+  }
+
+  bool get stringToBool {
+    return switch (toLowerCase()) {
+      'true' => true,
+      _ => false,
     };
   }
 }

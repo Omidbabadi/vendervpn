@@ -2,7 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:equatable/equatable.dart';
+import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
+import 'package:vendervpn/src/unity_ads/presentation/adapter/ads_adapter.dart';
 
 import '../../../../core/common/entities/config.dart';
 import '../../../../core/services/injection_container.dart';
@@ -22,9 +24,11 @@ class ConnectionAdapter extends _$ConnectionAdapter {
     _getVpnState = sl<GetVpnState>();
     _disconnect = sl<Disconnect>();
     _state = sl<GetVpnState>();
+    _cacheHelper = sl<CacheHelper>();
     return ConnectionStateInitial();
   }
 
+  late CacheHelper _cacheHelper;
   late Connect _connect;
   late GetVpnState _getVpnState;
   late Disconnect _disconnect;
@@ -47,9 +51,12 @@ class ConnectionAdapter extends _$ConnectionAdapter {
     result.fold(
       (l) {
         state = ConnectionStateError(l.message);
+        return;
       },
       (r) {
         state = ConnectionStateConnected(_getVpnState.call, config);
+        _cacheHelper.cacheVpnState('CONNECTED');
+        ref.read(adsAdapterProvider().notifier).showInterstitial();
       },
     );
   }
@@ -57,6 +64,7 @@ class ConnectionAdapter extends _$ConnectionAdapter {
   void stopConnection() {
     _disconnect.call();
     state = ConnectionStateDisconnected();
+    _cacheHelper.cacheVpnState('DISCONNECTED');
   }
 
   ValueNotifier<V2RayStatus> get status => _state.call;
