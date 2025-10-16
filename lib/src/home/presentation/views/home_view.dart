@@ -7,7 +7,7 @@ import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.d
 import 'package:vendervpn/src/home/presentation/views/widgets/configs_list.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/world_map.dart';
 
-import '../../../info_screen/presention/views/on_boarding_screen.dart';
+import '../../../info_screen/presention/views/status_screen.dart';
 import 'widgets/connection_button.dart';
 
 class HomeView extends ConsumerWidget {
@@ -21,7 +21,6 @@ class HomeView extends ConsumerWidget {
       }
     });
     final theme = ref.watch(currentThemeProvider);
-    print('Home View Theme Is: $theme');
     return Stack(
       children: [
         Positioned(top: 10, left: 0, right: 0, child: const WorldMap()),

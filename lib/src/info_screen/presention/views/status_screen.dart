@@ -6,6 +6,7 @@ import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.d
 
 import '../../../../core/res/media.dart';
 import '../../../../core/res/styles/colors.dart';
+import '../../../../core/res/styles/text.dart';
 import '../../../../l10n/app_localizations.dart';
 
 enum Status { loading, success, error, idle, connecting }
@@ -74,7 +75,11 @@ class StatusScreen extends ConsumerWidget {
               const SizedBox(height: 20),
               Text(texts[status]!, textAlign: TextAlign.center),
               const SizedBox(height: 20),
-              if (message != null) Text(message!),
+              if (message != null) Text(message!
+              ,style: TextStyles.headingBold1.copyWith(
+                color: Colours.classicAdabtiveTextColor(context)
+              ),
+              ),
             ],
           ),
         ),

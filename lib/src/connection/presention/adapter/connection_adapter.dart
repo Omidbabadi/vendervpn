@@ -4,7 +4,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
-import 'package:vendervpn/src/unity_ads/presentation/adapter/ads_adapter.dart';
 
 import '../../../../core/common/entities/config.dart';
 import '../../../../core/services/injection_container.dart';
@@ -35,7 +34,6 @@ class ConnectionAdapter extends _$ConnectionAdapter {
   late GetVpnState _state;
 
   Future<void> startConnection() async {
-    ref.read(adsAdapterProvider().notifier).initialize();
     final config = ref.read(currentConfigProvider);
     if (config == null) {
       return;
@@ -58,7 +56,6 @@ class ConnectionAdapter extends _$ConnectionAdapter {
       (r) {
         state = ConnectionStateConnected(_getVpnState.call, config);
         _cacheHelper.cacheVpnState('CONNECTED');
-        ref.read(adsAdapterProvider().notifier).showInterstitial();
       },
     );
   }

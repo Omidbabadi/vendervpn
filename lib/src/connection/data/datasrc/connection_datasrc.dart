@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:vendervpn/core/common/singelton/unity_ads_core.dart';
+
+import '../../../../core/services/injection_container.dart';
+import '../../../../core/utils/consts.dart';
 
 abstract class ConnectionDatasrc {
   const ConnectionDatasrc();
@@ -47,10 +51,15 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
       remark: remark,
       config: config,
       blockedApps: blockedApps,
-      bypassSubnets: bypassSubnets,
+      bypassSubnets: Constants.subnets,
       proxyOnly: proxyOnly,
       notificationDisconnectButtonName: 'Disconnect $remark',
     );
+    final adService = sl<UnityAdsService>();
+    await adService.initialize(gameId: Constants.unityGameId);
+    if(adService.isInitialized){
+      adService.showInterstitial(placementId: Constants.interstitialAndroid);
+    }
   }
 
   @override
