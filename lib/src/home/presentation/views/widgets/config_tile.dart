@@ -10,12 +10,17 @@ import '../../../../../core/res/styles/colors.dart';
 import '../../../../../core/utils/core_utils.dart';
 
 class ConfigTile extends ConsumerWidget {
-  const ConfigTile({super.key, required this.config});
+  const ConfigTile({
+    super.key,
+    required this.config,
+    required this.isConnected,
+  });
   final Config config;
+  final bool isConnected;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedConfig = ref.watch(currentConfigProvider);
-   ref.watch(currentThemeProvider);
+    ref.watch(currentThemeProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 9),
       child: Container(
@@ -38,10 +43,12 @@ class ConfigTile extends ConsumerWidget {
                       : Colors.grey[300],
             ),
           ),
-          onTap:
-              () => ref
-                  .read(currentConfigProvider.notifier)
-                  .setCurrentConfig(config),
+          onTap: () {
+            if (isConnected) {
+              return;
+            }
+            ref.read(currentConfigProvider.notifier).setCurrentConfig(config);
+          },
 
           title: Text(
             config.remark,

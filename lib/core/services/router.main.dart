@@ -15,6 +15,13 @@ final router = GoRouter(
       },
     ),
 
+    GoRoute(path: StatusScreen.path,
+      builder: (_,state) {
+        final status = state.extra as Status;
+        return StatusScreen(status: status,);
+      }
+    ),
+
     ShellRoute(
       builder: (context, state, child) {
         return DashboardScreen(state: state, child: child);

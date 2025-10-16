@@ -76,7 +76,9 @@ class ConfigsList extends ConsumerWidget {
                       horizontal: 6,
                       vertical: 4,
                     ),
-                    child: ConfigTile(config: list[configsIndex]),
+                    child: ConfigTile(config: list[configsIndex],
+                    isConnected: value.state == 'CONNECTED',
+                    ),
                   );
                 },
               );

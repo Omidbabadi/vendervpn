@@ -14,7 +14,14 @@ abstract class CoreUtils {
     return context.isDarkMode ? darkModeColor : lightModeColor;
   }
 
-  static isConnectedColor(bool isConnected) {
+  static bool isConnected(String state) {
+    return switch (state) {
+      'CONNECTED' => true,
+      _ => false
+    };
+  }
+
+  static Color isConnectedColor(bool isConnected) {
     return isConnected ? Colours.connectedColor : Colours.grayColor;
   }
 
@@ -25,7 +32,7 @@ abstract class CoreUtils {
     );
   }
 
-  static  Map<String, double>? countryCenter(String countryIso) {
+  static Map<String, double>? countryCenter(String countryIso) {
     final centers = {
       'AF': {'lat': 33.9391, 'lon': 67.7100},
       'AL': {'lat': 41.1533, 'lon': 20.1683},

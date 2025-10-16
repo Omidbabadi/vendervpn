@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:vendervpn/core/extensions/text_style_ext.dart';
+import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 
 import '../../../../../core/res/styles/colors.dart';
@@ -40,7 +41,7 @@ class ConnectionIndicator extends ConsumerWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            value.state == 'DISCONNECTED'
+                            !CoreUtils.isConnected(value.state)
                                 ? AppLocalizations.of(
                                   context,
                                 )!.vpnstatus_not_connect

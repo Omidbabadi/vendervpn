@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vendervpn/src/unity_ads/presentation/adapter/ads_adapter.dart';
-
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
-import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/res/styles/colors.dart';
-
-import '../../../../core/services/injection_container.dart';
 import '../../../../core/widgets/bottom_appbar.dart';
 import '../utils/dashboard_utils.dart';
 
@@ -33,7 +28,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   // @override
   // void initState() {
   //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     ref.read(adsAdapterProvider().notifier).showInterstitial();
   //   });
   //   super.initState();
   // }
@@ -41,7 +35,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = ref.watch(currentThemeProvider);
-    final adState = ref.watch(adsAdapterProvider());
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -65,8 +58,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       key: DashboardUtils.scaffoldKey,
       body: Column(
         children: [
-          if (adState is AdsIntialized)
-            sl<UnityAdsService>().showBannerAd('Banner_Android'),
           Expanded(child: widget.child),
         ],
       ),

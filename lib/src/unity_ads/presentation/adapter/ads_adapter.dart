@@ -24,14 +24,18 @@ class AdsAdapter extends _$AdsAdapter {
   Future<void> initialize() async {
     state = const InitializingAds();
     final result = await _initialize.call();
-    result.fold(
+result.fold(
       (l) {
         state = AdsError(l.message);
+
       },
       (r) {
         state = const AdsIntialized();
+
       },
     );
+
+
   }
 
   Future<void> showInterstitial() async {

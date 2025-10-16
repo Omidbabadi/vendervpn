@@ -35,15 +35,13 @@ class ConnectionAdapter extends _$ConnectionAdapter {
   late GetVpnState _state;
 
   Future<void> startConnection() async {
-    final adsState = ref.watch(adsAdapterProvider());
-    if (adsState is! AdsIntialized) {
-      ref.read(adsAdapterProvider().notifier).initialize();
-    }
+    ref.read(adsAdapterProvider().notifier).initialize();
     final config = ref.read(currentConfigProvider);
     if (config == null) {
       return;
     }
     state = ConnectionStateConnecting();
+    await Future.delayed(Duration(seconds: 3));
     final params = ConnectionsParams(
       blockedApps: [],
       bypassSubnets: [],

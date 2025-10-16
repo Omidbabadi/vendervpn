@@ -4,6 +4,8 @@ import 'package:vendervpn/src/dashboard/presention/views/dashboard_screen.dart';
 import 'package:vendervpn/src/home/presentation/views/home_view.dart';
 import 'package:vendervpn/src/splash_screen/presention/views/splash_screen.dart';
 
+import '../../src/info_screen/presention/views/on_boarding_screen.dart';
+
 
 
 part  'router.main.dart';
