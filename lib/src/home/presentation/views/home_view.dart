@@ -12,23 +12,11 @@ class HomeView extends ConsumerWidget {
   static const path = '/home';
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(currentThemeProvider);
+    final theme = ref.watch(currentThemeProvider);
+    print('Home View Theme Is: $theme');
     return Stack(
       children: [
-        Positioned(
-          top: 10,
-          left: 0,
-          right: 0,
-          child: const WorldMap()),
-        // SizedBox(
-        //   height: context.height / 2,
-        //   width: context.width,
-        //   child: Image.asset(
-        //     context.isDarkMode ? Media.darkModeMap : Media.lightModeMap,
-        //     fit: BoxFit.fitHeight,
-        //   ),
-        // ),
-
+        Positioned(top: 10, left: 0, right: 0, child: const WorldMap()),
         Positioned(
           left: 0,
           right: 0,
@@ -36,7 +24,6 @@ class HomeView extends ConsumerWidget {
           child: ConnectionButton(),
         ),
         ConfigsList(),
-       
       ],
     );
   }

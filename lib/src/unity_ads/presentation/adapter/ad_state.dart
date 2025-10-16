@@ -11,6 +11,14 @@ final class InitialAds extends AdsState {
   const InitialAds();
 }
 
+final class InitializingAds extends AdsState {
+  const InitializingAds();
+}
+
+final class AdsIntialized extends AdsState {
+  const AdsIntialized();
+}
+
 final class AdsLoaded extends AdsState {
   const AdsLoaded();
 }

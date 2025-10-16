@@ -12,13 +12,13 @@ import 'connection_status.dart';
 
 class ConfigsList extends ConsumerWidget {
   const ConfigsList({super.key});
-  static const path = '/configs';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final list = ref.watch(currentConfigsListProvider);
     final status = ref.watch(connectionAdapterProvider().notifier).status;
- ref.watch(currentThemeProvider);
+    final theme = ref.watch(currentThemeProvider);
+    print('Configs List Theme: $theme');
     return DraggableScrollableSheet(
       initialChildSize: 0.50,
       minChildSize: 0.50,

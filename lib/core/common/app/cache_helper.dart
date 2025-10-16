@@ -49,24 +49,27 @@ class CacheHelper {
     Cache.instance.setThemeMode(theme);
   }
 
-List<Map<String, dynamic>> get configs {
-  final configs = _pref.getStringList(_configs);
-  if (configs == null) return [];
+  List<Map<String, dynamic>> get configs {
+    final configs = _pref.getStringList(_configs);
+    if (configs == null) return [];
 
-  return configs.map((e) {
-    return Map<String, dynamic>.from(json.decode(e));
-  }).toList();
-}
-
+    return configs.map((e) {
+      return Map<String, dynamic>.from(json.decode(e));
+    }).toList();
+  }
 
   bool get permission => _pref.getBool(_permissionKey) ?? false;
 
   bool get firstTimer => _pref.getBool(_isFirstTimer) ?? true;
 
-
   String? get id => _pref.getString(_urlKey);
 
-  
-  ThemeMode get themeMode =>
-      _pref.getString(_themeMode)?.stringToTheme ?? ThemeMode.system;
+  ThemeMode get themeMode {
+    final theme =
+        _pref.getString(_themeMode)?.stringToTheme ?? ThemeMode.system;
+    Cache.instance.setThemeMode(theme);
+    return theme;
+  }
+
+  //_pref.getString(_themeMode)?.stringToTheme ?? ThemeMode.system;
 }

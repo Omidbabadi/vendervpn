@@ -6,7 +6,7 @@ part of 'ads_adapter.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$adsAdapterHash() => r'5b7574f60f594b34115fee49e40aac99663fe405';
+String _$adsAdapterHash() => r'e45aa4720f35680bb9ecd57a2c30fd02f480c068';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-abstract class _$AdsAdapter extends BuildlessAutoDisposeNotifier<AdsState> {
+abstract class _$AdsAdapter extends BuildlessNotifier<AdsState> {
   late final GlobalKey<State<StatefulWidget>>? familyKey;
 
   AdsState build([
@@ -80,8 +80,7 @@ class AdsAdapterFamily extends Family<AdsState> {
 }
 
 /// See also [AdsAdapter].
-class AdsAdapterProvider
-    extends AutoDisposeNotifierProviderImpl<AdsAdapter, AdsState> {
+class AdsAdapterProvider extends NotifierProviderImpl<AdsAdapter, AdsState> {
   /// See also [AdsAdapter].
   AdsAdapterProvider([
     GlobalKey<State<StatefulWidget>>? familyKey,
@@ -137,7 +136,7 @@ class AdsAdapterProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<AdsAdapter, AdsState> createElement() {
+  NotifierProviderElement<AdsAdapter, AdsState> createElement() {
     return _AdsAdapterProviderElement(this);
   }
 
@@ -155,14 +154,13 @@ class AdsAdapterProvider
   }
 }
 
-mixin AdsAdapterRef on AutoDisposeNotifierProviderRef<AdsState> {
+mixin AdsAdapterRef on NotifierProviderRef<AdsState> {
   /// The parameter `familyKey` of this provider.
   GlobalKey<State<StatefulWidget>>? get familyKey;
 }
 
 class _AdsAdapterProviderElement
-    extends AutoDisposeNotifierProviderElement<AdsAdapter, AdsState>
-    with AdsAdapterRef {
+    extends NotifierProviderElement<AdsAdapter, AdsState> with AdsAdapterRef {
   _AdsAdapterProviderElement(super.provider);
 
   @override

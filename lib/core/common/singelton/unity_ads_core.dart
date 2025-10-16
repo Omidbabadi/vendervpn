@@ -22,6 +22,7 @@ class UnityAdsService {
         print('✅ Unity Ads initialized successfully');
       },
       onFailed: (error, message) {
+        
         print('❌ Unity Ads initialization failed: $error - $message');
       },
     );

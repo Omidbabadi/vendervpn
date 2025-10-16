@@ -21,6 +21,7 @@ import '../../src/connection/data/repo/connection_repo_impl.dart';
 import '../../src/connection/domain/usecase/disconnect.dart';
 import '../../src/connection/domain/usecase/get_vpn_state.dart';
 import '../../src/connection/domain/usecase/initialize_v2ay.dart';
+import '../../src/unity_ads/domain/usecase/is_initialize.dart';
 import '../common/singelton/unity_ads_core.dart';
 
 part 'injection_container.main.dart';

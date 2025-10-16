@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vendervpn/core/extensions/theme_mode_ext.dart';
-import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/unity_ads/presentation/adapter/ads_adapter.dart';
 
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
@@ -43,7 +41,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = ref.watch(currentThemeProvider);
-
+    final adState = ref.watch(adsAdapterProvider());
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -51,13 +49,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             color: Colours.connectedColor,
             onPressed: () {
               ref.read(currentThemeProvider.notifier).toggleTheme(currentTheme);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Theme Changed: ${currentTheme.themeStringValue}',
-                  ),
-                ),
-              );
+
             },
             icon: Icon(
               _getThemeIcon(),
@@ -73,7 +65,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       key: DashboardUtils.scaffoldKey,
       body: Column(
         children: [
-          sl<UnityAdsService>().showBannerAd('Banner_Android'),
+          if (adState is AdsIntialized)
+            sl<UnityAdsService>().showBannerAd('Banner_Android'),
           Expanded(child: widget.child),
         ],
       ),

@@ -1,9 +1,9 @@
-
 import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/errors/exceptions.dart';
 
 abstract class UnityAdsDatasrc {
   Future<void> showInterstitial(String placementId);
+  Future<void> isInitialize();
 }
 
 class UnityAdsDatasrcImpl implements UnityAdsDatasrc {
@@ -16,6 +16,17 @@ class UnityAdsDatasrcImpl implements UnityAdsDatasrc {
       await _ads.showInterstitial(placementId: placementId);
     } on UnityException catch (e) {
       print(e.message);
+      throw UnityException(message: e.message);
+    }
+  }
+
+  @override
+  Future<void> isInitialize() async {
+    try {
+      _ads.initialize(gameId: '5867671');
+    } on UnityException catch (e) {
+      print(e.message);
+      throw UnityException(message: e.message);
     }
   }
 }

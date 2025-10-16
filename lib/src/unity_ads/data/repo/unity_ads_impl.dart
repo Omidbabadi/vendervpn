@@ -18,5 +18,15 @@ class UnityAdsRepoImpl implements UnityAdsRepo {
       return Left(UnityAdsFailure.fromException(e));
     }
   }
+  
+  @override
+  ResultFuture<bool> isInitialize() async {
+        try {
+      await _datasrc.isInitialize();
+      return const Right(true);
+    } on UnityException catch (e) {
+      return Left(UnityAdsFailure.fromException(e));
+    }
+  }
 
 }
