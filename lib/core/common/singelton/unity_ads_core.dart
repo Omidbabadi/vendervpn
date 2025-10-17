@@ -1,4 +1,9 @@
+// ignore_for_file: avoid_print
+
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
+
+import '../../errors/exceptions.dart';
+import '../../utils/consts.dart';
 
 class UnityAdsService {
   UnityAdsService._internal();
@@ -9,13 +14,12 @@ class UnityAdsService {
   bool get isInitialized => _isInitialized;
 
   Future<void> initialize({
-    required String gameId,
     bool testMode = false,
   }) async {
     if (_isInitialized) return;
-
+    try{
     await UnityAds.init(
-      gameId: gameId,
+      gameId: Constants.unityGameId,
       testMode: testMode,
       onComplete: () {
         _isInitialized = true;
@@ -23,19 +27,25 @@ class UnityAdsService {
       },
       onFailed: (error, message) {
         
-        print('❌ Unity Ads initialization failed: $error - $message');
+        throw  UnityException(
+          message: '❌ Unity Ads initialization failed: $error - $message',unityAdsInitializationError: error
+        );
       },
-    );
+    );}on UnityException {
+      rethrow;
+    } catch (e){
+      throw const UnityException(message: 'Unity Ads Not Initialized');
+    }
   }
 
-  Future<void> showInterstitial({required String placementId}) async {
+  Future<void> showInterstitial() async {
     if (!_isInitialized) {
       print('⚠️ Unity Ads not initialized yet');
       return;
     }
-
+    try{
     await UnityAds.load(
-      placementId: placementId,
+      placementId: Constants.interstitialAndroid,
       onComplete: (placementId) async {
         print('✅ Ad loaded: $placementId');
 
@@ -46,8 +56,12 @@ class UnityAdsService {
           onSkipped: (placementId) => print('⏩ Ad skipped: $placementId'),
           onComplete: (placementId) => print('🏁 Ad completed: $placementId'),
           onFailed:
-              (placementId, error, message) =>
-                  print('❌ Ad failed: $placementId - $error - $message'),
+              (placementId, error, message) {
+                throw UnityException(message: '❌ Ad failed: $placementId - $error - $message',
+                unityAdsShowError: error
+                );
+              }
+                  ,
         );
       },
       onFailed: (placementId, error, message) {
@@ -57,14 +71,27 @@ class UnityAdsService {
             UnityAds.load(placementId: placementId);
           });
         }
-        print('❌ Failed to load ad: $placementId - $error - $message');
+        throw UnityException(
+          message: '❌ Failed to load ad: $placementId - $error - $message',unityAdsLoadError: error
+        );
       },
     );
+    }on UnityException {
+      rethrow;
+    }
+    
+    catch (e){
+      throw UnityException(
+        message: 'Something Goes Wrong So No Ads Loaded',
+      );
+    }
   }
 
-  UnityBannerAd showBannerAd(String placementId) {
+  UnityBannerAd showBannerAd() {
+
+    try{
     return UnityBannerAd(
-      placementId: placementId,
+      placementId: Constants.bannerAndroid,
       onLoad: (placementId) => print('Banner loaded: $placementId'),
       onClick: (placementId) => print('Banner clicked: $placementId'),
       onShown: (placementId) => print('Banner shown: $placementId'),
@@ -75,8 +102,11 @@ class UnityAdsService {
                   UnityAds.load(placementId: placementId);
                 });
               }
-        print('Banner Ad $placementId failed: $error $message');
-      },
-    );
+throw UnityException(message: 'Banner Ad $placementId failed: $error $message');      },
+    );} on UnityException {
+      rethrow;
+    }catch (e){
+      throw const UnityException(message: 'Somthing Goes Wrong So No Baner Ad Been Loaded');
+    }
   }
 }

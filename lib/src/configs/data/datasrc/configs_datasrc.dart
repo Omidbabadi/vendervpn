@@ -33,17 +33,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
             final config = e.data['url'] as String;
             final V2RayURL parser = FlutterV2ray.parseFromURL(config);
             final fullJson = parser.getFullConfiguration();
-            // final configs = {
-            //   'url': config,
-            //   'country': country,
-            //   'remark': parser.remark,
-            //   'id': e.$id,
-            //   'port': parser.port.toString(),
-            //   'address': parser.address,
-            //   'uri': parser.url,
-            //   'dateAdded': DateTime.now().toString(),
-            //   'isSelected': (id == e.$id).toString(),
-            // };
+           
 
             final configModel = ConfigModel(
               configjson: fullJson,
@@ -64,7 +54,11 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
 
       sl<CacheHelper>().cacheConfigs(cacheConfig);
       return data.cast<Config>();
-    } catch (e) {
+    } on ServerException{
+      rethrow;
+    } 
+    
+    catch (e) {
       throw ServerException(
         message: 'Getting Configs From Server Failed',
         statusCode: 500,

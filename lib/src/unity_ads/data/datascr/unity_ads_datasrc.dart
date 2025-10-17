@@ -13,7 +13,7 @@ class UnityAdsDatasrcImpl implements UnityAdsDatasrc {
   @override
   Future<void> showInterstitial(String placementId) async {
     try {
-      await _ads.showInterstitial(placementId: placementId);
+      await _ads.showInterstitial();
     } on UnityException catch (e) {
       print(e.message);
       throw UnityException(message: e.message);
@@ -23,7 +23,7 @@ class UnityAdsDatasrcImpl implements UnityAdsDatasrc {
   @override
   Future<void> isInitialize() async {
     try {
-      _ads.initialize(gameId: '5867671');
+      _ads.initialize();
     } on UnityException catch (e) {
       print(e.message);
       throw UnityException(message: e.message);

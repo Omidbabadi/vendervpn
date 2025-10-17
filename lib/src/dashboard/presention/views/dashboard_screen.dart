@@ -60,7 +60,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
       key: DashboardUtils.scaffoldKey,
       body: Column(
-        children: [sl<UnityAdsService>().showBannerAd(Constants.bannerAndroid),
+        children: [sl<UnityAdsService>().showBannerAd(),
           Expanded(child: widget.child),
         ],
       ),

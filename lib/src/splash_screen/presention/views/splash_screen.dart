@@ -11,6 +11,7 @@ import 'package:vendervpn/src/home/presentation/views/home_view.dart';
 import '../../../../core/common/app/cache_helper.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../info_screen/presention/views/status_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -67,6 +68,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       }
       if (next is ConfigsError) {
         debugPrint(next.message);
+        context.go(StatusScreen.path,extra: Status.error);
       }
     });
     return Scaffold(body: Center(child: const AppLogo()));

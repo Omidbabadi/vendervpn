@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:vendervpn/core/common/singelton/unity_ads_core.dart';
 
+import '../../../../core/errors/exceptions.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../../../core/utils/consts.dart';
 
@@ -29,6 +30,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
   final FlutterV2ray _flutterV2ray;
   final ValueNotifier<V2RayStatus> _status;
 
+  //TODO: make initializtion Here
   @override
   Future<bool> initializeV2Ray() async {
     await _flutterV2ray.initializeV2Ray(
@@ -47,6 +49,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     List<String>? bypassSubnets,
     List<String>? blockedApps,
   ) async {
+    try{
     await _flutterV2ray.startV2Ray(
       remark: remark,
       config: config,
@@ -55,10 +58,22 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
       proxyOnly: proxyOnly,
       notificationDisconnectButtonName: 'Disconnect $remark',
     );
+    final ping = await _flutterV2ray.getConnectedServerDelay();
+    if(ping == -1){
+      throw ConnectionException(
+        message: 'Error: Server Is Unreachable, Most Likely The Server Is Down. \n Please Choose Another Server Or Check Your Ineternet'
+        ,ping: -1
+      );
+    }
     final adService = sl<UnityAdsService>();
-    await adService.initialize(gameId: Constants.unityGameId);
+    await adService.initialize();
     if(adService.isInitialized){
-      adService.showInterstitial(placementId: Constants.interstitialAndroid);
+     await adService.showInterstitial();
+    }} on ServerException {
+      rethrow;
+    }catch(e,s){
+      debugPrintStack(stackTrace: s);
+      throw const ServerException(message: 'There Was An Error While Connecting', statusCode: -1);
     }
   }
 

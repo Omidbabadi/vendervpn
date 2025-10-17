@@ -4,14 +4,18 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 
+import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/res/media.dart';
 import '../../../../core/res/styles/colors.dart';
 import '../../../../core/res/styles/text.dart';
+import '../../../../core/services/injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../configs/presention/app/adapter/configs_adapter.dart';
+import '../../../home/presentation/views/home_view.dart';
 
 enum Status { loading, success, error, idle, connecting }
 
-class StatusScreen extends ConsumerWidget {
+class StatusScreen extends ConsumerStatefulWidget {
   const StatusScreen({super.key, this.status, this.message});
   final Status? status;
   final String? message;
@@ -19,15 +23,39 @@ class StatusScreen extends ConsumerWidget {
   static const path = '/info';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(connectionAdapterProvider(), (p, next) {
-      if (next is ConnectionStateConnected) {
-        context.pop();
-        
-      } else if(next is ConnectionStateError) {
-        
-      }
+  ConsumerState<StatusScreen> createState() => _StatusScreenState();
+}
+
+class _StatusScreenState extends ConsumerState<StatusScreen> {
+  late Status _status;
+
+  @override
+  void initState() {
+    super.initState();
+    _status = widget.status ?? Status.idle; 
+
+        ref.listen(connectionAdapterProvider(), (p, next) {
+          if(next is ConnectionStateConnecting){
+            setState(() => _status = Status.connecting);
+          }else if( next is ConnectionStateConnected){
+                        setState(() => _status = Status.success);
+            
+          }
+          else if(next is ConnectionStateError){
+                                    setState(() => _status = Status.error);
+
+          }
+          else {
+                                    setState(() => _status = Status.idle);
+
+          }
     });
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
     final Map<Status, String> animations = {
       Status.loading: Media.loadingAnimation,
       Status.success: Media.success,
@@ -44,7 +72,14 @@ class StatusScreen extends ConsumerWidget {
       Status.idle: 'idle',
     };
 
+    ref.listen(configsAdapterProvider(), (p,n){
+      if(n is ConfigsLoaded){
+        context.go(HomeView.path);
+      }
+    });
+
     return Scaffold(
+
       appBar: AppBar(
         leading: IconButton.filled(
           onPressed: () {
@@ -62,20 +97,11 @@ class StatusScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              switch (status) {
-                Status.loading => Lottie.asset(animations[Status.loading]!),
-                Status.success => Lottie.asset(animations[Status.success]!),
-                Status.error => Lottie.asset(animations[Status.error]!),
-                null => Lottie.asset(animations[Status.error]!),
-                Status.idle => Lottie.asset(animations[Status.idle]!),
-                Status.connecting => Lottie.asset(
-                  animations[Status.connecting]!,
-                ),
-              },
+              Lottie.asset(animations[_status]!),
               const SizedBox(height: 20),
-              Text(texts[status]!, textAlign: TextAlign.center),
+              Text(texts[widget.status]!, textAlign: TextAlign.center),
               const SizedBox(height: 20),
-              if (message != null) Text(message!
+              if (widget.message != null) Text(widget.message!
               ,style: TextStyles.headingBold1.copyWith(
                 color: Colours.classicAdabtiveTextColor(context)
               ),
@@ -84,6 +110,18 @@ class StatusScreen extends ConsumerWidget {
           ),
         ),
       ),
+      floatingActionButton: _floatingActionButton(
+        (){
+          ref.read(configsAdapterProvider().notifier).getConfigs();
+        }
+        ,_status == Status.error,)
     );
   }
+}
+
+ElevatedButton? _floatingActionButton(void Function()? onPressed,bool isError){
+  if(!isError){
+    return null;
+  }
+  return ElevatedButton(onPressed: onPressed, child: const Text('Retry'));
 }
