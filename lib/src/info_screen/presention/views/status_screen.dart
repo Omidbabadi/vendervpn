@@ -4,11 +4,10 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 
-import '../../../../core/common/singelton/unity_ads_core.dart';
+import '../../../../core/common/app/riverpod/theme/current_theme.dart';
 import '../../../../core/res/media.dart';
 import '../../../../core/res/styles/colors.dart';
 import '../../../../core/res/styles/text.dart';
-import '../../../../core/services/injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../configs/presention/app/adapter/configs_adapter.dart';
 import '../../../home/presentation/views/home_view.dart';
@@ -34,27 +33,33 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
     super.initState();
     _status = widget.status ?? Status.idle; 
 
-        ref.listen(connectionAdapterProvider(), (p, next) {
-          if(next is ConnectionStateConnecting){
-            setState(() => _status = Status.connecting);
-          }else if( next is ConnectionStateConnected){
-                        setState(() => _status = Status.success);
-            
-          }
-          else if(next is ConnectionStateError){
-                                    setState(() => _status = Status.error);
-
-          }
-          else {
-                                    setState(() => _status = Status.idle);
-
-          }
-    });
+        
 
   }
 
   @override
   Widget build(BuildContext context) {
+
+    ref.listen(connectionAdapterProvider(), (p, next) {
+          if(next is ConnectionStateConnecting){
+            debugPrint(next.runtimeType.toString());
+            setState(() => _status = Status.connecting);
+          }else if( next is ConnectionStateConnected){            debugPrint(next.runtimeType.toString());
+
+                        setState(() => _status = Status.success);
+            
+          }
+          else if(next is ConnectionStateError){            debugPrint(next.runtimeType.toString());
+
+                                    setState(() => _status = Status.error);
+
+          }
+          else {            debugPrint(next.runtimeType.toString());
+
+                                    setState(() => _status = Status.idle);
+
+          }
+    });
 
     final Map<Status, String> animations = {
       Status.loading: Media.loadingAnimation,
@@ -74,9 +79,14 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
 
     ref.listen(configsAdapterProvider(), (p,n){
       if(n is ConfigsLoaded){
-        context.go(HomeView.path);
+        setState(() => _status = Status.success);
+      }
+      if(n is ConfigsError){
+            setState(() => _status = Status.error);
+
       }
     });
+    ref.watch(currentThemeProvider);
 
     return Scaffold(
 

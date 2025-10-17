@@ -60,6 +60,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     );
     final ping = await _flutterV2ray.getConnectedServerDelay();
     if(ping == -1){
+      disconnect();
       throw ConnectionException(
         message: 'Error: Server Is Unreachable, Most Likely The Server Is Down. \n Please Choose Another Server Or Check Your Ineternet'
         ,ping: -1
@@ -69,11 +70,12 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     await adService.initialize();
     if(adService.isInitialized){
      await adService.showInterstitial();
-    }} on ServerException {
+    }} on ConnectionException {
       rethrow;
     }catch(e,s){
       debugPrintStack(stackTrace: s);
-      throw const ServerException(message: 'There Was An Error While Connecting', statusCode: -1);
+
+      throw const ConnectionException(message: 'There Was An Error While Connecting', ping: -1);
     }
   }
 
