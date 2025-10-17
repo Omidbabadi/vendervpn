@@ -10,16 +10,16 @@ final router = GoRouter(
     GoRoute(
       path: '/',
       builder: (_, __) {
-
         return const SplashScreen();
       },
     ),
 
-    GoRoute(path: StatusScreen.path,
-      builder: (_,state) {
-        final status = state.extra as Status;
-        return StatusScreen(status: status,);
-      }
+    GoRoute(
+      path: StatusScreen.path,
+      builder: (_, state) {
+        final extra = state.extra as StatusUtils;
+        return StatusScreen(status: extra);
+      },
     ),
 
     ShellRoute(

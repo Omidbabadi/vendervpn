@@ -11,13 +11,13 @@ import '../../../../core/res/styles/text.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../configs/presention/app/adapter/configs_adapter.dart';
 import '../../../home/presentation/views/home_view.dart';
+import 'utils/status_utils.dart';
 
 enum Status { loading, success, error, idle, connecting }
 
 class StatusScreen extends ConsumerStatefulWidget {
-  const StatusScreen({super.key, this.status, this.message});
-  final Status? status;
-  final String? message;
+  const StatusScreen({super.key, this.status});
+  final StatusUtils? status;
 
   static const path = '/info';
 
@@ -26,51 +26,16 @@ class StatusScreen extends ConsumerStatefulWidget {
 }
 
 class _StatusScreenState extends ConsumerState<StatusScreen> {
-  late Status _status;
+  late StatusUtils _status;
 
   @override
   void initState() {
     super.initState();
-    _status = widget.status ?? Status.idle; 
-
-        
-
+    _status = widget.status ?? StatusUtils('idle', Status.idle);
   }
 
   @override
   Widget build(BuildContext context) {
-
-    ref.listen(connectionAdapterProvider(), (p, next) {
-          if(next is ConnectionStateConnecting){
-            debugPrint(next.runtimeType.toString());
-            setState(() => _status = Status.connecting);
-          }else if( next is ConnectionStateConnected){         
-            debugPrint(next.runtimeType.toString());
-
-            setState(() => _status = Status.success);
-            
-          }
-          else if(next is ConnectionStateError){            
-            debugPrint(next.runtimeType.toString());
-
-            setState(() => _status = Status.error);
-
-          }
-          else {
-            debugPrint(next.runtimeType.toString());
-
-            setState(() => _status = Status.idle);
-
-          }
-    });
-
-    final Map<Status, String> animations = {
-      Status.loading: Media.loadingAnimation,
-      Status.success: Media.success,
-      Status.error: Media.errorAnimation,
-      Status.connecting: Media.connectionAnimation,
-      Status.idle: Media.success,
-    };
     // TODO: localize these texts
     final Map<Status, String> texts = {
       Status.loading: 'loading',
@@ -80,19 +45,74 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
       Status.idle: 'idle',
     };
 
-    ref.listen(configsAdapterProvider(), (p,n){
-      if(n is ConfigsLoaded){
+    ref.listen(connectionAdapterProvider(), (p, next) {
+      if (next is ConnectionStateConnecting) {
+        debugPrint(next.runtimeType.toString());
+        setState(
+          () =>
+              _status = _status.copyWith(
+                message: texts[Status.connecting],
+                status: Status.connecting,
+              ),
+        );
+      } else if (next is ConnectionStateConnected) {
+        debugPrint(next.runtimeType.toString());
+
+        setState(
+          () =>
+              _status = _status.copyWith(
+                message: texts[Status.success],
+                status: Status.success,
+              ),
+        );
+      } else if (next is ConnectionStateError) {
+        debugPrint(next.runtimeType.toString());
+
+        setState(
+          () =>
+              _status = _status.copyWith(
+                message: next.message,
+                status: Status.error,
+              ),
+        );
+      } else {
+        debugPrint(next.runtimeType.toString());
+
+        setState(
+          () =>
+              _status = _status.copyWith(
+                message: texts[Status.idle],
+                status: Status.idle,
+              ),
+        );
+      }
+    });
+
+    final Map<Status, String> animations = {
+      Status.loading: Media.loadingAnimation,
+      Status.success: Media.success,
+      Status.error: Media.errorAnimation,
+      Status.connecting: Media.connectionAnimation,
+      Status.idle: Media.success,
+    };
+
+    ref.listen(configsAdapterProvider(), (p, n) {
+      if (n is ConfigsLoaded) {
         context.go(HomeView.path);
       }
-      if(n is ConfigsError){
-            setState(() => _status = Status.error);
-
+      if (n is ConfigsError) {
+        setState(
+          () =>
+              _status = _status.copyWith(
+                message: n.message,
+                status: Status.error,
+              ),
+        );
       }
     });
     ref.watch(currentThemeProvider);
 
     return Scaffold(
-
       appBar: AppBar(
         leading: IconButton.filled(
           onPressed: () {
@@ -110,32 +130,30 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Lottie.asset(animations[_status]!),
+              Lottie.asset(animations[_status.status]!),
               const SizedBox(height: 20),
-              Text(texts[widget.status]!, textAlign: TextAlign.center),
-              const SizedBox(height: 20),
-               Text(
-                  texts[_status] ?? 'IDLE'
-                
-              ,style: TextStyles.headingBold1.copyWith(
-                color: Colours.classicAdabtiveTextColor(context)
-              ),
+              Text(
+                _status.message,
+                style: TextStyles.headingBold1.copyWith(
+                  color: Colours.classicAdabtiveTextColor(context),
+                ),
               ),
             ],
           ),
         ),
       ),
-      floatingActionButton: _floatingActionButton(
-        (){
-          ref.read(configsAdapterProvider().notifier).getConfigs();
-        }
-        ,_status == Status.error,)
+      floatingActionButton: _floatingActionButton(() {
+        ref.read(configsAdapterProvider().notifier).getConfigs();
+      }, _status == Status.error),
     );
   }
 }
 
-ElevatedButton? _floatingActionButton(void Function()? onPressed,bool isError){
-  if(!isError){
+ElevatedButton? _floatingActionButton(
+  void Function()? onPressed,
+  bool isError,
+) {
+  if (!isError) {
     return null;
   }
   return ElevatedButton(onPressed: onPressed, child: const Text('Retry'));

@@ -8,6 +8,7 @@ import 'package:vendervpn/src/home/presentation/views/widgets/configs_list.dart'
 import 'package:vendervpn/src/home/presentation/views/widgets/world_map.dart';
 
 import '../../../info_screen/presention/views/status_screen.dart';
+import '../../../info_screen/presention/views/utils/status_utils.dart';
 import 'widgets/connection_button.dart';
 
 class HomeView extends ConsumerWidget {
@@ -17,10 +18,13 @@ class HomeView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(connectionAdapterProvider(), (p, next) {
       if (next is ConnectionStateConnecting) {
-        context.push('/info',extra: Status.connecting);
+        context.push(
+          '/info',
+          extra: StatusUtils('Connecting', Status.connecting),
+        );
       }
     });
-    final theme = ref.watch(currentThemeProvider);
+    ref.watch(currentThemeProvider);
     return Stack(
       children: [
         Positioned(top: 10, left: 0, right: 0, child: const WorldMap()),

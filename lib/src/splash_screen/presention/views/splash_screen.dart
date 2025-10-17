@@ -12,6 +12,7 @@ import '../../../../core/common/app/cache_helper.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../info_screen/presention/views/status_screen.dart';
+import '../../../info_screen/presention/views/utils/status_utils.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -26,7 +27,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cache = sl<CacheHelper>();
-            if (cache.vpnState == 'CONNECTED') {
+      if (cache.vpnState == 'CONNECTED') {
         final cachedConfigs = cache.configs;
         final configList =
             cachedConfigs.map((e) {
@@ -48,8 +49,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               );
               return config;
             }).toList();
-        if (configList.isEmpty){
-
+        if (configList.isEmpty) {
           ref.read(configsAdapterProvider().notifier).getConfigs();
         }
 
@@ -68,7 +68,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       }
       if (next is ConfigsError) {
         debugPrint(next.message);
-        context.go(StatusScreen.path,extra: Status.error);
+        context.go(
+          StatusScreen.path,
+          extra: StatusUtils(next.message, Status.error),
+        );
       }
     });
     return Scaffold(body: Center(child: const AppLogo()));

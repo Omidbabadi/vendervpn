@@ -51,10 +51,10 @@ class ConnectionAdapter extends _$ConnectionAdapter {
     final result = await _connect.call(params);
     result.fold(
       (l) {
-        if(l is UnityAdsFailure){
+        if (l is UnityAdsFailure) {
           state = ConnectionStateConnected(_getVpnState.call, config);
-                  _cacheHelper.cacheVpnState('CONNECTED');
-
+          _cacheHelper.cacheVpnState('CONNECTED');
+          debugPrint(l.message);
           return;
         }
         state = ConnectionStateError(l.message);

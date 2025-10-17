@@ -5,7 +5,6 @@ import 'package:vendervpn/src/home/presentation/views/home_view.dart';
 import 'package:vendervpn/src/splash_screen/presention/views/splash_screen.dart';
 
 import '../../src/info_screen/presention/views/status_screen.dart';
+import '../../src/info_screen/presention/views/utils/status_utils.dart';
 
-
-
-part  'router.main.dart';
+part 'router.main.dart';
