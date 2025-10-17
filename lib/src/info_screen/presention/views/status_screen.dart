@@ -44,19 +44,22 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
           if(next is ConnectionStateConnecting){
             debugPrint(next.runtimeType.toString());
             setState(() => _status = Status.connecting);
-          }else if( next is ConnectionStateConnected){            debugPrint(next.runtimeType.toString());
+          }else if( next is ConnectionStateConnected){         
+            debugPrint(next.runtimeType.toString());
 
-                        setState(() => _status = Status.success);
+            setState(() => _status = Status.success);
             
           }
-          else if(next is ConnectionStateError){            debugPrint(next.runtimeType.toString());
+          else if(next is ConnectionStateError){            
+            debugPrint(next.runtimeType.toString());
 
-                                    setState(() => _status = Status.error);
+            setState(() => _status = Status.error);
 
           }
-          else {            debugPrint(next.runtimeType.toString());
+          else {
+            debugPrint(next.runtimeType.toString());
 
-                                    setState(() => _status = Status.idle);
+            setState(() => _status = Status.idle);
 
           }
     });
@@ -79,7 +82,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
 
     ref.listen(configsAdapterProvider(), (p,n){
       if(n is ConfigsLoaded){
-        setState(() => _status = Status.success);
+        context.go(HomeView.path);
       }
       if(n is ConfigsError){
             setState(() => _status = Status.error);
@@ -111,7 +114,9 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
               const SizedBox(height: 20),
               Text(texts[widget.status]!, textAlign: TextAlign.center),
               const SizedBox(height: 20),
-              if (widget.message != null) Text(widget.message!
+               Text(
+                  texts[_status] ?? 'IDLE'
+                
               ,style: TextStyles.headingBold1.copyWith(
                 color: Colours.classicAdabtiveTextColor(context)
               ),

@@ -9,7 +9,7 @@ abstract class Colours {
   static const Color darkThemePrimaryTextColor = Color(0xffF4F1DE);
 
   static const Color onWightColor = Color.fromARGB(255, 243, 255, 251);
-  static const Color onBlackColor = Color(0xFF0E1116);
+  static const Color onBlackColor = Color(0xFF0C1916);
   static const Color lightThemePrimaryColor = Color(0xFF0E1116);
   static const Color darkThemeSecondaryColor = Color(0xFFDAD4EF);
   static const Color grayColor = Color(0xff9DA3A4);

@@ -60,7 +60,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     );
     final ping = await _flutterV2ray.getConnectedServerDelay();
     if(ping == -1){
-      disconnect();
+      //disconnect();
       throw ConnectionException(
         message: 'Error: Server Is Unreachable, Most Likely The Server Is Down. \n Please Choose Another Server Or Check Your Ineternet'
         ,ping: -1

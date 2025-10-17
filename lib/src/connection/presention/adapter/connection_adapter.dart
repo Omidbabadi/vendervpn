@@ -6,6 +6,7 @@ import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 
 import '../../../../core/common/entities/config.dart';
+import '../../../../core/errors/failures.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../domain/usecase/connect.dart';
 import '../../domain/usecase/disconnect.dart';
@@ -50,6 +51,12 @@ class ConnectionAdapter extends _$ConnectionAdapter {
     final result = await _connect.call(params);
     result.fold(
       (l) {
+        if(l is UnityAdsFailure){
+          state = ConnectionStateConnected(_getVpnState.call, config);
+                  _cacheHelper.cacheVpnState('CONNECTED');
+
+          return;
+        }
         state = ConnectionStateError(l.message);
         return;
       },
