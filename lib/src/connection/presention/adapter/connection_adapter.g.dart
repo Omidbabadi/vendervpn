@@ -6,7 +6,7 @@ part of 'connection_adapter.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$connectionAdapterHash() => r'7994884a9b7580a547d5b99590b09c2dd4f5fc5f';
+String _$connectionAdapterHash() => r'604725ae4811bbdbc818634c5e601acbe0e4a182';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,8 +29,7 @@ class _SystemHash {
   }
 }
 
-abstract class _$ConnectionAdapter
-    extends BuildlessAutoDisposeNotifier<ConnectionState> {
+abstract class _$ConnectionAdapter extends BuildlessNotifier<ConnectionState> {
   late final GlobalKey<State<StatefulWidget>>? familyKey;
 
   ConnectionState build([
@@ -81,8 +80,8 @@ class ConnectionAdapterFamily extends Family<ConnectionState> {
 }
 
 /// See also [ConnectionAdapter].
-class ConnectionAdapterProvider extends AutoDisposeNotifierProviderImpl<
-    ConnectionAdapter, ConnectionState> {
+class ConnectionAdapterProvider
+    extends NotifierProviderImpl<ConnectionAdapter, ConnectionState> {
   /// See also [ConnectionAdapter].
   ConnectionAdapterProvider([
     GlobalKey<State<StatefulWidget>>? familyKey,
@@ -138,8 +137,7 @@ class ConnectionAdapterProvider extends AutoDisposeNotifierProviderImpl<
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ConnectionAdapter, ConnectionState>
-      createElement() {
+  NotifierProviderElement<ConnectionAdapter, ConnectionState> createElement() {
     return _ConnectionAdapterProviderElement(this);
   }
 
@@ -157,14 +155,14 @@ class ConnectionAdapterProvider extends AutoDisposeNotifierProviderImpl<
   }
 }
 
-mixin ConnectionAdapterRef on AutoDisposeNotifierProviderRef<ConnectionState> {
+mixin ConnectionAdapterRef on NotifierProviderRef<ConnectionState> {
   /// The parameter `familyKey` of this provider.
   GlobalKey<State<StatefulWidget>>? get familyKey;
 }
 
 class _ConnectionAdapterProviderElement
-    extends AutoDisposeNotifierProviderElement<ConnectionAdapter,
-        ConnectionState> with ConnectionAdapterRef {
+    extends NotifierProviderElement<ConnectionAdapter, ConnectionState>
+    with ConnectionAdapterRef {
   _ConnectionAdapterProviderElement(super.provider);
 
   @override

@@ -15,7 +15,7 @@ part 'connection_adapter.g.dart';
 
 part 'connection_state.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ConnectionAdapter extends _$ConnectionAdapter {
   @override
   ConnectionState build([GlobalKey? familyKey]) {
