@@ -9,8 +9,10 @@ import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dar
 import 'package:vendervpn/src/home/presentation/views/home_view.dart';
 
 import '../../../../core/common/app/cache_helper.dart';
+import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../connection/presention/adapter/connection_adapter.dart';
 import '../../../info_screen/presention/views/status_screen.dart';
 import '../../../info_screen/presention/views/utils/status_utils.dart';
 
@@ -25,9 +27,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final cache = sl<CacheHelper>();
       if (cache.vpnState == 'CONNECTED') {
+        await sl<UnityAdsService>().initialize();
         final cachedConfigs = cache.configs;
         final configList =
             cachedConfigs.map((e) {
@@ -54,7 +57,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         }
 
         ref.read(currentConfigsListProvider.notifier).setConfigs(configList);
-        context.go(HomeView.path);
+        if (mounted) {
+          context.go(HomeView.path);
+        }
       }
       ref.read(configsAdapterProvider().notifier).getConfigs();
     });
@@ -62,16 +67,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(configsAdapterProvider(), (previous, next) {
+    final adService = sl<UnityAdsService>();
+    ref.listen(configsAdapterProvider(), (previous, next) async {
       if (next is ConfigsLoaded) {
-        context.go(HomeView.path);
+        ref.read(connectionAdapterProvider().notifier).startConnection();
+        await adService.initialize();
+        if (adService.isInitialized) {
+          await adService.loadInterstitial();
+        }
+        if (mounted) {
+          context.go(HomeView.path);
+        }
       }
       if (next is ConfigsError) {
         debugPrint(next.message);
-        context.go(
-          StatusScreen.path,
-          extra: StatusUtils(next.message, Status.error),
-        );
+        if (mounted) {
+          context.go(
+            StatusScreen.path,
+            extra: StatusUtils(next.message, Status.error),
+          );
+        }
       }
     });
     return Scaffold(body: Center(child: const AppLogo()));

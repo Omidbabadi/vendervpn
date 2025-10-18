@@ -41,14 +41,14 @@ class UnityAdsService {
   Future<void> loadInterstitial() async {
     if (!_isInitialized) {
       print('⚠️ Unity Ads not initialized yet');
-      return;
+      await initialize();
     }
     try {
       await UnityAds.load(
         placementId: Constants.interstitialAndroid,
         onComplete: (placementId) async {
+          await showInterstitial();
           print('✅ Ad loaded: $placementId');
-          _isInterstitialLoaded = true;
         },
         onFailed: (placementId, error, message) {
           if (error == UnityAdsLoadError.noFill) {
@@ -72,7 +72,7 @@ class UnityAdsService {
 
   Future<void> showInterstitial() async {
     if (!_isInterstitialLoaded) {
-     await loadInterstitial();
+      await loadInterstitial();
     }
     try {
       await UnityAds.showVideoAd(
