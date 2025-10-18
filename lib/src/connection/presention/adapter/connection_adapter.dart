@@ -40,7 +40,6 @@ class ConnectionAdapter extends _$ConnectionAdapter {
       return;
     }
     state = ConnectionStateConnecting();
-    await Future.delayed(Duration(seconds: 3));
     final params = ConnectionsParams(
       blockedApps: [],
       bypassSubnets: [],

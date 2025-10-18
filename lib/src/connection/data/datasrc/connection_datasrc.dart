@@ -71,10 +71,13 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
 
       final adService = sl<UnityAdsService>();
       await adService.initialize();
+      await Future.delayed(Duration(seconds: 2));
       if (adService.isInitialized) {
         await adService.showInterstitial();
       }
     } on ConnectionException {
+      rethrow;
+    } on UnityException {
       rethrow;
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
