@@ -11,6 +11,7 @@ class UnityAdsService {
   factory UnityAdsService() => _instance;
 
   bool _isInitialized = false;
+  bool _isInterstitialLoaded = false;
   bool get isInitialized => _isInitialized;
 
   Future<void> initialize({bool testMode = false}) async {
@@ -37,7 +38,7 @@ class UnityAdsService {
     }
   }
 
-  Future<void> showInterstitial() async {
+  Future<void> loadInterstitial() async {
     if (!_isInitialized) {
       print('⚠️ Unity Ads not initialized yet');
       return;
@@ -47,22 +48,7 @@ class UnityAdsService {
         placementId: Constants.interstitialAndroid,
         onComplete: (placementId) async {
           print('✅ Ad loaded: $placementId');
-
-          await UnityAds.showVideoAd(
-            placementId: placementId,
-            onStart: (placementId) => print('▶️ Ad started: $placementId'),
-            onClick: (placementId) => print('👆 Ad clicked: $placementId'),
-            onSkipped: (placementId) => print('⏩ Ad skipped: $placementId'),
-            onComplete: (placementId) => print('🏁 Ad completed: $placementId'),
-            onFailed: (placementId, error, message) {
-              print('❌ Failed to load ad: $placementId - $error - $message');
-
-              throw UnityException(
-                message: '❌ Ad failed: $placementId - $error - $message',
-                unityAdsShowError: error,
-              );
-            },
-          );
+          _isInterstitialLoaded = true;
         },
         onFailed: (placementId, error, message) {
           if (error == UnityAdsLoadError.noFill) {
@@ -84,31 +70,58 @@ class UnityAdsService {
     }
   }
 
-  UnityBannerAd showBannerAd() {
+  Future<void> showInterstitial() async {
+    if (!_isInterstitialLoaded) {
+     await loadInterstitial();
+    }
     try {
-      return UnityBannerAd(
-        placementId: Constants.bannerAndroid,
-        onLoad: (placementId) => print('Banner loaded: $placementId'),
-        onClick: (placementId) => print('Banner clicked: $placementId'),
-        onShown: (placementId) => print('Banner shown: $placementId'),
+      await UnityAds.showVideoAd(
+        placementId: Constants.interstitialAndroid,
+        onStart: (placementId) => print('▶️ Ad started: $placementId'),
+        onClick: (placementId) => print('👆 Ad clicked: $placementId'),
+        onSkipped: (placementId) => print('⏩ Ad skipped: $placementId'),
+        onComplete: (placementId) => print('🏁 Ad completed: $placementId'),
         onFailed: (placementId, error, message) {
-          if (error == UnityAdsBannerError.noFill) {
-            Future.delayed(Duration(seconds: 30), () {
-              print('Banner Ad $placementId failed: $error $message');
-              UnityAds.load(placementId: placementId);
-            });
-          }
+          print('❌ Failed to load ad: $placementId - $error - $message');
+
           throw UnityException(
-            message: 'Banner Ad $placementId failed: $error $message',
+            message: '❌ Ad failed: $placementId - $error - $message',
+            unityAdsShowError: error,
           );
         },
       );
     } on UnityException {
       rethrow;
     } catch (e) {
-      throw const UnityException(
-        message: 'Somthing Goes Wrong So No Baner Ad Been Loaded',
-      );
+      throw UnityException(message: 'Something Goes Wrong So No Ads Showed');
     }
+  }
+}
+
+UnityBannerAd showBannerAd() {
+  try {
+    return UnityBannerAd(
+      placementId: Constants.bannerAndroid,
+      onLoad: (placementId) => print('Banner loaded: $placementId'),
+      onClick: (placementId) => print('Banner clicked: $placementId'),
+      onShown: (placementId) => print('Banner shown: $placementId'),
+      onFailed: (placementId, error, message) {
+        if (error == UnityAdsBannerError.noFill) {
+          Future.delayed(Duration(seconds: 30), () {
+            print('Banner Ad $placementId failed: $error $message');
+            UnityAds.load(placementId: placementId);
+          });
+        }
+        throw UnityException(
+          message: 'Banner Ad $placementId failed: $error $message',
+        );
+      },
+    );
+  } on UnityException {
+    rethrow;
+  } catch (e) {
+    throw const UnityException(
+      message: 'Somthing Goes Wrong So No Baner Ad Been Loaded',
+    );
   }
 }

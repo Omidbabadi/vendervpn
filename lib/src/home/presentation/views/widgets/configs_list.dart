@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
+import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/config_tile.dart';
 
@@ -17,8 +18,7 @@ class ConfigsList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final list = ref.watch(currentConfigsListProvider);
     final status = ref.watch(connectionAdapterProvider().notifier).status;
-    final theme = ref.watch(currentThemeProvider);
-    print('Configs List Theme: $theme');
+ ref.watch(currentThemeProvider);
     return DraggableScrollableSheet(
       initialChildSize: 0.50,
       minChildSize: 0.50,
@@ -34,17 +34,7 @@ class ConfigsList extends ConsumerWidget {
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
             ),
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: CoreUtils.adabtiveColor(
-            //       context,
-            //       lightModeColor: Colours.darkBackgroundColor,
-            //       darkModeColor: Colours.lightBackgroundColor,
-            //     ),
-            //     blurRadius: 10,
-            //     offset: const Offset(3, 3),
-            //   ),
-            // ],
+
           ),
           child: ValueListenableBuilder(
             valueListenable: status,
@@ -58,7 +48,7 @@ class ConfigsList extends ConsumerWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Center(
                         child: FilledButton(
-                          onPressed: () async {},
+                          onPressed: () => ref.read(configsAdapterProvider().notifier).getConfigs() ,
                           child: Text(
                             AppLocalizations.of(context)!.get_servers,
                           ),

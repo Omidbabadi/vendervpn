@@ -27,7 +27,7 @@ class HomeView extends ConsumerWidget {
     ref.watch(currentThemeProvider);
     return Stack(
       children: [
-        Positioned(top: 10, left: 0, right: 0, child: const WorldMap(),),
+        Positioned(top: 30, left: 0, right: 0, child: const WorldMap(),),
         Positioned(
           left: 0,
           right: 0,

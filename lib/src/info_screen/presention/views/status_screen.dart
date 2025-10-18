@@ -44,7 +44,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
       Status.connecting: 'connecting',
       Status.idle: 'idle',
     };
-
+    final configsState = ref.watch(configsAdapterProvider());
     ref.listen(connectionAdapterProvider(), (p, next) {
       if (next is ConnectionStateConnecting) {
         debugPrint(next.runtimeType.toString());
@@ -114,7 +114,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton.filled(
+        leading: configsState is! ConfigsError ? IconButton.filled(
           onPressed: () {
             context.pop();
           },
@@ -122,7 +122,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
             Icons.arrow_back_ios_new,
             color: Colours.darkThemePrimaryTextColor,
           ),
-        ),
+        ) : null,
       ),
       body: Center(
         child: Padding(
@@ -140,11 +140,10 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-              if (_status.status == Status.error)
+              if (configsState is ConfigsError)
                 ElevatedButton(
                   onPressed: () {
                     ref.read(configsAdapterProvider().notifier).getConfigs();
-                    context.go(HomeView.path);
                   },
                   child: const Text('Retry'),
                 ),

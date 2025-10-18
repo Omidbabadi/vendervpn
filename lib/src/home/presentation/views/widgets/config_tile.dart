@@ -58,12 +58,7 @@ class ConfigTile extends ConsumerWidget {
             style: TextStyles.paragraphSubTextRegular.adaptiveColor(context),
           ),
           trailing: CoreUtils.getCountryFlag(config.country!),
-          subtitle: Text(
-            '${config.address}:${config.port}',
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            style: TextStyles.paragraphSubTextRegular.adaptiveColor(context),
-          ),
+          
         ),
       ),
     );
