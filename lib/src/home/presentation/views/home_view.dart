@@ -27,7 +27,7 @@ class HomeView extends ConsumerWidget {
     ref.watch(currentThemeProvider);
     return Stack(
       children: [
-        Positioned(top: 10, left: 0, right: 0, child: const WorldMap()),
+        Positioned(top: 10, left: 0, right: 0, child: const WorldMap(),),
         Positioned(
           left: 0,
           right: 0,
@@ -39,3 +39,4 @@ class HomeView extends ConsumerWidget {
     );
   }
 }
+//sl<UnityAdsService>().showBannerAd(),

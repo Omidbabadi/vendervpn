@@ -128,7 +128,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
         child: Padding(
           padding: EdgeInsets.all(24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Lottie.asset(animations[_status.status]!),
               const SizedBox(height: 20),
@@ -137,24 +137,21 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
                 style: TextStyles.headingBold1.copyWith(
                   color: Colours.classicAdabtiveTextColor(context),
                 ),
+                textAlign: TextAlign.center,
               ),
+              const SizedBox(height: 40),
+              if (_status.status == Status.error)
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(configsAdapterProvider().notifier).getConfigs();
+                    context.go(HomeView.path);
+                  },
+                  child: const Text('Retry'),
+                ),
             ],
           ),
         ),
       ),
-      floatingActionButton: _floatingActionButton(() {
-        ref.read(configsAdapterProvider().notifier).getConfigs();
-      }, _status == Status.error),
     );
   }
-}
-
-ElevatedButton? _floatingActionButton(
-  void Function()? onPressed,
-  bool isError,
-) {
-  if (!isError) {
-    return null;
-  }
-  return ElevatedButton(onPressed: onPressed, child: const Text('Retry'));
 }

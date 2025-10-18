@@ -5,7 +5,6 @@ import '../../../../core/common/app/riverpod/theme/current_theme.dart';
 import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/res/styles/colors.dart';
 import '../../../../core/services/injection_container.dart';
-import '../../../../core/utils/consts.dart';
 import '../../../../core/widgets/bottom_appbar.dart';
 import '../utils/dashboard_utils.dart';
 
@@ -59,11 +58,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         bottom: AppBarBottom(),
       ),
       key: DashboardUtils.scaffoldKey,
-      body: Column(
-        children: [sl<UnityAdsService>().showBannerAd(),
-          Expanded(child: widget.child),
-        ],
-      ),
+      body: widget.child,
     );
   }
 }
