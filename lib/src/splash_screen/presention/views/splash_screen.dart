@@ -71,10 +71,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     ref.listen(configsAdapterProvider(), (previous, next) async {
       if (next is ConfigsLoaded) {
         ref.read(connectionAdapterProvider().notifier).startConnection();
-        await adService.initialize();
-        if (adService.isInitialized) {
-          await adService.loadInterstitial();
-        }
+
         if (mounted) {
           context.go(HomeView.path);
         }

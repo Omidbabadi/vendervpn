@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
+import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/res/styles/colors.dart';
+import '../../../../core/services/injection_container.dart';
 import '../../../../core/widgets/bottom_appbar.dart';
 import '../utils/dashboard_utils.dart';
 
@@ -24,13 +26,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ThemeMode.system => Icons.light_mode_outlined,
     };
   }
+  final adService = sl<UnityAdsService>();
 
-  // @override
-  // void initState() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //   });
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (adService.isInitialized) {
+         // await adService.loadInterstitial();
+        }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

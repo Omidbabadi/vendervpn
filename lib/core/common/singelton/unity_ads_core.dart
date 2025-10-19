@@ -15,30 +15,34 @@ class UnityAdsService {
   bool get isInitialized => _isInitialized;
 
   Future<void> initialize({bool testMode = false}) async {
-    if (_isInitialized) return;
-    try {
-      await UnityAds.init(
-        gameId: Constants.unityGameId,
-        testMode: testMode,
-        onComplete: () {
-          _isInitialized = true;
-          print('✅ Unity Ads initialized successfully');
-        },
-        onFailed: (error, message) {
-          throw UnityException(
-            message: '❌ Unity Ads initialization failed: $error - $message',
-            unityAdsInitializationError: error,
-          );
-        },
-      );
-    } on UnityException {
-      rethrow;
-    } catch (e) {
-      throw const UnityException(message: 'Unity Ads Not Initialized');
+    if (!_isInitialized) {
+      try {
+        await UnityAds.init(
+          gameId: Constants.unityGameId,
+          testMode: testMode,
+          onComplete: () {
+            _isInitialized = true;
+            print('✅ Unity Ads initialized successfully');
+          },
+          onFailed: (error, message) {
+            throw UnityException(
+              message: '❌ Unity Ads initialization failed: $error - $message',
+              unityAdsInitializationError: error,
+            );
+          },
+        );
+      } on UnityException {
+        rethrow;
+      } catch (e) {
+        throw const UnityException(message: 'Unity Ads Not Initialized');
+      }
+    } else {
+      print('Unity Ads already initialized');
     }
   }
 
   Future<void> loadInterstitial() async {
+    await Future.delayed(Duration(seconds: 3));
     if (!_isInitialized) {
       print('⚠️ Unity Ads not initialized yet');
       await initialize();
@@ -71,9 +75,6 @@ class UnityAdsService {
   }
 
   Future<void> showInterstitial() async {
-    if (!_isInterstitialLoaded) {
-      await loadInterstitial();
-    }
     try {
       await UnityAds.showVideoAd(
         placementId: Constants.interstitialAndroid,
