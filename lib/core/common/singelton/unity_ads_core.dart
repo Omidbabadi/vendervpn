@@ -17,20 +17,22 @@ class UnityAdsService {
   Future<void> initialize({bool testMode = false}) async {
     if (!_isInitialized) {
       try {
-        await UnityAds.init(
-          gameId: Constants.unityGameId,
-          testMode: testMode,
-          onComplete: () {
-            _isInitialized = true;
-            print('✅ Unity Ads initialized successfully');
-          },
-          onFailed: (error, message) {
-            throw UnityException(
-              message: '❌ Unity Ads initialization failed: $error - $message',
-              unityAdsInitializationError: error,
-            );
-          },
-        );
+        return Future.delayed(Duration.zero, () {
+          UnityAds.init(
+            gameId: Constants.unityGameId,
+            testMode: testMode,
+            onComplete: () {
+              _isInitialized = true;
+              print('✅ Unity Ads initialized successfully');
+            },
+            onFailed: (error, message) {
+              throw UnityException(
+                message: '❌ Unity Ads initialization failed: $error - $message',
+                unityAdsInitializationError: error,
+              );
+            },
+          );
+        });
       } on UnityException {
         rethrow;
       } catch (e) {
@@ -42,31 +44,32 @@ class UnityAdsService {
   }
 
   Future<void> loadInterstitial() async {
-    await Future.delayed(Duration(seconds: 3));
     if (!_isInitialized) {
       print('⚠️ Unity Ads not initialized yet');
       await initialize();
     }
     try {
-      await UnityAds.load(
-        placementId: Constants.interstitialAndroid,
-        onComplete: (placementId) async {
-          await showInterstitial();
-          print('✅ Ad loaded: $placementId');
-        },
-        onFailed: (placementId, error, message) {
-          if (error == UnityAdsLoadError.noFill) {
-            Future.delayed(Duration(seconds: 30), () {
-              print('❌ Failed to load ad: $placementId - $error - $message');
-              UnityAds.load(placementId: placementId);
-            });
-          }
-          throw UnityException(
-            message: '❌ Failed to load ad: $placementId - $error - $message',
-            unityAdsLoadError: error,
-          );
-        },
-      );
+      return Future.delayed(Duration.zero, () {
+        UnityAds.load(
+          placementId: Constants.interstitialAndroid,
+          onComplete: (placementId) async {
+            await showInterstitial();
+            print('✅ Ad loaded: $placementId');
+          },
+          onFailed: (placementId, error, message) {
+            if (error == UnityAdsLoadError.noFill) {
+              Future.delayed(Duration(seconds: 30), () {
+                print('❌ Failed to load ad: $placementId - $error - $message');
+                UnityAds.load(placementId: placementId);
+              });
+            }
+            throw UnityException(
+              message: '❌ Failed to load ad: $placementId - $error - $message',
+              unityAdsLoadError: error,
+            );
+          },
+        );
+      });
     } on UnityException {
       rethrow;
     } catch (e) {
@@ -76,7 +79,8 @@ class UnityAdsService {
 
   Future<void> showInterstitial() async {
     try {
-      await UnityAds.showVideoAd(
+      return Future.delayed(Duration.zero, () {
+        UnityAds.showVideoAd(
         placementId: Constants.interstitialAndroid,
         onStart: (placementId) => print('▶️ Ad started: $placementId'),
         onClick: (placementId) => print('👆 Ad clicked: $placementId'),
@@ -91,6 +95,7 @@ class UnityAdsService {
           );
         },
       );
+      });
     } on UnityException {
       rethrow;
     } catch (e) {
