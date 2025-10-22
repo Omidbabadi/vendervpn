@@ -53,7 +53,6 @@ class UnityAdsService {
         UnityAds.load(
           placementId: Constants.interstitialAndroid,
           onComplete: (placementId) async {
-            await showInterstitial();
             print('✅ Ad loaded: $placementId');
           },
           onFailed: (placementId, error, message) {
@@ -81,20 +80,20 @@ class UnityAdsService {
     try {
       return Future.delayed(Duration.zero, () {
         UnityAds.showVideoAd(
-        placementId: Constants.interstitialAndroid,
-        onStart: (placementId) => print('▶️ Ad started: $placementId'),
-        onClick: (placementId) => print('👆 Ad clicked: $placementId'),
-        onSkipped: (placementId) => print('⏩ Ad skipped: $placementId'),
-        onComplete: (placementId) => print('🏁 Ad completed: $placementId'),
-        onFailed: (placementId, error, message) {
-          print('❌ Failed to load ad: $placementId - $error - $message');
+          placementId: Constants.interstitialAndroid,
+          onStart: (placementId) => print('▶️ Ad started: $placementId'),
+          onClick: (placementId) => print('👆 Ad clicked: $placementId'),
+          onSkipped: (placementId) => print('⏩ Ad skipped: $placementId'),
+          onComplete: (placementId) => print('🏁 Ad completed: $placementId'),
+          onFailed: (placementId, error, message) {
+            print('❌ Failed to load ad: $placementId - $error - $message');
 
-          throw UnityException(
-            message: '❌ Ad failed: $placementId - $error - $message',
-            unityAdsShowError: error,
-          );
-        },
-      );
+            throw UnityException(
+              message: '❌ Ad failed: $placementId - $error - $message',
+              unityAdsShowError: error,
+            );
+          },
+        );
       });
     } on UnityException {
       rethrow;
@@ -103,33 +102,31 @@ class UnityAdsService {
     }
   }
 
-
-UnityBannerAd showBannerAd() {
-  try {
-    return UnityBannerAd(
-      placementId: Constants.bannerAndroid,
-      onLoad: (placementId) => print('Banner loaded: $placementId'),
-      onClick: (placementId) => print('Banner clicked: $placementId'),
-      onShown: (placementId) => print('Banner shown: $placementId'),
-      onFailed: (placementId, error, message) {
-        if (error == UnityAdsBannerError.noFill) {
-          Future.delayed(Duration(seconds: 30), () {
-            print('Banner Ad $placementId failed: $error $message');
-            UnityAds.load(placementId: placementId);
-          });
-        }
-        throw UnityException(
-          message: 'Banner Ad $placementId failed: $error $message',
-        );
-      },
-    );
-  } on UnityException {
-    rethrow;
-  } catch (e) {
-    throw const UnityException(
-      message: 'Somthing Goes Wrong So No Baner Ad Been Loaded',
-    );
+  UnityBannerAd showBannerAd() {
+    try {
+      return UnityBannerAd(
+        placementId: Constants.bannerAndroid,
+        onLoad: (placementId) => print('Banner loaded: $placementId'),
+        onClick: (placementId) => print('Banner clicked: $placementId'),
+        onShown: (placementId) => print('Banner shown: $placementId'),
+        onFailed: (placementId, error, message) {
+          if (error == UnityAdsBannerError.noFill) {
+            Future.delayed(Duration(seconds: 30), () {
+              print('Banner Ad $placementId failed: $error $message');
+              UnityAds.load(placementId: placementId);
+            });
+          }
+          throw UnityException(
+            message: 'Banner Ad $placementId failed: $error $message',
+          );
+        },
+      );
+    } on UnityException {
+      rethrow;
+    } catch (e) {
+      throw const UnityException(
+        message: 'Somthing Goes Wrong So No Baner Ad Been Loaded',
+      );
+    }
   }
-}
-
 }
