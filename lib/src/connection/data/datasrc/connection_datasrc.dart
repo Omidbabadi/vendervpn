@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
-import 'package:vendervpn/core/common/singelton/unity_ads_core.dart';
 
 import '../../../../core/errors/exceptions.dart';
-import '../../../../core/services/injection_container.dart';
 import '../../../../core/utils/consts.dart';
 
 abstract class ConnectionDatasrc {
@@ -69,9 +67,6 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
         notificationDisconnectButtonName: 'Disconnect $remark',
       );
 
-      final adService = sl<UnityAdsService>();
-      await adService.initialize();
-      await adService.loadInterstitial();
     } on ConnectionException {
       rethrow;
     } on UnityException {

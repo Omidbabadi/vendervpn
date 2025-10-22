@@ -7,6 +7,8 @@ import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.d
 import 'package:vendervpn/src/home/presentation/views/widgets/configs_list.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/world_map.dart';
 
+import '../../../../core/common/singelton/unity_ads_core.dart';
+import '../../../../core/services/injection_container.dart';
 import '../../../info_screen/presention/views/status_screen.dart';
 import '../../../info_screen/presention/views/utils/status_utils.dart';
 import 'widgets/connection_button.dart';
@@ -27,6 +29,9 @@ class HomeView extends ConsumerWidget {
     ref.watch(currentThemeProvider);
     return Stack(
       children: [
+        Positioned(
+          top: 0,left: 0,right: 0,
+          child: sl<UnityAdsService>().showBannerAd()),
         Positioned(top: 30, left: 0, right: 0, child: const WorldMap(),),
         Positioned(
           left: 0,

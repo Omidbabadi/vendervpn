@@ -11,7 +11,7 @@ class UnityAdsService {
   factory UnityAdsService() => _instance;
 
   bool _isInitialized = false;
-  bool _isInterstitialLoaded = false;
+  //bool _isInterstitialLoaded = false;
   bool get isInitialized => _isInitialized;
 
   Future<void> initialize({bool testMode = false}) async {
@@ -102,7 +102,7 @@ class UnityAdsService {
       throw UnityException(message: 'Something Goes Wrong So No Ads Showed');
     }
   }
-}
+
 
 UnityBannerAd showBannerAd() {
   try {
@@ -130,4 +130,6 @@ UnityBannerAd showBannerAd() {
       message: 'Somthing Goes Wrong So No Baner Ad Been Loaded',
     );
   }
+}
+
 }

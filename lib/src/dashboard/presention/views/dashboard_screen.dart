@@ -26,15 +26,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ThemeMode.system => Icons.light_mode_outlined,
     };
   }
+
   final adService = sl<UnityAdsService>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (adService.isInitialized) {
-         // await adService.loadInterstitial();
-        }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${adService.isInitialized}')));
     });
   }
 
@@ -48,7 +49,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             color: Colours.connectedColor,
             onPressed: () {
               ref.read(currentThemeProvider.notifier).toggleTheme(currentTheme);
-
             },
             icon: Icon(
               _getThemeIcon(),

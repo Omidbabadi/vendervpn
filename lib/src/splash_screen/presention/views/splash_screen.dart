@@ -24,13 +24,16 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
+  final adService = sl<UnityAdsService>();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final cache = sl<CacheHelper>();
       if (cache.vpnState == 'CONNECTED') {
-        await sl<UnityAdsService>().initialize();
+        await adService.initialize();
+        await Future.delayed(Duration(seconds: 3));
         final cachedConfigs = cache.configs;
         final configList =
             cachedConfigs.map((e) {
@@ -67,11 +70,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final adService = sl<UnityAdsService>();
     ref.listen(configsAdapterProvider(), (previous, next) async {
       if (next is ConfigsLoaded) {
         ref.read(connectionAdapterProvider().notifier).startConnection();
-
+        await adService.initialize();
+        await Future.delayed(Duration(seconds: 3));
+        ref.read(connectionAdapterProvider().notifier).stopConnection();
         if (mounted) {
           context.go(HomeView.path);
         }

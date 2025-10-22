@@ -6,6 +6,7 @@ import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 
 import '../../../../core/common/entities/config.dart';
+import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../domain/usecase/connect.dart';
@@ -25,6 +26,7 @@ class ConnectionAdapter extends _$ConnectionAdapter {
     _disconnect = sl<Disconnect>();
     _state = sl<GetVpnState>();
     _cacheHelper = sl<CacheHelper>();
+    _adService = sl<UnityAdsService>();
     return ConnectionStateInitial();
   }
 
@@ -33,6 +35,7 @@ class ConnectionAdapter extends _$ConnectionAdapter {
   late GetVpnState _getVpnState;
   late Disconnect _disconnect;
   late GetVpnState _state;
+  late UnityAdsService _adService;
 
   Future<void> startConnection() async {
     final config = ref.read(currentConfigProvider);
@@ -61,6 +64,7 @@ class ConnectionAdapter extends _$ConnectionAdapter {
       },
       (r) {
         state = ConnectionStateConnected(_getVpnState.call, config);
+        _adService.loadInterstitial();
         _cacheHelper.cacheVpnState('CONNECTED');
       },
     );
