@@ -18,9 +18,7 @@ Future<void> _cacheInit() async {
 
 Future<void> _unityAdsInit() async {
   final adService = UnityAdsService();
-  sl
-    ..registerLazySingleton(() => UnityAdsService())
-    ..registerLazySingleton(() => adService);
+  sl.registerLazySingleton<UnityAdsService>(() => adService);
 }
 
 Future<void> _configsInit() async {
