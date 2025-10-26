@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vendervpn/core/services/injection_container.dart';
+import 'package:vendervpn/src/admob/domain/usecase/load_interstitial_ad.dart';
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
 import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/res/styles/colors.dart';
-import '../../../../core/services/injection_container.dart';
 import '../../../../core/widgets/bottom_appbar.dart';
 import '../utils/dashboard_utils.dart';
 
@@ -27,16 +28,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     };
   }
 
-  final adService = sl<UnityAdsService>();
+  late LoadInterstitialAd _loadInterstitialAd;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('${adService.isInitialized}')));
-      //await adService.showInterstitial();
+      _loadInterstitialAd = sl<LoadInterstitialAd>();
+      await _loadInterstitialAd.call();
+      //  AdMobSingelton().showInterstitialAd();
     });
   }
 

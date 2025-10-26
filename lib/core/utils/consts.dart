@@ -5,6 +5,8 @@ abstract class Constants {
   static const interstitialAndroid = 'Interstitial_Android';
   static const bannerAndroid = 'Banner_Android';
 
+  static const androidAdMobAdUnitId = 'ca-app-pub-3940256099942544/1033173712';
+  static const iosAdMobAdUnitId = 'ca-app-pub-3940256099942544/4411468910';
   static const List<String> subnets = [
     "0.0.0.0/5",
     "8.0.0.0/7",
@@ -37,9 +39,5 @@ abstract class Constants {
     "200.0.0.0/5",
     "208.0.0.0/4",
     "240.0.0.0/4",
-];
-
-
-
-
+  ];
 }

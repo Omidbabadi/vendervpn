@@ -69,9 +69,6 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
 
     } on ConnectionException {
       rethrow;
-    } on UnityException {
-      print('Unity Exception Happen');
-      rethrow;
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
 

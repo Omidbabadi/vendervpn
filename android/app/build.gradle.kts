@@ -24,7 +24,8 @@ android {
         applicationId = "com.vender.vendervpn"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
+        //flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -45,8 +46,8 @@ flutter {
 }
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    // implementation("com.google.android.gms:play-services-ads:22.6.0")   
-    implementation ("com.unity3d.ads:unity-ads:4.7.0")
+    implementation("com.google.android.gms:play-services-ads:22.6.0")   
+   // implementation ("com.unity3d.ads:unity-ads:4.7.0")
 
 
 

@@ -41,9 +41,7 @@ class ConnectionRepoImpl implements ConnectionRepo {
       return Right(null);
     } on ConnectionException catch (e) {
       return Left(ConnectionFailure.fromException(e));
-    } on UnityException catch (e){
-      return Left(UnityAdsFailure.fromException(e));
-    }
+    } 
     
      catch (e) {
       return Left(ServerFailure(message: e.toString(), statusCode: 500));

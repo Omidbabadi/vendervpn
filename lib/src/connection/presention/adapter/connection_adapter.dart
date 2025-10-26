@@ -6,8 +6,6 @@ import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 
 import '../../../../core/common/entities/config.dart';
-import '../../../../core/common/singelton/unity_ads_core.dart';
-import '../../../../core/errors/failures.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../domain/usecase/connect.dart';
 import '../../domain/usecase/disconnect.dart';
@@ -26,7 +24,7 @@ class ConnectionAdapter extends _$ConnectionAdapter {
     _disconnect = sl<Disconnect>();
     _state = sl<GetVpnState>();
     _cacheHelper = sl<CacheHelper>();
-    _adService = sl<UnityAdsService>();
+    //_adService = sl<UnityAdsService>();
     return ConnectionStateInitial();
   }
 
@@ -35,7 +33,7 @@ class ConnectionAdapter extends _$ConnectionAdapter {
   late GetVpnState _getVpnState;
   late Disconnect _disconnect;
   late GetVpnState _state;
-  late UnityAdsService _adService;
+ // late UnityAdsService _adService;
 
   Future<void> startConnection({bool isStartup = (false)}) async {
     final config = ref.read(currentConfigProvider);
@@ -53,24 +51,24 @@ class ConnectionAdapter extends _$ConnectionAdapter {
     final result = await _connect.call(params);
     result.fold(
       (l) {
-        if (l is UnityAdsFailure) {
-          state = ConnectionStateConnected(_getVpnState.call, config);
-          _cacheHelper.cacheVpnState('CONNECTED');
-          debugPrint(l.message);
-          return;
-        }
+        // if (l is UnityAdsFailure) {
+        //   state = ConnectionStateConnected(_getVpnState.call, config);
+        //   _cacheHelper.cacheVpnState('CONNECTED');
+        //   debugPrint(l.message);
+        //   return;
+        // }
         state = ConnectionStateError(l.message);
         return;
       },
       (r) async {
-        if (isStartup == false) {
-          if (!_adService.isInitialized) {
-            _adService.initialize();
-            await Future.delayed(Duration(seconds: 2));
-          }
-          await _adService.loadInterstitial();
-          await Future.delayed(Duration(seconds: 10));
-        }
+        // if (isStartup == false) {
+        //   if (!_adService.isInitialized) {
+        //  //   _adService.initialize();
+        //     await Future.delayed(Duration(seconds: 2));
+        //   }
+        // //  await _adService.loadInterstitial();
+        //   await Future.delayed(Duration(seconds: 10));
+        // }
         _cacheHelper.cacheVpnState('CONNECTED');
         state = ConnectionStateConnected(_getVpnState.call, config);
       },

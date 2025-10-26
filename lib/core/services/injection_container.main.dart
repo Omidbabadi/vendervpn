@@ -17,8 +17,16 @@ Future<void> _cacheInit() async {
 }
 
 Future<void> _unityAdsInit() async {
-  final adService = UnityAdsService();
-  sl.registerLazySingleton<UnityAdsService>(() => adService);
+  // final adService = UnityAdsService();
+  // sl.registerLazySingleton<UnityAdsService>(() => adService);
+
+  sl
+    ..registerLazySingleton(() => Init(sl()))
+    ..registerLazySingleton(() => LoadInterstitialAd(sl()))
+    ..registerLazySingleton<AdmobRepo>(() => AdmobRepoImpl(sl()))
+    ..registerLazySingleton<AdmobRemoteDatasrc>(
+      () => AdmobRemoteDatasrcImpl(null),
+    );
 }
 
 Future<void> _configsInit() async {

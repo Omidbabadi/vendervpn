@@ -9,10 +9,8 @@ import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dar
 import 'package:vendervpn/src/home/presentation/views/home_view.dart';
 
 import '../../../../core/common/app/cache_helper.dart';
-import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../../../core/widgets/app_logo.dart';
-import '../../../connection/presention/adapter/connection_adapter.dart';
 import '../../../info_screen/presention/views/status_screen.dart';
 import '../../../info_screen/presention/views/utils/status_utils.dart';
 
@@ -24,7 +22,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
-  final adService = sl<UnityAdsService>();
+  // final adService = sl<UnityAdsService>();
 
   @override
   void initState() {
@@ -32,7 +30,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final cache = sl<CacheHelper>();
       if (cache.vpnState == 'CONNECTED') {
-        await adService.initialize();
+     //   await adService.initialize();
         await Future.delayed(Duration(seconds: 3));
         final cachedConfigs = cache.configs;
         final configList =
@@ -72,14 +70,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     ref.listen(configsAdapterProvider(), (previous, next) async {
       if (next is ConfigsLoaded) {
-        ref
-            .read(connectionAdapterProvider().notifier)
-            .startConnection(isStartup: true);
-        await Future.delayed(Duration(seconds: 1));
-        await adService.initialize();
-        await Future.delayed(Duration(seconds: 2));
+        // ref
+        //     .read(connectionAdapterProvider().notifier)
+        //     .startConnection(isStartup: true);
+        // await Future.delayed(Duration(seconds: 1));
+        // await adService.initialize();
+        // await Future.delayed(Duration(seconds: 2));
 
-        ref.read(connectionAdapterProvider().notifier).stopConnection();
+        // ref.read(connectionAdapterProvider().notifier).stopConnection();
         if (mounted) {
           context.go(HomeView.path);
         }
