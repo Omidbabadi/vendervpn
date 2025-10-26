@@ -72,7 +72,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     ref.listen(configsAdapterProvider(), (previous, next) async {
       if (next is ConfigsLoaded) {
-        ref.read(connectionAdapterProvider().notifier).startConnection();
+        ref
+            .read(connectionAdapterProvider().notifier)
+            .startConnection(isStartup: true);
         await Future.delayed(Duration(seconds: 1));
         await adService.initialize();
         await Future.delayed(Duration(seconds: 2));

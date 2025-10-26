@@ -37,7 +37,7 @@ class ConnectionAdapter extends _$ConnectionAdapter {
   late GetVpnState _state;
   late UnityAdsService _adService;
 
-  Future<void> startConnection() async {
+  Future<void> startConnection({bool isStartup = (false)}) async {
     final config = ref.read(currentConfigProvider);
     if (config == null) {
       return;
@@ -63,11 +63,14 @@ class ConnectionAdapter extends _$ConnectionAdapter {
         return;
       },
       (r) async {
-        if (!_adService.isInitialized) {
-          _adService.initialize();
-          await Future.delayed(Duration(seconds: 5));
+        if (isStartup == false) {
+          if (!_adService.isInitialized) {
+            _adService.initialize();
+            await Future.delayed(Duration(seconds: 2));
+          }
+          await _adService.loadInterstitial();
+          await Future.delayed(Duration(seconds: 10));
         }
-        await _adService.loadInterstitial();
         _cacheHelper.cacheVpnState('CONNECTED');
         state = ConnectionStateConnected(_getVpnState.call, config);
       },
