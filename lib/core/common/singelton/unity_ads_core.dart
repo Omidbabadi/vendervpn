@@ -21,7 +21,7 @@ class UnityAdsService {
         return Future.delayed(Duration.zero, () {
           UnityAds.init(
             gameId: Constants.unityGameId,
-            testMode: testMode,
+            testMode: true,
             onComplete: () {
               _isInitialized = true;
               print('✅ Unity Ads initialized successfully');
@@ -59,13 +59,12 @@ class UnityAdsService {
             print('✅ Ad loaded: $placementId');
           },
           onFailed: (placementId, error, message) {
-            if (error == UnityAdsLoadError.noFill) {
-              Future.delayed(Duration(seconds: 10), () {
-                i++;
-                print('retries $i');
-                UnityAds.load(placementId: placementId);
-              });
-            }
+            Future.delayed(Duration(seconds: 10), () {
+              i++;
+              print('retries $i');
+              UnityAds.load(placementId: placementId);
+            });
+
             print('❌ Failed to load ad: $placementId - $error - $message');
             throw UnityException(
               message: '❌ Failed to load ad: $placementId - $error - $message',
