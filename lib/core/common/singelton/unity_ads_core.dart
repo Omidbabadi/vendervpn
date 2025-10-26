@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:flutter/material.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 
 import '../../errors/exceptions.dart';
@@ -9,7 +10,7 @@ class UnityAdsService {
   UnityAdsService._internal();
   static final UnityAdsService _instance = UnityAdsService._internal();
   factory UnityAdsService() => _instance;
-
+  int i = 0;
   bool _isInitialized = false;
   //bool _isInterstitialLoaded = false;
   bool get isInitialized => _isInitialized;
@@ -44,6 +45,7 @@ class UnityAdsService {
   }
 
   Future<void> loadInterstitial() async {
+    debugPrint('loadInterstitial started');
     if (!_isInitialized) {
       print('⚠️ Unity Ads not initialized yet');
       await initialize();
@@ -53,15 +55,18 @@ class UnityAdsService {
         UnityAds.load(
           placementId: Constants.interstitialAndroid,
           onComplete: (placementId) async {
+            await showInterstitial();
             print('✅ Ad loaded: $placementId');
           },
           onFailed: (placementId, error, message) {
             if (error == UnityAdsLoadError.noFill) {
-              Future.delayed(Duration(seconds: 30), () {
-                print('❌ Failed to load ad: $placementId - $error - $message');
+              Future.delayed(Duration(seconds: 10), () {
+                i++;
+                print('retries $i');
                 UnityAds.load(placementId: placementId);
               });
             }
+            print('❌ Failed to load ad: $placementId - $error - $message');
             throw UnityException(
               message: '❌ Failed to load ad: $placementId - $error - $message',
               unityAdsLoadError: error,

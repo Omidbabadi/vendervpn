@@ -65,11 +65,9 @@ class ConnectionAdapter extends _$ConnectionAdapter {
       (r) async {
         if (!_adService.isInitialized) {
           _adService.initialize();
-          await Future.delayed(Duration(seconds: 2));
+          await Future.delayed(Duration(seconds: 5));
         }
         await _adService.loadInterstitial();
-        await Future.delayed(Duration(seconds: 2));
-        await _adService.showInterstitial();
         _cacheHelper.cacheVpnState('CONNECTED');
         state = ConnectionStateConnected(_getVpnState.call, config);
       },

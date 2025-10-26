@@ -73,10 +73,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     ref.listen(configsAdapterProvider(), (previous, next) async {
       if (next is ConfigsLoaded) {
         ref.read(connectionAdapterProvider().notifier).startConnection();
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(Duration(seconds: 1));
         await adService.initialize();
-        await Future.delayed(Duration(seconds: 2));
-        await adService.loadInterstitial();
         await Future.delayed(Duration(seconds: 2));
 
         ref.read(connectionAdapterProvider().notifier).stopConnection();

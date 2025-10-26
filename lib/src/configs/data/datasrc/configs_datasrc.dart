@@ -33,7 +33,6 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
             final config = e.data['url'] as String;
             final V2RayURL parser = FlutterV2ray.parseFromURL(config);
             final fullJson = parser.getFullConfiguration();
-           
 
             final configModel = ConfigModel(
               configjson: fullJson,
@@ -54,11 +53,10 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
 
       sl<CacheHelper>().cacheConfigs(cacheConfig);
       return data.cast<Config>();
-    } on ServerException{
+    } on ServerException {
       rethrow;
-    } 
-    
-    catch (e) {
+    } catch (e) {
+      print(e);
       throw ServerException(
         message: 'Getting Configs From Server Failed',
         statusCode: 500,
