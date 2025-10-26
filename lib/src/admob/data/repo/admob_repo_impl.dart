@@ -32,8 +32,12 @@ class AdmobRepoImpl implements AdmobRepo {
   }
 
   @override
-  ResultFuture<void> showInterstitialAd() {
-    // TODO: implement showInterstitialAd
-    throw UnimplementedError();
+  ResultFuture<void> showInterstitialAd() async {
+    try {
+      await _remoteDatasrc.showInterstitialAd();
+      return Right(null);
+    } on AdmobException catch (e) {
+      return Left(AdmobFailure.fromException(e));
+    }
   }
 }

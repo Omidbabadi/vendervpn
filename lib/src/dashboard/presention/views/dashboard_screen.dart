@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/src/admob/domain/usecase/load_interstitial_ad.dart';
+import 'package:vendervpn/src/admob/domain/usecase/show_interstitial_ad.dart';
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
 import '../../../../core/common/singelton/unity_ads_core.dart';
 import '../../../../core/res/styles/colors.dart';
@@ -29,13 +30,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   late LoadInterstitialAd _loadInterstitialAd;
+  late ShowInterstitialAd _showInterstitialAd;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _loadInterstitialAd = sl<LoadInterstitialAd>();
+      _showInterstitialAd = sl<ShowInterstitialAd>();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadInterstitialAd.call();
+      await _showInterstitialAd.call();
       //  AdMobSingelton().showInterstitialAd();
     });
   }

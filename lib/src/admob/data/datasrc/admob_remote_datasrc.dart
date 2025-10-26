@@ -11,24 +11,25 @@ abstract class AdmobRemoteDatasrc {
 }
 
 class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
-   AdmobRemoteDatasrcImpl(this._interstitialAd,);
+  AdmobRemoteDatasrcImpl(this._interstitialAd);
   static final _mobileAds = MobileAds.instance;
 
-  static final AdRequest request = AdRequest(
-    
-    nonPersonalizedAds: true,
-  );
+  static final AdRequest request = AdRequest(nonPersonalizedAds: true);
 
   InterstitialAd? _interstitialAd;
   int _numInterstitialLoadAttempts = 0;
 
-   int maxFailedLoadAttempts = 3;
+  int maxFailedLoadAttempts = 3;
 
   @override
   Future<void> init() async {
     try {
       final status = await _mobileAds.initialize();
-      print(status.adapterStatuses['com.google.android.gms.ads.MobileAds']!.state);
+      print(
+        status
+            .adapterStatuses['com.google.android.gms.ads.MobileAds']!
+            .description,
+      );
       print('Admob initialized');
     } catch (e) {
       throw AdmobException(message: 'Admob initialization failed');
@@ -36,31 +37,32 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   }
 
   @override
-  Future<void> loadInterstitialAd() async{
+  Future<void> loadInterstitialAd() async {
     try {
       InterstitialAd.load(
-      adUnitId:
-          Platform.isAndroid
-              ? Constants.androidAdMobAdUnitId
-              : Constants.iosAdMobAdUnitId,
-      request: request,
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (InterstitialAd ad) {
-          print('$ad loaded');
-          _interstitialAd = ad;
-          _numInterstitialLoadAttempts = 0;
-          _interstitialAd!.setImmersiveMode(true);
-        },
-        onAdFailedToLoad: (LoadAdError error) {
-          print('InterstitialAd failed to load: $error.');
-          _numInterstitialLoadAttempts += 1;
-          _interstitialAd = null;
-          if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
-            init();
-          }
-        },
-      ),
-    );
+        adUnitId:
+            Platform.isAndroid
+                ? Constants.androidAdMobAdUnitId
+                : Constants.iosAdMobAdUnitId,
+        request: request,
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+            _interstitialAd!.setImmersiveMode(true);
+            showInterstitialAd();
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+              init();
+            }
+          },
+        ),
+      );
     } on AdmobException {
       rethrow;
     } catch (e) {
@@ -69,8 +71,27 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   }
 
   @override
-  Future<void> showInterstitialAd() {
-    // TODO: implement showInterstitialAd
-    throw UnimplementedError();
+  Future<void> showInterstitialAd() async {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      await loadInterstitialAd();
+      return;
+    }
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent:
+          (InterstitialAd ad) => print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        init();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        init();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
   }
 }

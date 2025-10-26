@@ -23,6 +23,7 @@ Future<void> _unityAdsInit() async {
   sl
     ..registerLazySingleton(() => Init(sl()))
     ..registerLazySingleton(() => LoadInterstitialAd(sl()))
+    ..registerLazySingleton(() => ShowInterstitialAd(sl()))
     ..registerLazySingleton<AdmobRepo>(() => AdmobRepoImpl(sl()))
     ..registerLazySingleton<AdmobRemoteDatasrc>(
       () => AdmobRemoteDatasrcImpl(null),
