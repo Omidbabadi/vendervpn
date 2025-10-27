@@ -4,9 +4,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/l10n/l10n.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
-import 'package:vendervpn/src/admob/domain/usecase/init.dart';
-
-import 'core/common/singelton/unity_ads_core.dart';
 import 'core/res/styles/colors.dart';
 import 'core/services/injection_container.dart';
 import 'core/services/router.dart';
@@ -14,8 +11,6 @@ import 'core/services/router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
-  late Init initad = sl<Init>();
-  final result = await initad.call();
   runApp(ProviderScope(child: const MyApp()));
 }
 

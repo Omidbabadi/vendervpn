@@ -6,7 +6,7 @@ Future<void> init() async {
   await _cacheInit();
   await _v2rayInit();
   await _configsInit();
-  await _unityAdsInit();
+  await _adMobInit();
 }
 
 Future<void> _cacheInit() async {
@@ -16,10 +16,7 @@ Future<void> _cacheInit() async {
     ..registerLazySingleton(() => pref);
 }
 
-Future<void> _unityAdsInit() async {
-  // final adService = UnityAdsService();
-  // sl.registerLazySingleton<UnityAdsService>(() => adService);
-
+Future<void> _adMobInit() async {
   sl
     ..registerLazySingleton(() => Init(sl()))
     ..registerLazySingleton(() => LoadInterstitialAd(sl()))

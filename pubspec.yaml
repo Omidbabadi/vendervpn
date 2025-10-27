@@ -57,7 +57,7 @@ dependencies:
   country_flags: ^4.0.1
   flutter_v2ray: ^1.0.10
   countries_world_map: ^ 1.3.0
-  google_mobile_ads: ^6.0.0
+  google_mobile_ads: ^5.0.0
   
 
 dev_dependencies:

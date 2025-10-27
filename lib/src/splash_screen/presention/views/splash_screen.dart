@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/extensions/string_ext.dart';
+import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
 import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dart';
+import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/home_view.dart';
 
 import '../../../../core/common/app/cache_helper.dart';
@@ -30,7 +32,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final cache = sl<CacheHelper>();
       if (cache.vpnState == 'CONNECTED') {
-     //   await adService.initialize();
+        //   await adService.initialize();
         await Future.delayed(Duration(seconds: 3));
         final cachedConfigs = cache.configs;
         final configList =
@@ -68,16 +70,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final vpnState = ref.watch(connectionAdapterProvider());
     ref.listen(configsAdapterProvider(), (previous, next) async {
       if (next is ConfigsLoaded) {
-        // ref
-        //     .read(connectionAdapterProvider().notifier)
-        //     .startConnection(isStartup: true);
-        // await Future.delayed(Duration(seconds: 1));
-        // await adService.initialize();
-        // await Future.delayed(Duration(seconds: 2));
-
-        // ref.read(connectionAdapterProvider().notifier).stopConnection();
+        ref.read(connectionAdapterProvider().notifier).startConnection();
+        if(vpnState is ConnectionStateConnected){
+        ref.read(admobAdapterProvider.notifier).init();
+        }
+        ref.read(connectionAdapterProvider().notifier).stopConnection();
         if (mounted) {
           context.go(HomeView.path);
         }
