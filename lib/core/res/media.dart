@@ -12,6 +12,4 @@ abstract class Media {
 
   static const onBoardingScreen = '$animationBasePath/Animation-8.json';
 
-  static const darkModeMap = '$basePath/dark_mode_world_map1.png';
-  static const lightModeMap = '$basePath/world_map.png';
 }
