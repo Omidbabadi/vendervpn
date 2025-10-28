@@ -32,7 +32,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
       );
       print('Admob initialized');
     } catch (e) {
-      throw AdmobException(message: 'Admob initialization failed');
+      throw AdmobException(null, message: 'Admob initialization failed');
     }
   }
 
@@ -60,13 +60,15 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
             if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
               init();
             }
+
+            throw AdmobException(error, message: error.message);
           },
         ),
       );
     } on AdmobException {
       rethrow;
     } catch (e) {
-      throw AdmobException(message: e.toString());
+      throw AdmobException(null,message: e.toString());
     }
   }
 

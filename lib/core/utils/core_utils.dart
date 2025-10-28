@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:vendervpn/core/extensions/context_ext.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
+import 'package:toastification/toastification.dart';
 
 abstract class CoreUtils {
   const CoreUtils();
@@ -17,12 +18,33 @@ abstract class CoreUtils {
   static bool isConnected(String state) {
     return switch (state) {
       'CONNECTED' => true,
-      _ => false
+      _ => false,
     };
   }
 
   static Color isConnectedColor(bool isConnected) {
     return isConnected ? Colours.connectedColor : Colours.grayColor;
+  }
+
+  static showSnackBar(
+    BuildContext context,
+    bool isError, {
+    required String title,
+    required String message,
+  }) {
+    toastification.dismissAll();
+    toastification.show(
+      context: context,
+      title: Text(title),
+      style: ToastificationStyle.fillColored,
+      type: !isError ? ToastificationType.success : ToastificationType.error,
+      description: Text(message),
+      alignment: Alignment.topCenter,
+      autoCloseDuration: const Duration(seconds: 4),
+      borderRadius: BorderRadius.circular(12),
+      showProgressBar: true,
+      dragToClose: true,
+    );
   }
 
   static CountryFlag getCountryFlag(String currencyCode) {
