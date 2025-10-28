@@ -149,13 +149,55 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
               const SizedBox(height: 40),
               if (_status.status == Status.success)
                 Row(
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      'Server: ${connectedConfig!.remark} \n IP: ${connectedConfig.address} ',
-                    style: TextStyles.paragraphRegular.adaptiveColor(context),),
-                    CoreUtils.getCountryFlag(connectedConfig.country!)
+                    Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text.rich(
+                          TextSpan(
+                            text: 'Server: ',
+                            style: TextStyles.headingSemiBold1.adaptiveColor(
+                              context,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: ' ${connectedConfig!.remark}',
+                                style: TextStyles.paragraphRegular.copyWith(
+                                  color: CoreUtils.adabtiveColor(
+                                    context,
+                                    lightModeColor: Colours.onBlackColor,
+                                    darkModeColor: Colours.onWightColor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text.rich(
+                          TextSpan(
+                            text: 'IP: ',
+                            style: TextStyles.headingSemiBold1.adaptiveColor(
+                              context,
+                            ),
+
+                            children: [
+                              TextSpan(
+                                text: ' ${connectedConfig.address}',
+                                style: TextStyles.paragraphRegular.copyWith(
+                                  color: CoreUtils.adabtiveColor(
+                                    context,
+                                    lightModeColor: Colours.onBlackColor,
+                                    darkModeColor: Colours.onWightColor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    CoreUtils.getCountryFlag(connectedConfig.country!),
                   ],
                 ),
               if (configsState is ConfigsError)

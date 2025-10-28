@@ -77,6 +77,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         if(vpnState is ConnectionStateConnected){
         ref.read(admobAdapterProvider.notifier).init();
         }
+        await Future.delayed(Duration(seconds: 2));
+
         ref.read(connectionAdapterProvider().notifier).stopConnection();
         if (mounted) {
           context.go(HomeView.path);
