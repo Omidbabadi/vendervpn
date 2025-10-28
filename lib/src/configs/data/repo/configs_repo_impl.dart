@@ -3,7 +3,7 @@ import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
-import 'package:vendervpn/src/configs/data/datasrc/configs_datasrc.dart';
+import 'package:vendervpn/src/configs/data/datasrc/configs_remote_datasrc.dart';
 import 'package:vendervpn/src/configs/domain/repo/configs_repo.dart';
 
 class ConfigsRepoImpl implements ConfigsRepo {

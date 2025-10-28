@@ -2,6 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
+import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
+import 'package:vendervpn/core/extensions/text_style_ext.dart';
+import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
@@ -14,6 +17,8 @@ import '../../../home/presentation/views/home_view.dart';
 import 'utils/status_utils.dart';
 
 enum Status { loading, success, error, idle, connecting }
+
+//TODO: make this code cleaner
 
 class StatusScreen extends ConsumerStatefulWidget {
   const StatusScreen({super.key, this.status});
@@ -36,6 +41,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final configsState = ref.watch(configsAdapterProvider());
     // TODO: localize these texts
     final Map<Status, String> texts = {
       Status.loading: 'loading',
@@ -44,7 +50,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
       Status.connecting: 'connecting',
       Status.idle: 'idle',
     };
-    final configsState = ref.watch(configsAdapterProvider());
+
     ref.listen(connectionAdapterProvider(), (p, next) {
       if (next is ConnectionStateConnecting) {
         debugPrint(next.runtimeType.toString());
@@ -111,18 +117,21 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
       }
     });
     ref.watch(currentThemeProvider);
-
+    final connectedConfig = ref.watch(currentConfigProvider);
     return Scaffold(
       appBar: AppBar(
-        leading: configsState is! ConfigsError ? IconButton.filled(
-          onPressed: () {
-            context.pop();
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colours.darkThemePrimaryTextColor,
-          ),
-        ) : null,
+        leading:
+            configsState is! ConfigsError
+                ? IconButton.filled(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colours.darkThemePrimaryTextColor,
+                  ),
+                )
+                : null,
       ),
       body: Center(
         child: Padding(
@@ -134,12 +143,21 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
               const SizedBox(height: 20),
               Text(
                 _status.message,
-                style: TextStyles.headingBold1.copyWith(
-                  color: Colours.classicAdabtiveTextColor(context),
-                ),
+                style: TextStyles.headingBold1.adaptiveColor(context),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
+              if (_status.status == Status.success)
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Server: ${connectedConfig!.remark} \n IP: ${connectedConfig.address} ',
+                    style: TextStyles.paragraphRegular.adaptiveColor(context),),
+                    CoreUtils.getCountryFlag(connectedConfig.country!)
+                  ],
+                ),
               if (configsState is ConfigsError)
                 ElevatedButton(
                   onPressed: () {

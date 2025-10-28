@@ -11,7 +11,7 @@ import 'package:vendervpn/src/admob/domain/repo/admob_repo.dart';
 import 'package:vendervpn/src/admob/domain/usecase/init.dart';
 import 'package:vendervpn/src/admob/domain/usecase/load_interstitial_ad.dart';
 import 'package:vendervpn/src/admob/domain/usecase/show_interstitial_ad.dart';
-import 'package:vendervpn/src/configs/data/datasrc/configs_datasrc.dart';
+import 'package:vendervpn/src/configs/data/datasrc/configs_remote_datasrc.dart';
 import 'package:vendervpn/src/configs/domain/repo/configs_repo.dart';
 import 'package:vendervpn/src/configs/domain/usecases/get_configs.dart';
 import 'package:vendervpn/src/connection/data/datasrc/connection_datasrc.dart';

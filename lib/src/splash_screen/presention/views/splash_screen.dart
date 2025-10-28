@@ -32,7 +32,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final cache = sl<CacheHelper>();
       if (cache.vpnState == 'CONNECTED') {
-        //   await adService.initialize();
+                ref.read(admobAdapterProvider.notifier).init();
         await Future.delayed(Duration(seconds: 3));
         final cachedConfigs = cache.configs;
         final configList =
@@ -73,7 +73,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final vpnState = ref.watch(connectionAdapterProvider());
     ref.listen(configsAdapterProvider(), (previous, next) async {
       if (next is ConfigsLoaded) {
-        ref.read(connectionAdapterProvider().notifier).startConnection();
+        ref.read(connectionAdapterProvider().notifier).startConnection(isStartup: true);
         if(vpnState is ConnectionStateConnected){
         ref.read(admobAdapterProvider.notifier).init();
         }

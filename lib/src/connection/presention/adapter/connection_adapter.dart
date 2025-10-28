@@ -56,7 +56,9 @@ class ConnectionAdapter extends _$ConnectionAdapter {
         return;
       },
       (r) async {
+        if(isStartup){
         ref.read(admobAdapterProvider.notifier).init();
+        }
         ref.read(admobAdapterProvider.notifier).loadInterstitialAd();
 
         _cacheHelper.cacheVpnState('CONNECTED');
