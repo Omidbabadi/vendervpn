@@ -10,6 +10,7 @@ import 'package:vendervpn/src/admob/data/repo/admob_repo_impl.dart';
 import 'package:vendervpn/src/admob/domain/repo/admob_repo.dart';
 import 'package:vendervpn/src/admob/domain/usecase/init.dart';
 import 'package:vendervpn/src/admob/domain/usecase/load_interstitial_ad.dart';
+import 'package:vendervpn/src/admob/domain/usecase/show_banner_ad.dart';
 import 'package:vendervpn/src/admob/domain/usecase/show_interstitial_ad.dart';
 import 'package:vendervpn/src/configs/data/datasrc/configs_remote_datasrc.dart';
 import 'package:vendervpn/src/configs/domain/repo/configs_repo.dart';
@@ -23,6 +24,4 @@ import '../../src/connection/data/repo/connection_repo_impl.dart';
 import '../../src/connection/domain/usecase/disconnect.dart';
 import '../../src/connection/domain/usecase/get_vpn_state.dart';
 import '../../src/connection/domain/usecase/initialize_v2ay.dart';
-import '../common/singelton/unity_ads_core.dart';
-
 part 'injection_container.main.dart';

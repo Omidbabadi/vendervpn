@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/consts.dart';
@@ -8,6 +9,7 @@ abstract class AdmobRemoteDatasrc {
   Future<void> init();
   Future<void> loadInterstitialAd();
   Future<void> showInterstitialAd();
+  Future<BannerAd?> showBannerAd(double width);
 }
 
 class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
@@ -17,6 +19,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   static final AdRequest request = AdRequest(nonPersonalizedAds: true);
 
   InterstitialAd? _interstitialAd;
+
   int _numInterstitialLoadAttempts = 0;
 
   int maxFailedLoadAttempts = 3;
@@ -68,7 +71,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
     } on AdmobException {
       rethrow;
     } catch (e) {
-      throw AdmobException(null,message: e.toString());
+      throw AdmobException(null, message: e.toString());
     }
   }
 
@@ -95,5 +98,50 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
     );
     _interstitialAd!.show();
     _interstitialAd = null;
+  }
+
+  @override
+  Future<BannerAd?> showBannerAd(double width) async {
+    BannerAd? _bannerAd;
+    try {
+      final size =
+          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+            width.truncate(),
+          );
+
+      if (size == null) {
+        throw AdmobException(
+          null,
+          message: 'Unable to get width of anchored banner',
+        );
+      }
+      await BannerAd(
+        size: size,
+        adUnitId: Constants.androidBannerAdId,
+        listener: BannerAdListener(
+          onAdLoaded: (ad) {
+            debugPrint('Banner Ad Loaded ${ad.adUnitId}');
+            _bannerAd = ad as BannerAd;
+          },
+          onAdClicked: (ad) {
+            debugPrint('Ad Clicked');
+          },
+          onAdFailedToLoad: (ad, loadError) {
+            throw AdmobException(
+              loadError,
+              message: 'Banner Ad Failed To Load: ${loadError.message}',
+            );
+          },
+        ),
+        request: request,
+      ).load();
+
+      return _bannerAd;
+    } on AdmobException {
+      rethrow;
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s);
+      throw AdmobException(null, message: e.toString());
+    }
   }
 }

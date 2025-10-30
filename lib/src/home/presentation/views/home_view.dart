@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:vendervpn/core/common/app/riverpod/banner_ad.dart';
 import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/extensions/context_ext.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
@@ -16,18 +18,22 @@ class HomeView extends ConsumerWidget {
   static const path = '/home';
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(connectionAdapterProvider(), (p, next) {
+    ref.listen(connectionAdapterProvider(), (p, next) async {
       if (next is ConnectionStateConnecting) {
         context.push(
           '/info',
           extra: StatusUtils('Connecting', Status.connecting),
         );
-      }
-    });
+      }    });
     ref.watch(currentThemeProvider);
+    final bannerAd = ref.watch(loadedBannerAdProvider);
+
     return Stack(
       children: [
-        Positioned(top: 30, left: 0, right: 0, child: const WorldMap(),),
+        if (bannerAd != null)
+          Positioned(top: 0, left: 0, right: 0, child: SizedBox(child: AdWidget(ad: bannerAd))),
+        
+        Positioned(top: 30, left: 0, right: 0, child: const WorldMap()),
         Positioned(
           left: 0,
           right: 0,
@@ -39,4 +45,3 @@ class HomeView extends ConsumerWidget {
     );
   }
 }
-//sl<UnityAdsService>().showBannerAd(),

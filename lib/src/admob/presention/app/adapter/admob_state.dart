@@ -37,6 +37,14 @@ final class InterstitialAdShowed extends AdmobState {
   const InterstitialAdShowed();
 }
 
+final class BannerAdLoading extends AdmobState {
+  const BannerAdLoading();
+}
+
+final class BannerAdLoaded extends AdmobState {
+  const BannerAdLoaded();
+}
+
 
 final class AdmobError extends AdmobState {
   const AdmobError(this.message);

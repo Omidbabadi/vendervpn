@@ -6,7 +6,7 @@ part of 'admob_adapter.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$admobAdapterHash() => r'ca671fdd568d62e86c20d59a86b64f8ac2b4a792';
+String _$admobAdapterHash() => r'81f8c7d170823d423b59cee1d40587044de82fba';
 
 /// See also [AdmobAdapter].
 @ProviderFor(AdmobAdapter)

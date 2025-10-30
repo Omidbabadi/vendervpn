@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/extensions/string_ext.dart';
-import 'package:vendervpn/core/res/media.dart';
 import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
 import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
@@ -26,8 +24,6 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
-  // final adService = sl<UnityAdsService>();
-
   @override
   void initState() {
     super.initState();
@@ -100,13 +96,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     });
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            LottieBuilder.asset(Media.loadingAnimation),
-            const AppLogo(),
-          ],
-        ),
+        child: const AppLogo(),
       ),
     );
   }
