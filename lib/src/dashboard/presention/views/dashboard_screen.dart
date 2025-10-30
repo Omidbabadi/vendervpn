@@ -41,6 +41,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final currentTheme = ref.watch(currentThemeProvider);
     ref.listen(connectionAdapterProvider(), (p, n) {
       if (n is ConnectionStateConnected) {
+                ref.read(admobAdapterProvider.notifier).showBannerAd(context.width);
+
         CoreUtils.showSnackBar(
           context,
           false,

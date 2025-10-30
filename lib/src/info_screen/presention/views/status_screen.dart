@@ -118,10 +118,11 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
     });
     ref.watch(currentThemeProvider);
     final connectedConfig = ref.watch(currentConfigProvider);
+    final connectionState = ref.watch(connectionAdapterProvider());
     return Scaffold(
       appBar: AppBar(
         leading:
-            configsState is! ConfigsError || _status.status != Status.connecting
+           ((configsState is! ConfigsError) || (connectionState is! ConnectionStateConnecting))
                 ? IconButton.filled(
                   onPressed: () {
                     context.pop();
