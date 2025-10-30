@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 import 'package:vendervpn/src/admob/domain/repo/admob_repo.dart';
@@ -43,13 +42,11 @@ class AdmobRepoImpl implements AdmobRepo {
   }
 
   @override
-  ResultFuture<BannerAd?> showBannerAd(double width) async {
+  ResultFuture<void> showBannerAd(double width) async {
     try {
-      final bannerAd = await _remoteDatasrc.showBannerAd(width);
-      if (bannerAd == null) {
-        throw AdmobException(null, message: 'Banner Ad Failed to Load');
-      }
-      return Right(bannerAd);
+       await _remoteDatasrc.showBannerAd(width);
+      
+      return Right(null);
     } on AdmobException catch (e) {
       return Left(AdmobFailure.fromException(e));
     }

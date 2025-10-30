@@ -13,34 +13,65 @@ import '../../../info_screen/presention/views/status_screen.dart';
 import '../../../info_screen/presention/views/utils/status_utils.dart';
 import 'widgets/connection_button.dart';
 
-class HomeView extends ConsumerWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
   static const path = '/home';
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<HomeView> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+          final _bannerAd = ref.watch(loadedBannerAdProvider);
+
     ref.listen(connectionAdapterProvider(), (p, next) async {
       if (next is ConnectionStateConnecting) {
         context.push(
           '/info',
           extra: StatusUtils('Connecting', Status.connecting),
         );
-      }    });
+      }
+    });
     ref.watch(currentThemeProvider);
-    final bannerAd = ref.watch(loadedBannerAdProvider);
 
-    return Stack(
+    if (_bannerAd != null) {
+      print('Home View: ${_bannerAd.adUnitId}');
+    } else {
+      print('banner ad was null');
+    }
+
+    return Column(
       children: [
-        if (bannerAd != null)
-          Positioned(top: 0, left: 0, right: 0, child: SizedBox(child: AdWidget(ad: bannerAd))),
-        
-        Positioned(top: 30, left: 0, right: 0, child: const WorldMap()),
-        Positioned(
-          left: 0,
-          right: 0,
-          top: context.height / 10,
-          child: ConnectionButton(),
+        if (_bannerAd != null)
+              SizedBox(
+                height: 90,
+                child: AdWidget(ad: _bannerAd,)),
+        Expanded(
+          child: Stack(
+            children: [
+              
+          
+              Positioned(top: 30, left: 0, right: 0, child: const WorldMap()),
+              Positioned(
+                left: 0,
+                right: 0,
+                top: context.height / 10,
+                child: ConnectionButton(),
+              ),
+              ConfigsList(),
+            ],
+          ),
         ),
-        ConfigsList(),
       ],
     );
   }

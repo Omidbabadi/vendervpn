@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class Cache {
   Cache._internal();
@@ -9,9 +10,18 @@ class Cache {
 
   final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
 
+  BannerAd? _bannerAd;
+
+  BannerAd? get bannerAd => _bannerAd;
+
   Map<String, String> _map = {};
 
   Map<String, String> get map => _map;
+
+  void setBannerAd(BannerAd banner) {
+    print('baner Ad: ${banner.adUnitId}');
+    _bannerAd = banner;
+  }
 
   void setMap(Map<String, String> map) {
     _map = map;

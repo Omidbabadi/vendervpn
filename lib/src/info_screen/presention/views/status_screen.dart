@@ -121,7 +121,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
     return Scaffold(
       appBar: AppBar(
         leading:
-            configsState is! ConfigsError
+            configsState is! ConfigsError || _status.status != Status.connecting
                 ? IconButton.filled(
                   onPressed: () {
                     context.pop();

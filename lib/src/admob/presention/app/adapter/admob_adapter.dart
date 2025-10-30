@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vendervpn/core/common/app/riverpod/banner_ad.dart';
+import 'package:vendervpn/core/common/singelton/core.dart';
 import 'package:vendervpn/src/admob/domain/usecase/load_interstitial_ad.dart';
 import 'package:vendervpn/src/admob/domain/usecase/show_banner_ad.dart';
 import 'package:vendervpn/src/admob/domain/usecase/show_interstitial_ad.dart';
@@ -69,12 +70,13 @@ class AdmobAdapter extends _$AdmobAdapter {
 
   Future<void> showBannerAd(double width) async {
     final result = await _showBannerAd.call(width);
-     result.fold(
+    result.fold(
       (failure) {
         debugPrint(failure.message);
       },
-      (bannerAd) {
-          debugPrint('ad mob adabter');
+      (right) {
+        debugPrint('ad mob adabter');
+        final bannerAd = Cache.instance.bannerAd;
         if (bannerAd != null) {
           ref.read(loadedBannerAdProvider.notifier).loadBannerAd(bannerAd);
         }

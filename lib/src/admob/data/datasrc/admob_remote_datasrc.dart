@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:vendervpn/core/common/singelton/core.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/consts.dart';
 
@@ -9,7 +10,7 @@ abstract class AdmobRemoteDatasrc {
   Future<void> init();
   Future<void> loadInterstitialAd();
   Future<void> showInterstitialAd();
-  Future<BannerAd?> showBannerAd(double width);
+  Future<void> showBannerAd(double width);
 }
 
 class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
@@ -101,8 +102,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   }
 
   @override
-  Future<BannerAd?> showBannerAd(double width) async {
-    BannerAd? _bannerAd;
+  Future<void> showBannerAd(double width) async {
     try {
       final size =
           await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
@@ -115,18 +115,19 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
           message: 'Unable to get width of anchored banner',
         );
       }
+      print(size.height);
       await BannerAd(
         size: size,
         adUnitId: Constants.androidBannerAdId,
         listener: BannerAdListener(
           onAdLoaded: (ad) {
-            debugPrint('Banner Ad Loaded ${ad.adUnitId}');
-            _bannerAd = ad as BannerAd;
+            Cache.instance.setBannerAd(ad as BannerAd);
           },
           onAdClicked: (ad) {
             debugPrint('Ad Clicked');
           },
           onAdFailedToLoad: (ad, loadError) {
+            print(loadError.message);
             throw AdmobException(
               loadError,
               message: 'Banner Ad Failed To Load: ${loadError.message}',
@@ -135,8 +136,6 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
         ),
         request: request,
       ).load();
-
-      return _bannerAd;
     } on AdmobException {
       rethrow;
     } catch (e, s) {
