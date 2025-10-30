@@ -26,13 +26,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {});
   }
 
   @override
   Widget build(BuildContext context) {
-          final _bannerAd = ref.watch(loadedBannerAdProvider);
+    final _bannerAd = ref.watch(loadedBannerAdProvider);
 
     ref.listen(connectionAdapterProvider(), (p, next) async {
       if (next is ConnectionStateConnecting) {
@@ -52,15 +51,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     return Column(
       children: [
-        if (_bannerAd != null)
-              SizedBox(
-                height: 90,
-                child: AdWidget(ad: _bannerAd,)),
         Expanded(
           child: Stack(
             children: [
-              
-          
               Positioned(top: 30, left: 0, right: 0, child: const WorldMap()),
               Positioned(
                 left: 0,
@@ -72,6 +65,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ],
           ),
         ),
+        if (_bannerAd != null)
+          SizedBox(height: 90, child: AdWidget(ad: _bannerAd)),
       ],
     );
   }

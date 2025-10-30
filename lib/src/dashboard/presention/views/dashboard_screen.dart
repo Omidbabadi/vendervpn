@@ -33,17 +33,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {});
   }
 
   @override
   Widget build(BuildContext context) {
-                    ref.read(admobAdapterProvider.notifier).showBannerAd(context.width);
     final currentTheme = ref.watch(currentThemeProvider);
     ref.listen(connectionAdapterProvider(), (p, n) {
       if (n is ConnectionStateConnected) {
-
         CoreUtils.showSnackBar(
           context,
           false,

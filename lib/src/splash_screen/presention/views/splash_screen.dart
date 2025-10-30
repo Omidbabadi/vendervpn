@@ -4,6 +4,7 @@ import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
+import 'package:vendervpn/core/extensions/context_ext.dart';
 import 'package:vendervpn/core/extensions/string_ext.dart';
 import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
 import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dart';
@@ -32,6 +33,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (cache.vpnState == 'CONNECTED') {
         ref.read(admobAdapterProvider.notifier).init();
         await Future.delayed(Duration(seconds: 3));
+        ref.read(admobAdapterProvider.notifier).showBannerAd(context.width);
+        await Future.delayed(Duration(seconds: 2));
         final cachedConfigs = cache.configs;
         final configList =
             cachedConfigs.map((e) {
@@ -70,6 +73,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     final vpnState = ref.watch(connectionAdapterProvider());
     ref.listen(configsAdapterProvider(), (previous, next) async {
+      if (!mounted) return;
       if (next is ConfigsLoaded) {
         ref
             .read(connectionAdapterProvider().notifier)
@@ -78,26 +82,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           ref.read(admobAdapterProvider.notifier).init();
         }
         await Future.delayed(Duration(seconds: 2));
-
+        ref.read(admobAdapterProvider.notifier).showBannerAd(context.width);
+        await Future.delayed(Duration(seconds: 2));
         ref.read(connectionAdapterProvider().notifier).stopConnection();
-        if (mounted) {
-          context.go(HomeView.path);
-        }
+        context.go(HomeView.path);
       }
       if (next is ConfigsError) {
         debugPrint(next.message);
-        if (mounted) {
-          context.go(
-            StatusScreen.path,
-            extra: StatusUtils(next.message, Status.error),
-          );
-        }
+        context.go(
+          StatusScreen.path,
+          extra: StatusUtils(next.message, Status.error),
+        );
       }
     });
-    return Scaffold(
-      body: Center(
-        child: const AppLogo(),
-      ),
-    );
+    return Scaffold(body: Center(child: const AppLogo()));
   }
 }
