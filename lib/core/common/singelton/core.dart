@@ -7,20 +7,31 @@ class Cache {
   static final instance = Cache._internal();
 
   String? _url;
-
   final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
-
   BannerAd? _bannerAd;
-
-  BannerAd? get bannerAd => _bannerAd;
+  InterstitialAd? _interstitialAd;
 
   Map<String, String> _map = {};
-
   Map<String, String> get map => _map;
 
-  void setBannerAd(BannerAd banner) {
-    print('baner Ad: ${banner.adUnitId}');
+  //interstitial ad
+  InterstitialAd? get interstitialAd => _interstitialAd;
+  void setInterstitialAd(InterstitialAd? ad) {
+    _interstitialAd = ad;
+  }
+
+  void resetInterstitialAd() {
+    _interstitialAd = null;
+  }
+
+  // banner ad
+  BannerAd? get bannerAd => _bannerAd;
+  void setBannerAd(BannerAd? banner) {
     _bannerAd = banner;
+  }
+
+  void resetBannerAd() {
+    _bannerAd = null;
   }
 
   void setMap(Map<String, String> map) {

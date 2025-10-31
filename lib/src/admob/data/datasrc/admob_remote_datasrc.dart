@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:vendervpn/core/common/singelton/core.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/consts.dart';
+import 'package:vendervpn/core/utils/core_utils.dart';
 
 abstract class AdmobRemoteDatasrc {
   Future<void> init();
@@ -17,7 +18,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   AdmobRemoteDatasrcImpl(this._interstitialAd);
   static final _mobileAds = MobileAds.instance;
 
-  static final AdRequest request = AdRequest(nonPersonalizedAds: true);
+  static final AdRequest request = AdRequest(nonPersonalizedAds: false);
 
   InterstitialAd? _interstitialAd;
 
@@ -44,23 +45,20 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   Future<void> loadInterstitialAd() async {
     try {
       InterstitialAd.load(
-        adUnitId:
-            Platform.isAndroid
-                ? Constants.androidAdMobAdUnitId
-                : Constants.iosAdMobAdUnitId,
+        adUnitId: CoreUtils.interstitialAdId!,
         request: request,
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
             _interstitialAd!.setImmersiveMode(true);
-            showInterstitialAd();
+            Cache.instance.setInterstitialAd(ad);
           },
           onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
             _numInterstitialLoadAttempts += 1;
             _interstitialAd = null;
+                        Cache.instance.setInterstitialAd(null);
+
             if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
               init();
             }
@@ -79,13 +77,12 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   @override
   Future<void> showInterstitialAd() async {
     if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
+      debugPrint('Warning: attempt to show interstitial before loaded.');
       await loadInterstitialAd();
-      return;
     }
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent:
-          (InterstitialAd ad) => print('ad onAdShowedFullScreenContent.'),
+          (InterstitialAd ad) => debugPrint('ad onAdShowedFullScreenContent.'),
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
         print('$ad onAdDismissedFullScreenContent.');
         ad.dispose();
@@ -115,9 +112,8 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
           message: 'Unable to get width of anchored banner',
         );
       }
-      print(size.height);
       await BannerAd(
-        size: size,
+        size: AdSize.fullBanner,
         adUnitId: Constants.androidBannerAdId,
         listener: BannerAdListener(
           onAdLoaded: (ad) {
@@ -127,14 +123,13 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
             debugPrint('Ad Clicked');
           },
           onAdFailedToLoad: (ad, loadError) {
-            print(loadError.message);
             throw AdmobException(
               loadError,
               message: 'Banner Ad Failed To Load: ${loadError.message}',
             );
           },
         ),
-        request: request,
+        request: const AdRequest(),
       ).load();
     } on AdmobException {
       rethrow;

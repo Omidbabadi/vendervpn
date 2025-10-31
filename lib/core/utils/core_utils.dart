@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:vendervpn/core/extensions/context_ext.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:toastification/toastification.dart';
+import 'package:vendervpn/core/utils/consts.dart';
 
 abstract class CoreUtils {
   const CoreUtils();
@@ -13,6 +16,25 @@ abstract class CoreUtils {
     required Color darkModeColor,
   }) {
     return context.isDarkMode ? darkModeColor : lightModeColor;
+  }
+
+
+  static String? get bannerAdUnitId {
+    if (Platform.isAndroid) {
+      return Constants.androidBannerAdId;
+    } else if (Platform.isIOS) {
+      return Constants.iosBannerAdId;
+    }
+    return null;
+  }
+
+  static String? get interstitialAdId {
+    if (Platform.isAndroid) {
+      return Constants.androidInterstialAdUnitId;
+    } else if (Platform.isIOS) {
+      return Constants.iOSInterstialAdUnitId;
+    }
+    return null;
   }
 
   static bool isConnected(String state) {
