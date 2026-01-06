@@ -30,7 +30,7 @@ abstract class CoreUtils {
 
   static String? get interstitialAdId {
     if (Platform.isAndroid) {
-      return Constants.androidInterstialAdUnitId;
+      return Constants.interstialAdUnitIdTest;
     } else if (Platform.isIOS) {
       return Constants.iOSInterstialAdUnitId;
     }

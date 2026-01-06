@@ -146,9 +146,6 @@ class AdMobSingelton {
   final mobileAds = MobileAds.instance;
   bool get isInitialized => _isInitialized;
   static final AdRequest request = AdRequest(
-    keywords: <String>['foo', 'bar'],
-    contentUrl: 'http://foo.com/bar.html',
-    nonPersonalizedAds: true,
   );
 
   InterstitialAd? _interstitialAd;

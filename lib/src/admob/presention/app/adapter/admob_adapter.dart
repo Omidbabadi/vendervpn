@@ -42,14 +42,16 @@ class AdmobAdapter extends _$AdmobAdapter {
     );
   }
 
-  Future<void> loadInterstitialAd() async {
+  Future<void> loadInterstitialAd(VoidCallback onAdShown) async {
     state = const InterstitialAdLoading();
-    final result = await _loadInterstitialAd.call();
+    final result = await _loadInterstitialAd.call(onAdShown);
     result.fold(
       (left) {
         state = AdmobError(left.message);
       },
       (right) {
+       // showInterstitialAd();
+       
         state = InterstitialAdLoaded();
       },
     );

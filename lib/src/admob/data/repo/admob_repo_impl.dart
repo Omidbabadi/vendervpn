@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dartz/dartz.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
@@ -22,9 +24,9 @@ class AdmobRepoImpl implements AdmobRepo {
   }
 
   @override
-  ResultFuture<void> loadInterstitialAd() async {
+  ResultFuture<void> loadInterstitialAd(VoidCallback onAdShown) async {
     try {
-      await _remoteDatasrc.loadInterstitialAd();
+     await _remoteDatasrc.loadInterstitialAd(onAdShown);
       return Right(null);
     } on AdmobException catch (e) {
       return Left(AdmobFailure.fromException(e));
@@ -44,11 +46,27 @@ class AdmobRepoImpl implements AdmobRepo {
   @override
   ResultFuture<void> showBannerAd(double width) async {
     try {
-       await _remoteDatasrc.showBannerAd(width);
-      
+      await _remoteDatasrc.showBannerAd(width);
+
       return Right(null);
     } on AdmobException catch (e) {
       return Left(AdmobFailure.fromException(e));
     }
+  }
+
+  @override
+  ResultFuture<void> loadRewardedAd() async {
+    try {
+      await _remoteDatasrc.loadRewardedAd();
+      return Right(null);
+    } catch (e) {
+      return Left(AdmobFailure.fromException(AdmobException(null,message: 'test')));
+    }
+  }
+
+  @override
+  ResultFuture<void> showRewardedAd() {
+    // TODO: implement showRewardedAd
+    throw UnimplementedError();
   }
 }

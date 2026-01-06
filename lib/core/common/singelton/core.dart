@@ -10,6 +10,7 @@ class Cache {
   final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
   BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
+  RewardedAd? _rewardedAd;
 
   Map<String, String> _map = {};
   Map<String, String> get map => _map;
@@ -23,6 +24,11 @@ class Cache {
   void resetInterstitialAd() {
     _interstitialAd = null;
   }
+
+  // rewarded ad
+  RewardedAd? get rewardedAd => _rewardedAd;
+  void setRewardedAd(RewardedAd ad) => _rewardedAd = ad;
+  void resetRewardedAd() => _rewardedAd = null;
 
   // banner ad
   BannerAd? get bannerAd => _bannerAd;

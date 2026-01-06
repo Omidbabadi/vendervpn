@@ -5,7 +5,6 @@ import 'package:equatable/equatable.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
-
 import '../../../../core/common/entities/config.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../domain/usecase/connect.dart';
@@ -34,7 +33,8 @@ class ConnectionAdapter extends _$ConnectionAdapter {
   late Disconnect _disconnect;
   late GetVpnState _state;
 
-  Future<void> startConnection({bool isStartup = (false)}) async {
+  Future<void> startConnection() async {
+    final adService = ref.read(admobAdapterProvider.notifier);
     final config = ref.read(currentConfigProvider);
     if (config == null) {
       return;
@@ -54,16 +54,15 @@ class ConnectionAdapter extends _$ConnectionAdapter {
         return;
       },
       (r) async {
-        if(isStartup){
-        ref.read(admobAdapterProvider.notifier).init();
-        }        await Future.delayed(Duration(seconds: 2));
+        await adService.init();
 
-        ref.read(admobAdapterProvider.notifier).loadInterstitialAd();
         _cacheHelper.cacheVpnState('CONNECTED');
+        await adService.loadInterstitialAd(
+          (){
+                    state = ConnectionStateConnected(_getVpnState.call, config);
 
-        await Future.delayed(Duration(seconds: 5));
-
-        state = ConnectionStateConnected(_getVpnState.call, config);
+          }
+        );
       },
     );
   }

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vendervpn/core/extensions/context_ext.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
 import '../../../../core/res/styles/colors.dart';
 import '../../../../core/widgets/bottom_appbar.dart';
-import '../../../admob/presention/app/adapter/admob_adapter.dart';
 import '../utils/dashboard_utils.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -41,7 +39,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final currentTheme = ref.watch(currentThemeProvider);
     ref.listen(connectionAdapterProvider(), (p, n) {
       if (n is ConnectionStateConnected) {
-                ref.read(admobAdapterProvider.notifier).showBannerAd(context.width);
 
         CoreUtils.showSnackBar(
           context,

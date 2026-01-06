@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -9,9 +9,11 @@ import 'package:vendervpn/core/utils/core_utils.dart';
 
 abstract class AdmobRemoteDatasrc {
   Future<void> init();
-  Future<void> loadInterstitialAd();
+  Future<void> loadInterstitialAd(VoidCallback onAdShown);
   Future<void> showInterstitialAd();
   Future<void> showBannerAd(double width);
+  Future<void> loadRewardedAd();
+  Future<void> showRewardedAd();
 }
 
 class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
@@ -29,20 +31,15 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   @override
   Future<void> init() async {
     try {
-      final status = await _mobileAds.initialize();
-      print(
-        status
-            .adapterStatuses['com.google.android.gms.ads.MobileAds']!
-            .description,
-      );
-      print('Admob initialized');
+      await _mobileAds.initialize();
+      debugPrint('Ad mob Initialized');
     } catch (e) {
       throw AdmobException(null, message: 'Admob initialization failed');
     }
   }
 
   @override
-  Future<void> loadInterstitialAd() async {
+  Future<void> loadInterstitialAd(VoidCallback onAdShown) async {
     try {
       InterstitialAd.load(
         adUnitId: CoreUtils.interstitialAdId!,
@@ -52,17 +49,19 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
             _interstitialAd!.setImmersiveMode(true);
-            Cache.instance.setInterstitialAd(ad);
+            showInterstitialAd();
+            onAdShown();
           },
           onAdFailedToLoad: (LoadAdError error) {
             _numInterstitialLoadAttempts += 1;
             _interstitialAd = null;
-                        Cache.instance.setInterstitialAd(null);
+            Cache.instance.setInterstitialAd(null);
 
             if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
               init();
             }
-
+            debugPrint(error.message);
+            onAdShown();
             throw AdmobException(error, message: error.message);
           },
         ),
@@ -76,10 +75,8 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
 
   @override
   Future<void> showInterstitialAd() async {
-    if (_interstitialAd == null) {
-      debugPrint('Warning: attempt to show interstitial before loaded.');
-      await loadInterstitialAd();
-    }
+    if (_interstitialAd == null) return;
+
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent:
           (InterstitialAd ad) => debugPrint('ad onAdShowedFullScreenContent.'),
@@ -91,11 +88,9 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
         print('$ad onAdFailedToShowFullScreenContent: $error');
         ad.dispose();
-        init();
       },
     );
     _interstitialAd!.show();
-    _interstitialAd = null;
   }
 
   @override
@@ -137,5 +132,58 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
       debugPrintStack(stackTrace: s);
       throw AdmobException(null, message: e.toString());
     }
+  }
+
+  @override
+  Future<void> loadRewardedAd() async {
+    final completer = Completer<void>();
+    RewardedAd.load(
+      adUnitId: Constants.rewardedAd,
+      request: AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          completer.complete();
+          Cache.instance.setRewardedAd(ad);
+        },
+
+        onAdFailedToLoad: (error) {
+          completer.completeError(error.message);
+        },
+      ),
+    );
+    return completer.future;
+  }
+
+  @override
+  Future<void> showRewardedAd() async {
+    final ad = Cache.instance.rewardedAd;
+    if (ad == null) {
+      return;
+    }
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (ad) {
+        debugPrint('Ad showed full screen content.');
+      },
+      onAdFailedToShowFullScreenContent: (ad, err) {
+        debugPrint('Ad failed to show full screen content with error: $err');
+
+        ad.dispose();
+      },
+      onAdDismissedFullScreenContent: (ad) {
+        debugPrint('Ad was dismissed.');
+        ad.dispose();
+      },
+      onAdImpression: (ad) {
+        debugPrint('Ad recorded an impression.');
+      },
+      onAdClicked: (ad) {
+        debugPrint('Ad was clicked.');
+      },
+    );
+    ad.show(
+      onUserEarnedReward: (ad, reward) {
+        Cache.instance.resetRewardedAd();
+      },
+    );
   }
 }
