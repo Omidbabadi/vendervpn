@@ -39,7 +39,7 @@ class ConfigTile extends ConsumerWidget {
               borderRadius: BorderRadius.circular(6),
               color:
                   selectedConfig != null && config.id == selectedConfig.id
-                      ? Colours.connectedColor
+                      ? Colours.primary
                       : Colors.grey[300],
             ),
           ),
@@ -58,7 +58,6 @@ class ConfigTile extends ConsumerWidget {
             style: TextStyles.paragraphSubTextRegular.adaptiveColor(context),
           ),
           trailing: CoreUtils.getCountryFlag(config.country!),
-          
         ),
       ),
     );

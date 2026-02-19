@@ -7,5 +7,5 @@ class InitializeV2ay extends UsecaseWithOutParams<void> {
 
   final ConnectionRepo _repo;
   @override
-  ResultFuture<void> call() => _repo.initializeV2Ray();
+  ResultFuture<void> call() => _repo.initialize();
 }

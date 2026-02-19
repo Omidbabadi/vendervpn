@@ -17,7 +17,7 @@ final router = GoRouter(
     GoRoute(
       path: StatusScreen.path,
       builder: (_, state) {
-        final extra = state.extra as StatusUtils;
+        final extra = state.extra as StatusUtils?;
         return StatusScreen(status: extra);
       },
     ),
@@ -31,6 +31,18 @@ final router = GoRouter(
           path: HomeView.path,
           builder: (_, __) {
             return const HomeView();
+          },
+        ),
+        GoRoute(
+          path: XrayVpnScreen.path,
+          builder: (_, __) {
+            return const XrayVpnScreen();
+          },
+        ),
+        GoRoute(
+          path: ServerListScreen.path,
+          builder: (_, __) {
+            return const ServerListScreen();
           },
         ),
       ],

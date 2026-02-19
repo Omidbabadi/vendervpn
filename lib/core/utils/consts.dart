@@ -1,17 +1,17 @@
 abstract class Constants {
   const Constants();
+  static const interstialAdUnitId = 'ca-app-pub-3940256099942544/1033173712';
 
-  static const unityGameId = '5867671';
-  static const interstitialAndroid = 'Interstitial_Android';
-  static const bannerAndroid = 'Banner_Android';
+  static const iOSInterstialAdUnitId = 'ca-app-pub-3940256099942544/1033173712';
 
-  static const interstialAdUnitIdTest = 'ca-app-pub-3940256099942544/1033173712';
-  static const androidInterstialAdUnitId =
-      'ca-app-pub-3785233012063626/6389192603';
-  static const iOSInterstialAdUnitId = 'ca-app-pub-3940256099942544/4411468910';
-  static const androidBannerAdId = 'ca-app-pub-3940256099942544/9214589741';
-  static const iosBannerAdId = '';
-  static const rewardedAd = 'ca-app-pub-3940256099942544/5224354917';
+  static const linuxInterstialAdUnitId =
+      'ca-app-pub-3940256099942544/1033173712';
+  static const windowsInterstialAdUnitId =
+      'ca-app-pub-3940256099942544/1033173712';
+
+  static const androidBannerAdIdTest = 'ca-app-pub-3940256099942544/9214589741';
+  static const iosBannerAdIdTest = '';
+  static const androidRewardedAdTest = 'ca-app-pub-3940256099942544/5224354917';
 
   static const List<String> subnets = [
     "0.0.0.0/5",

@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
@@ -13,9 +13,19 @@ class ConnectionRepoImpl implements ConnectionRepo {
   final ConnectionDatasrc _datasrc;
 
   @override
-  ResultFuture<bool> initializeV2Ray() async {
+  ResultFuture<int> ping(String config) async {
     try {
-      final result = await _datasrc.initializeV2Ray();
+      final result = await _datasrc.ping(config);
+      return Right(result);
+    } on ConnectionException catch (e) {
+      return Left(ConnectionFailure.fromException(e));
+    }
+  }
+
+  @override
+  ResultFuture<bool> initialize() async {
+    try {
+      final result = await _datasrc.initialize();
       return Right(result);
     } on ConnectionException catch (e) {
       return Left(ConnectionFailure.fromException(e));
@@ -41,9 +51,7 @@ class ConnectionRepoImpl implements ConnectionRepo {
       return Right(null);
     } on ConnectionException catch (e) {
       return Left(ConnectionFailure.fromException(e));
-    } 
-    
-     catch (e) {
+    } catch (e) {
       return Left(ServerFailure(message: e.toString(), statusCode: 500));
     }
   }

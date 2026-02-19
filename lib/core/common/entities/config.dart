@@ -19,6 +19,10 @@ class Config {
 
   final bool isSelected;
 
+  final String? serverIp;
+
+  final int ping;
+
   const Config({
     required this.configjson,
     required this.importedFrom,
@@ -29,7 +33,9 @@ class Config {
     required this.dateAdded,
     required this.id,
     required this.isSelected,
+    required this.ping,
     this.country,
+    this.serverIp,
   });
 
   const Config.empty()
@@ -42,5 +48,7 @@ class Config {
       dateAdded = 'Test String',
       id = 'Test String',
       isSelected = false,
-      country = 'Test String';
+      country = 'Test String',
+      serverIp = 'Test String',
+      ping = -1;
 }

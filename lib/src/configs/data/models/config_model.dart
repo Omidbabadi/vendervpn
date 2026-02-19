@@ -12,7 +12,9 @@ class ConfigModel extends Config {
     required super.dateAdded,
     required super.id,
     required super.isSelected,
+    required super.ping,
     super.country,
+    super.serverIp
   });
 
   const ConfigModel.empty()
@@ -27,12 +29,15 @@ class ConfigModel extends Config {
         id: 'Test String',
         isSelected: false,
         country: 'Test String',
+        serverIp: 'Test String',
+        ping: -1
       );
 
   Map<String, String> toMap(ConfigModel config) {
     return {
       'uri': config.uri,
-      'country': config.country! ,
+      'country': config.country ?? 'N/A' ,
+      'serverIp': config.serverIp ?? 'N/A',
       'remark': config.remark,
       'id': config.id,
       'isSelected': config.isSelected.stringValue,
@@ -40,6 +45,7 @@ class ConfigModel extends Config {
       'address': config.address,
       'dateAdded': config.dateAdded,
       'importedFrom': config.importedFrom,
+      'ping': config.ping.toString()
     };
   }
 
@@ -54,6 +60,8 @@ class ConfigModel extends Config {
     String? id,
     String? country,
     bool? isSelected,
+    String? serverIp,
+    int? ping
   }) => ConfigModel(
     configjson: configjson ?? this.configjson,
     importedFrom: importedFrom ?? this.importedFrom,
@@ -65,5 +73,7 @@ class ConfigModel extends Config {
     id: id ?? this.id,
     isSelected: isSelected ?? this.isSelected,
     country: country ?? this.country,
+    serverIp: serverIp ?? this.serverIp,
+    ping: ping ?? this.ping
   );
 }

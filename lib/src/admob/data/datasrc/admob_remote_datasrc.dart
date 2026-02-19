@@ -9,7 +9,13 @@ import 'package:vendervpn/core/utils/core_utils.dart';
 
 abstract class AdmobRemoteDatasrc {
   Future<void> init();
-  Future<void> loadInterstitialAd(VoidCallback onAdShown);
+  Future<void> loadInterstitialAd(
+    VoidCallback onAdLoaded,
+    VoidCallback onAdFailed, {
+    required VoidCallback onAdShowedFullScreenContent,
+    required VoidCallback onAdDismissedFullScreenContent,
+    required VoidCallback onAdFailedToShowFullScreenContent,
+  });
   Future<void> showInterstitialAd();
   Future<void> showBannerAd(double width);
   Future<void> loadRewardedAd();
@@ -39,7 +45,14 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   }
 
   @override
-  Future<void> loadInterstitialAd(VoidCallback onAdShown) async {
+  Future<void> loadInterstitialAd(
+    VoidCallback onAdLoaded,
+    VoidCallback onAdFailed, {
+
+    required VoidCallback onAdShowedFullScreenContent,
+    required VoidCallback onAdDismissedFullScreenContent,
+    required VoidCallback onAdFailedToShowFullScreenContent,
+  }) async {
     try {
       InterstitialAd.load(
         adUnitId: CoreUtils.interstitialAdId!,
@@ -49,8 +62,12 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
             _interstitialAd!.setImmersiveMode(true);
-            showInterstitialAd();
-            onAdShown();
+            _showInterstitialAd(
+              onAdShowedFullScreenContent,
+              onAdDismissedFullScreenContent,
+              onAdFailedToShowFullScreenContent,
+            );
+            onAdLoaded();
           },
           onAdFailedToLoad: (LoadAdError error) {
             _numInterstitialLoadAttempts += 1;
@@ -61,7 +78,8 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
               init();
             }
             debugPrint(error.message);
-            onAdShown();
+            onAdFailed();
+
             throw AdmobException(error, message: error.message);
           },
         ),
@@ -73,6 +91,32 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
     }
   }
 
+  _showInterstitialAd(
+    VoidCallback onAdDismissedFullScreenContent,
+    VoidCallback onAdFailedToShowFullScreenContent,
+    VoidCallback onAdShowedFullScreenContent,
+  ) {
+    if (_interstitialAd == null) return;
+
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+
+      
+
+      onAdShowedFullScreenContent:
+          (InterstitialAd ad) => onAdShowedFullScreenContent,
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        onAdDismissedFullScreenContent();
+        ad.dispose();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        onAdFailedToShowFullScreenContent();
+        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+      },
+    );
+    _interstitialAd!.show();
+  }
+
   @override
   Future<void> showInterstitialAd() async {
     if (_interstitialAd == null) return;
@@ -81,12 +125,12 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
       onAdShowedFullScreenContent:
           (InterstitialAd ad) => debugPrint('ad onAdShowedFullScreenContent.'),
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
+        debugPrint('$ad onAdDismissedFullScreenContent.');
         ad.dispose();
         init();
       },
       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
+        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
         ad.dispose();
       },
     );
@@ -109,7 +153,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
       }
       await BannerAd(
         size: AdSize.fullBanner,
-        adUnitId: Constants.androidBannerAdId,
+        adUnitId: Constants.androidBannerAdIdTest,
         listener: BannerAdListener(
           onAdLoaded: (ad) {
             Cache.instance.setBannerAd(ad as BannerAd);
@@ -138,7 +182,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   Future<void> loadRewardedAd() async {
     final completer = Completer<void>();
     RewardedAd.load(
-      adUnitId: Constants.rewardedAd,
+      adUnitId: Constants.androidRewardedAdTest,
       request: AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {

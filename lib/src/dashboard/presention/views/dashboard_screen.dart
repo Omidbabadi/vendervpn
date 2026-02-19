@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
+import 'package:vendervpn/src/home/presentation/views/new_home_screen.dart';
+import 'package:vendervpn/src/info_screen/presention/views/utils/status_utils.dart';
 import '../../../../core/common/app/riverpod/theme/current_theme.dart';
 import '../../../../core/res/styles/colors.dart';
 import '../../../../core/widgets/bottom_appbar.dart';
+import '../../../info_screen/presention/views/status_screen.dart';
 import '../utils/dashboard_utils.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -31,20 +33,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.go(XrayVpnScreen.path);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final currentTheme = ref.watch(currentThemeProvider);
-    ref.listen(connectionAdapterProvider(), (p, n) {
-      if (n is ConnectionStateConnected) {
-
-        CoreUtils.showSnackBar(
-          context,
-          false,
-          title: 'VPN Status',
-          message: 'VPN Connected',
+    ref.listen(connectionAdapterProvider(), (p, next) {
+      if (next is ConnectionStateConnecting) {
+        context.go(
+          '/info',
+          extra: StatusUtils('Connection', Status.connecting),
         );
       }
     });
@@ -52,7 +53,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       appBar: AppBar(
         actions: [
           IconButton.filled(
-            color: Colours.connectedColor,
+            color: Colours.primary,
             onPressed: () {
               ref.read(currentThemeProvider.notifier).toggleTheme(currentTheme);
             },

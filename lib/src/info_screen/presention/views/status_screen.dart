@@ -31,12 +31,17 @@ class StatusScreen extends ConsumerStatefulWidget {
 }
 
 class _StatusScreenState extends ConsumerState<StatusScreen> {
+   final ValueNotifier<StatusUtils> _statusNotifier =ValueNotifier<StatusUtils>(
+           StatusUtils('connection', Status.connecting,),
+
+   ) ;
   late StatusUtils _status;
+  bool showBackButton = false;
 
   @override
   void initState() {
     super.initState();
-    _status = widget.status ?? StatusUtils('idle', Status.idle);
+  
   }
 
   @override
@@ -53,44 +58,25 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
 
     ref.listen(connectionAdapterProvider(), (p, next) {
       if (next is ConnectionStateConnecting) {
-        debugPrint(next.runtimeType.toString());
-        setState(
-          () =>
-              _status = _status.copyWith(
-                message: texts[Status.connecting],
-                status: Status.connecting,
-              ),
-        );
+        _statusNotifier.value = StatusUtils((texts[Status.connecting] as String),Status.connecting)..showBackButton = false;
+        
       } else if (next is ConnectionStateConnected) {
         debugPrint(next.runtimeType.toString());
+        _statusNotifier.value = StatusUtils(
+            texts[Status.success] as String,
+            Status.success,
+          )..showBackButton = true;
 
-        setState(
-          () =>
-              _status = _status.copyWith(
-                message: texts[Status.success],
-                status: Status.success,
-              ),
-        );
       } else if (next is ConnectionStateError) {
-        debugPrint(next.runtimeType.toString());
-
-        setState(
-          () =>
-              _status = _status.copyWith(
-                message: next.message,
-                status: Status.error,
-              ),
-        );
+                _statusNotifier.value = StatusUtils(
+            texts[Status.error] as String,
+            Status.error,
+          )..showBackButton = true;
       } else {
-        debugPrint(next.runtimeType.toString());
-
-        setState(
-          () =>
-              _status = _status.copyWith(
-                message: texts[Status.idle],
-                status: Status.idle,
-              ),
-        );
+                _statusNotifier.value = StatusUtils(
+            texts[Status.success] as String,
+            Status.success,
+          )..showBackButton = true;
       }
     });
 
@@ -107,111 +93,113 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
         context.go(HomeView.path);
       }
       if (n is ConfigsError) {
-        setState(
-          () =>
-              _status = _status.copyWith(
-                message: n.message,
-                status: Status.error,
-              ),
-        );
+                _statusNotifier.value = StatusUtils(
+            n.message,
+            Status.error,
+          )..showBackButton = false;
       }
     });
     ref.watch(currentThemeProvider);
     final connectedConfig = ref.watch(currentConfigProvider);
-    final connectionState = ref.watch(connectionAdapterProvider());
-    return Scaffold(
-      appBar: AppBar(
-        leading:
-           ((configsState is! ConfigsError) || (connectionState is! ConnectionStateConnecting))
-                ? IconButton.filled(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colours.darkThemePrimaryTextColor,
+    return ValueListenableBuilder<StatusUtils>(
+      valueListenable: _statusNotifier,
+      builder: (context,status,_) {
+        return Scaffold(
+          appBar: AppBar(
+            leading:
+                (status.showBackButton || configsState is ConfigsError)
+                    ? IconButton.filled(
+                      onPressed: () {
+                        context.go(HomeView.path);
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colours.darkThemePrimaryTextColor,
+                      ),
+                    )
+                    : null,
+          ),
+          body: Center(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Lottie.asset(animations[status.status]!),
+                  const SizedBox(height: 20),
+                  Text(
+                    status.message,
+                    style: TextStyles.headingBold1.adaptiveColor(context),
+                    textAlign: TextAlign.center,
                   ),
-                )
-                : null,
-      ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Lottie.asset(animations[_status.status]!),
-              const SizedBox(height: 20),
-              Text(
-                _status.message,
-                style: TextStyles.headingBold1.adaptiveColor(context),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              if (_status.status == Status.success)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 40),
+                  if (status.status == Status.success)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text.rich(
-                          TextSpan(
-                            text: 'Server: ',
-                            style: TextStyles.headingSemiBold1.adaptiveColor(
-                              context,
-                            ),
-                            children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text.rich(
                               TextSpan(
-                                text: ' ${connectedConfig!.remark}',
-                                style: TextStyles.paragraphRegular.copyWith(
-                                  color: CoreUtils.adabtiveColor(
-                                    context,
-                                    lightModeColor: Colours.onBlackColor,
-                                    darkModeColor: Colours.onWightColor,
-                                  ),
+                                text: 'Server: ',
+                                style: TextStyles.headingSemiBold1.adaptiveColor(
+                                  context,
                                 ),
+                                children: [
+                                  TextSpan(
+                                    text: ' ${connectedConfig!.remark}',
+                                    style: TextStyles.paragraphRegular.copyWith(
+                                      color: CoreUtils.adabtiveColor(
+                                        context,
+                                        lightModeColor: Colours.onBlackColor,
+                                        darkModeColor: Colours.onWightColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            text: 'IP: ',
-                            style: TextStyles.headingSemiBold1.adaptiveColor(
-                              context,
                             ),
-
-                            children: [
+                            Text.rich(
                               TextSpan(
-                                text: ' ${connectedConfig.address}',
-                                style: TextStyles.paragraphRegular.copyWith(
-                                  color: CoreUtils.adabtiveColor(
-                                    context,
-                                    lightModeColor: Colours.onBlackColor,
-                                    darkModeColor: Colours.onWightColor,
-                                  ),
+                                text: 'IP: ',
+                                style: TextStyles.headingSemiBold1.adaptiveColor(
+                                  context,
                                 ),
+        
+                                children: [
+                                  TextSpan(
+                                    text: ' ${connectedConfig.address}',
+                                    style: TextStyles.paragraphRegular.copyWith(
+                                      color: CoreUtils.adabtiveColor(
+                                        context,
+                                        lightModeColor: Colours.onBlackColor,
+                                        darkModeColor: Colours.onWightColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
+                        CoreUtils.getCountryFlag(connectedConfig.country!),
                       ],
                     ),
-                    CoreUtils.getCountryFlag(connectedConfig.country!),
-                  ],
-                ),
-              if (configsState is ConfigsError)
-                ElevatedButton(
-                  onPressed: () {
-                    ref.read(configsAdapterProvider().notifier).getConfigs();
-                  },
-                  child: const Text('Retry'),
-                ),
-            ],
+                  if (configsState is ConfigsError)
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.read(configsAdapterProvider().notifier).getConfigs();
+                      },
+                      child: const Text('Retry'),
+                    ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }

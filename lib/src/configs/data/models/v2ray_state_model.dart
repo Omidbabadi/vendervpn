@@ -1,4 +1,4 @@
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/common/entities/v2ray_state.dart';
 
 class V2RayStateModel extends V2RayState {

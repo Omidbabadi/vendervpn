@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
+import 'package:vendervpn/src/admob/domain/usecase/load_interstitial_ad.dart';
 import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
+import 'package:vendervpn/src/connection/domain/usecase/ping.dart';
 import '../../../../core/common/entities/config.dart';
 import '../../../../core/services/injection_container.dart';
 import '../../domain/usecase/connect.dart';
@@ -24,6 +26,7 @@ class ConnectionAdapter extends _$ConnectionAdapter {
     _disconnect = sl<Disconnect>();
     _state = sl<GetVpnState>();
     _cacheHelper = sl<CacheHelper>();
+    _ping = sl<Ping>();
     return ConnectionStateInitial();
   }
 
@@ -32,6 +35,25 @@ class ConnectionAdapter extends _$ConnectionAdapter {
   late GetVpnState _getVpnState;
   late Disconnect _disconnect;
   late GetVpnState _state;
+  late Ping _ping;
+
+  _adParams(ConnectionState connectionState) {
+    state = connectionState;
+  }
+
+
+  Future<int> ping(String config) async {
+    final result = await _ping.call(config);
+    final ping = result.fold(
+      (left) {
+        return -1;
+      },
+      (right) {
+        return right;
+      },
+    );
+    return ping;
+  }
 
   Future<void> startConnection() async {
     final adService = ref.read(admobAdapterProvider.notifier);
@@ -54,15 +76,25 @@ class ConnectionAdapter extends _$ConnectionAdapter {
         return;
       },
       (r) async {
+        final adParams = LoadInterstitialAdParams(
+          () {},
+          () {
+            _adParams(ConnectionStateConnected(_getVpnState.call, config));
+          },
+          onAdDismissedFullScreenContent: () {
+            state = ConnectionStateConnected(_getVpnState.call, config);
+          },
+          onAdFailedToShowFullScreenContent: () {
+            state = ConnectionStateConnected(_getVpnState.call, config);
+          },
+          onAdShowedFullScreenContent: () {
+            state = ConnectionStateConnected(_getVpnState.call, config);
+          },
+        );
         await adService.init();
 
         _cacheHelper.cacheVpnState('CONNECTED');
-        await adService.loadInterstitialAd(
-          (){
-                    state = ConnectionStateConnected(_getVpnState.call, config);
-
-          }
-        );
+        await adService.loadInterstitialAd(adParams);
       },
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
@@ -30,9 +30,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         final cachedConfigs = cache.configs;
         final configList =
             cachedConfigs.map((e) {
-              final V2RayURL parser = FlutterV2ray.parseFromURL(
-                e['uri'] as String,
-              );
+              final V2RayURL parser = V2ray.parseFromURL(e['uri'] as String);
               final fullJson = parser.getFullConfiguration();
               final config = Config(
                 configjson: fullJson,
@@ -44,7 +42,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 dateAdded: e['dateAdded'] as String,
                 id: e['id'] as String,
                 isSelected: (e['isSelected'] as String).stringToBool,
-                country: e['country'] as String,
+                country: e['country'] as String, 
+                ping: e['ping'] as int
               );
               return config;
             }).toList();
@@ -66,13 +65,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     ref.listen(configsAdapterProvider(), (previous, next) async {
       if (!mounted) return;
       if (next is ConfigsLoaded) {
-         context.go(HomeView.path);
+        context.go(HomeView.path);
       }
       if (next is ConfigsError) {
         debugPrint(next.message);
         context.go(
           StatusScreen.path,
-          extra: StatusUtils(next.message, Status.error),
+         extra: StatusUtils(next.message, Status.error),
         );
       }
     });

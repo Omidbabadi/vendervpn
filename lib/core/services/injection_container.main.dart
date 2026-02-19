@@ -42,12 +42,12 @@ Future<void> _configsInit() async {
 
 Future<void> _v2rayInit() async {
   final status = ValueNotifier<V2RayStatus>(V2RayStatus());
-  final v2ray = FlutterV2ray(
+  final v2ray = V2ray(
     onStatusChanged: (s) {
       status.value = s;
     },
   );
-  await v2ray.initializeV2Ray(
+  await v2ray.initialize(
     notificationIconResourceType: 'mipmap',
     notificationIconResourceName: 'ic_launcher',
   );
@@ -58,12 +58,11 @@ Future<void> _v2rayInit() async {
     ..registerLazySingleton(() => Disconnect(sl()))
     ..registerLazySingleton(() => InitializeV2ay(sl()))
     ..registerLazySingleton(() => GetVpnState(sl()))
+    ..registerLazySingleton(() => Ping(sl()))
     ..registerLazySingleton<ConnectionRepo>(() => ConnectionRepoImpl(sl()))
     ..registerLazySingleton<ConnectionDatasrc>(
-      () => ConnectionDatasrcImpl(
-        sl<FlutterV2ray>(),
-        sl<ValueNotifier<V2RayStatus>>(),
-      ),
+      () =>
+          ConnectionDatasrcImpl(sl<V2ray>(), sl<ValueNotifier<V2RayStatus>>()),
     )
     ..registerLazySingleton(() => v2ray)
     ..registerLazySingleton(() => status);

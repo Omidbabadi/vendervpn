@@ -192,4 +192,8 @@ abstract class TextStyles {
     fontSize: 36,
     fontWeight: FontWeight.w700,
   );
+
+  static const TextStyle headerBig = TextStyle(
+    fontSize: 30, fontWeight: FontWeight.w700,
+  );
 }

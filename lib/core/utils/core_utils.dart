@@ -18,21 +18,24 @@ abstract class CoreUtils {
     return context.isDarkMode ? darkModeColor : lightModeColor;
   }
 
-
   static String? get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return Constants.androidBannerAdId;
+      return Constants.androidBannerAdIdTest;
     } else if (Platform.isIOS) {
-      return Constants.iosBannerAdId;
+      return Constants.iosBannerAdIdTest;
     }
     return null;
   }
 
   static String? get interstitialAdId {
     if (Platform.isAndroid) {
-      return Constants.interstialAdUnitIdTest;
+      return Constants.interstialAdUnitId;
     } else if (Platform.isIOS) {
       return Constants.iOSInterstialAdUnitId;
+    } else if (Platform.isLinux) {
+      return Constants.linuxInterstialAdUnitId;
+    } else if (Platform.isWindows) {
+      return Constants.windowsInterstialAdUnitId;
     }
     return null;
   }
@@ -45,7 +48,7 @@ abstract class CoreUtils {
   }
 
   static Color isConnectedColor(bool isConnected) {
-    return isConnected ? Colours.connectedColor : Colours.grayColor;
+    return isConnected ? Colours.primary : Colours.grayColor;
   }
 
   static showSnackBar(

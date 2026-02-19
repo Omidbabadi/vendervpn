@@ -24,9 +24,22 @@ class AdmobRepoImpl implements AdmobRepo {
   }
 
   @override
-  ResultFuture<void> loadInterstitialAd(VoidCallback onAdShown) async {
+  ResultFuture<void> loadInterstitialAd(
+    VoidCallback onAdLoaded,
+    VoidCallback onAdFailed,{
+   required VoidCallback onAdShowedFullScreenContent,
+
+  required  VoidCallback onAdDismissedFullScreenContent,
+  required  VoidCallback onAdFailedToShowFullScreenContent,}
+  ) async {
     try {
-     await _remoteDatasrc.loadInterstitialAd(onAdShown);
+      await _remoteDatasrc.loadInterstitialAd(
+        onAdLoaded,
+        onAdFailed,
+       onAdShowedFullScreenContent: onAdShowedFullScreenContent,
+       onAdDismissedFullScreenContent: onAdDismissedFullScreenContent,
+        onAdFailedToShowFullScreenContent:onAdFailedToShowFullScreenContent ,
+      );
       return Right(null);
     } on AdmobException catch (e) {
       return Left(AdmobFailure.fromException(e));
@@ -60,7 +73,9 @@ class AdmobRepoImpl implements AdmobRepo {
       await _remoteDatasrc.loadRewardedAd();
       return Right(null);
     } catch (e) {
-      return Left(AdmobFailure.fromException(AdmobException(null,message: 'test')));
+      return Left(
+        AdmobFailure.fromException(AdmobException(null, message: 'test')),
+      );
     }
   }
 

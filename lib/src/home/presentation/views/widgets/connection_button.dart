@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/res/media.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
@@ -26,9 +26,7 @@ class ConnectionButton extends ConsumerWidget {
           glowShape: BoxShape.circle,
           animate: value.state == 'CONNECTED',
           glowColor:
-              value.state == 'CONNECTED'
-                  ? Colours.connectedColor
-                  : Colours.grayColor,
+              value.state == 'CONNECTED' ? Colours.primary : Colours.grayColor,
           duration:
               value.state == 'CONNECTED'
                   ? const Duration(milliseconds: 6000)
@@ -66,7 +64,7 @@ class ConnectionButton extends ConsumerWidget {
                   ],
                   color:
                       value.state == "CONNECTED"
-                          ? Colours.connectedColor
+                          ? Colours.primary
                           : Colours.lightBackgroundColor,
                   shape: BoxShape.circle,
                 ),

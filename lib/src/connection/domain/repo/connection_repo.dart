@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 
 abstract class ConnectionRepo {
-  ResultFuture<bool> initializeV2Ray();
+  ResultFuture<bool> initialize();
   ResultFuture<void> connect(
     String config,
     String remark,
@@ -12,6 +12,6 @@ abstract class ConnectionRepo {
     List<String>? blockedApps,
   );
   void disconnect();
-
+  ResultFuture<int> ping(String config);
   ValueNotifier<V2RayStatus> get connectionStatus;
 }

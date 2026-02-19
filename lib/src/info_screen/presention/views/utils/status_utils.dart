@@ -1,8 +1,9 @@
 import 'package:vendervpn/src/info_screen/presention/views/status_screen.dart';
 
 class StatusUtils {
-  const StatusUtils(this.message, this.status);
+  StatusUtils(this.message, this.status) : showBackButton = false;
 
+   bool showBackButton;
   final String message;
   final Status status;
 

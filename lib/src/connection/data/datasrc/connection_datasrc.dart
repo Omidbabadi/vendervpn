@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/utils/consts.dart';
@@ -9,7 +9,7 @@ import '../../../../core/utils/consts.dart';
 abstract class ConnectionDatasrc {
   const ConnectionDatasrc();
 
-  Future<bool> initializeV2Ray();
+  Future<bool> initialize();
   Future<void> connect(
     String config,
     String remark,
@@ -18,25 +18,47 @@ abstract class ConnectionDatasrc {
     List<String>? blockedApps,
   );
   void disconnect();
-
+  Future<int> ping(String config);
   ValueNotifier<V2RayStatus> get connectionStatus;
 }
 
 class ConnectionDatasrcImpl implements ConnectionDatasrc {
-  const ConnectionDatasrcImpl(this._flutterV2ray, this._status);
+  const ConnectionDatasrcImpl(this._V2ray, this._status);
 
-  final FlutterV2ray _flutterV2ray;
+  final V2ray _V2ray;
   final ValueNotifier<V2RayStatus> _status;
 
   //TODO: make initializtion Here
   @override
-  Future<bool> initializeV2Ray() async {
-    await _flutterV2ray.initializeV2Ray(
+  Future<bool> initialize() async {
+    await _V2ray.initialize(
       notificationIconResourceType: 'mipmap',
       notificationIconResourceName: 'ic_launcher',
     );
-    final per = await _flutterV2ray.requestPermission();
+    final per = await _V2ray.requestPermission();
     return per;
+  }
+
+  @override
+  Future<int> ping(String config) async {
+    try {
+      final ping = await _V2ray.getServerDelay(config: config);
+      if (ping == -1) {
+        throw ConnectionException(
+          message:
+              "Server Is Unreachable \n Please Choose Another Server Or Check Your Network",
+          ping: -1,
+        );
+      }
+      return ping;
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s);
+
+      throw const ConnectionException(
+        message: 'There Was An Error While Connecting',
+        ping: -1,
+      );
+    }
   }
 
   @override
@@ -48,7 +70,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     List<String>? blockedApps,
   ) async {
     try {
-      final ping = await _flutterV2ray.getServerDelay(config: config);
+      final ping = await _V2ray.getServerDelay(config: config);
 
       if (ping == -1) {
         throw ConnectionException(
@@ -58,7 +80,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
         );
       }
 
-      await _flutterV2ray.startV2Ray(
+      await _V2ray.startV2Ray(
         remark: remark,
         config: config,
         blockedApps: blockedApps,
@@ -66,7 +88,6 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
         proxyOnly: proxyOnly,
         notificationDisconnectButtonName: 'Disconnect $remark',
       );
-
     } on ConnectionException {
       rethrow;
     } catch (e, s) {
@@ -81,7 +102,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
 
   @override
   void disconnect() {
-    _flutterV2ray.stopV2Ray();
+    _V2ray.stopV2Ray();
   }
 
   @override
