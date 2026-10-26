@@ -7,6 +7,14 @@ Future<void> init() async {
   await _v2rayInit();
   await _configsInit();
   await _adMobInit();
+  await _ipInit();
+}
+
+Future<void> _ipInit() async {
+  sl
+    ..registerLazySingleton(() => GetUserCountry(sl()))
+    ..registerLazySingleton<IpRepo>(() => IpRepoImpl(sl()))
+    ..registerLazySingleton<IpRemoteDatasrc>(() => const IpRemoteDatasrcImpl());
 }
 
 Future<void> _cacheInit() async {
@@ -22,6 +30,8 @@ Future<void> _adMobInit() async {
     ..registerLazySingleton(() => LoadInterstitialAd(sl()))
     ..registerLazySingleton(() => ShowInterstitialAd(sl()))
     ..registerLazySingleton(() => ShowBannerAd(sl()))
+    ..registerLazySingleton(() => LoadRewardedAd(sl()))
+    ..registerLazySingleton(() => ShowRewardedAd(sl()))
     ..registerLazySingleton<AdmobRepo>(() => AdmobRepoImpl(sl()))
     ..registerLazySingleton<AdmobRemoteDatasrc>(
       () => AdmobRemoteDatasrcImpl(null),
@@ -41,29 +51,26 @@ Future<void> _configsInit() async {
 }
 
 Future<void> _v2rayInit() async {
-  final status = ValueNotifier<V2RayStatus>(V2RayStatus());
-  final v2ray = V2ray(
-    onStatusChanged: (s) {
-      status.value = s;
+  var v2rayStatus = ValueNotifier<V2RayStatus>(V2RayStatus());
+  late final V2ray v2ray = V2ray(
+    onStatusChanged: (status) {
+      if (Cache.instance.isVpnDisconnected) return;
+      v2rayStatus.value = status;
     },
   );
-  await v2ray.initialize(
-    notificationIconResourceType: 'mipmap',
-    notificationIconResourceName: 'ic_launcher',
-  );
-  final per = await v2ray.requestPermission();
-  if (!per) return;
+
   sl
     ..registerLazySingleton(() => Connect(sl()))
     ..registerLazySingleton(() => Disconnect(sl()))
     ..registerLazySingleton(() => InitializeV2ay(sl()))
     ..registerLazySingleton(() => GetVpnState(sl()))
     ..registerLazySingleton(() => Ping(sl()))
+    ..registerLazySingleton(() => RequestPermission(sl()))
     ..registerLazySingleton<ConnectionRepo>(() => ConnectionRepoImpl(sl()))
     ..registerLazySingleton<ConnectionDatasrc>(
       () =>
           ConnectionDatasrcImpl(sl<V2ray>(), sl<ValueNotifier<V2RayStatus>>()),
     )
     ..registerLazySingleton(() => v2ray)
-    ..registerLazySingleton(() => status);
+    ..registerLazySingleton(() => v2rayStatus);
 }

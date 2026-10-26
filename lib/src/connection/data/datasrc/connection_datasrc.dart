@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:vendervpn/core/common/singelton/core.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/utils/consts.dart';
@@ -9,7 +10,7 @@ import '../../../../core/utils/consts.dart';
 abstract class ConnectionDatasrc {
   const ConnectionDatasrc();
 
-  Future<bool> initialize();
+  Future<void> initialize();
   Future<void> connect(
     String config,
     String remark,
@@ -17,32 +18,62 @@ abstract class ConnectionDatasrc {
     List<String>? bypassSubnets,
     List<String>? blockedApps,
   );
-  void disconnect();
+  Future<void> disconnect();
   Future<int> ping(String config);
   ValueNotifier<V2RayStatus> get connectionStatus;
+  Future<bool> requestPermission();
 }
 
 class ConnectionDatasrcImpl implements ConnectionDatasrc {
-  const ConnectionDatasrcImpl(this._V2ray, this._status);
+  ConnectionDatasrcImpl(this._v2ray, this._status);
 
-  final V2ray _V2ray;
+  final V2ray _v2ray;
   final ValueNotifier<V2RayStatus> _status;
+  bool _isInitialized = false;
 
-  //TODO: make initializtion Here
   @override
-  Future<bool> initialize() async {
-    await _V2ray.initialize(
-      notificationIconResourceType: 'mipmap',
-      notificationIconResourceName: 'ic_launcher',
-    );
-    final per = await _V2ray.requestPermission();
-    return per;
+  Future<bool> requestPermission() async {
+    try {
+      final per = await _v2ray.requestPermission();
+      if (per == false) {
+        throw ConnectionException(message: 'Permission Denied', ping: -1);
+      } else {
+        return per;
+      }
+    } on ConnectionException {
+      rethrow;
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s);
+
+      throw ConnectionException(message: 'Error: ${e.toString()}', ping: -1);
+    }
+  }
+
+  @override
+  Future<void> initialize() async {
+    if (_isInitialized) return;
+    try {
+      await _v2ray.initialize(
+        notificationIconResourceType: 'mipmap',
+        notificationIconResourceName: 'ic_launcher',
+      );
+      _isInitialized = true;
+    } on ConnectionException {
+      rethrow;
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s);
+
+      throw const ConnectionException(
+        message: 'There Was An Error While Connecting',
+        ping: -1,
+      );
+    }
   }
 
   @override
   Future<int> ping(String config) async {
     try {
-      final ping = await _V2ray.getServerDelay(config: config);
+      final ping = await _v2ray.getServerDelay(config: config);
       if (ping == -1) {
         throw ConnectionException(
           message:
@@ -70,7 +101,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     List<String>? blockedApps,
   ) async {
     try {
-      final ping = await _V2ray.getServerDelay(config: config);
+      final ping = await _v2ray.getServerDelay(config: config);
 
       if (ping == -1) {
         throw ConnectionException(
@@ -80,7 +111,8 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
         );
       }
 
-      await _V2ray.startV2Ray(
+      Cache.instance.setVpnDisconnected(false);
+      await _v2ray.startV2Ray(
         remark: remark,
         config: config,
         blockedApps: blockedApps,
@@ -101,8 +133,11 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
   }
 
   @override
-  void disconnect() {
-    _V2ray.stopV2Ray();
+  Future<void> disconnect() async {
+    Cache.instance.setVpnDisconnected(true);
+    _status.value = V2RayStatus();
+    await _v2ray.stopV2Ray();
+    _status.value = V2RayStatus();
   }
 
   @override

@@ -12,9 +12,9 @@ class ConfigModel extends Config {
     required super.dateAdded,
     required super.id,
     required super.isSelected,
-    required super.ping,
+    super.ping,
     super.country,
-    super.serverIp
+    super.serverIp,
   });
 
   const ConfigModel.empty()
@@ -30,13 +30,13 @@ class ConfigModel extends Config {
         isSelected: false,
         country: 'Test String',
         serverIp: 'Test String',
-        ping: -1
+        ping: -1,
       );
 
   Map<String, String> toMap(ConfigModel config) {
     return {
       'uri': config.uri,
-      'country': config.country ?? 'N/A' ,
+      'country': config.country ?? 'N/A',
       'serverIp': config.serverIp ?? 'N/A',
       'remark': config.remark,
       'id': config.id,
@@ -45,10 +45,11 @@ class ConfigModel extends Config {
       'address': config.address,
       'dateAdded': config.dateAdded,
       'importedFrom': config.importedFrom,
-      'ping': config.ping.toString()
+      'ping': config.ping?.toString() ?? '-1',
     };
   }
 
+  @override
   ConfigModel copyWith({
     String? configjson,
     String? importedFrom,
@@ -61,7 +62,7 @@ class ConfigModel extends Config {
     String? country,
     bool? isSelected,
     String? serverIp,
-    int? ping
+    int? ping,
   }) => ConfigModel(
     configjson: configjson ?? this.configjson,
     importedFrom: importedFrom ?? this.importedFrom,
@@ -74,6 +75,6 @@ class ConfigModel extends Config {
     isSelected: isSelected ?? this.isSelected,
     country: country ?? this.country,
     serverIp: serverIp ?? this.serverIp,
-    ping: ping ?? this.ping
+    ping: ping ?? this.ping,
   );
 }

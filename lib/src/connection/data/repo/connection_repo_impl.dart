@@ -13,6 +13,16 @@ class ConnectionRepoImpl implements ConnectionRepo {
   final ConnectionDatasrc _datasrc;
 
   @override
+  ResultFuture<bool> requestPermission() async {
+    try {
+      final result = await _datasrc.requestPermission();
+      return Right(result);
+    } on ConnectionException catch (e) {
+      return Left(ConnectionFailure.fromException(e));
+    }
+  }
+
+  @override
   ResultFuture<int> ping(String config) async {
     try {
       final result = await _datasrc.ping(config);
@@ -23,7 +33,7 @@ class ConnectionRepoImpl implements ConnectionRepo {
   }
 
   @override
-  ResultFuture<bool> initialize() async {
+  ResultFuture<void> initialize() async {
     try {
       final result = await _datasrc.initialize();
       return Right(result);
@@ -60,7 +70,7 @@ class ConnectionRepoImpl implements ConnectionRepo {
   ValueNotifier<V2RayStatus> get connectionStatus => _datasrc.connectionStatus;
 
   @override
-  void disconnect() {
-    _datasrc.disconnect();
+  Future<void> disconnect() async {
+    await _datasrc.disconnect();
   }
 }

@@ -10,28 +10,11 @@ class LoadInterstitialAd
 
   @override
   ResultFuture<void> call(LoadInterstitialAdParams params) =>
-      _repo.loadInterstitialAd(
-        params.onAdLoaded,
-        params.onAdFailed,
-            onAdShowedFullScreenContent:     params.onAdShowedFullScreenContent,
-
-       onAdDismissedFullScreenContent: params.onAdDismissedFullScreenContent,
-      onAdFailedToShowFullScreenContent:  params.onAdFailedToShowFullScreenContent,
-      );
+      _repo.loadInterstitialAd(params.onAdLoaded, params.onAdFailed);
 }
 
 class LoadInterstitialAdParams {
-  const LoadInterstitialAdParams(
-    this.onAdLoaded,
-    this.onAdFailed,
-    {
-      required this.onAdShowedFullScreenContent,
-    required this.onAdDismissedFullScreenContent,
-    required this.onAdFailedToShowFullScreenContent}
-  );
+  const LoadInterstitialAdParams(this.onAdLoaded, this.onAdFailed);
   final VoidCallback onAdLoaded;
   final VoidCallback onAdFailed;
-  final VoidCallback onAdShowedFullScreenContent;
-  final VoidCallback onAdDismissedFullScreenContent;
-  final VoidCallback onAdFailedToShowFullScreenContent;
 }

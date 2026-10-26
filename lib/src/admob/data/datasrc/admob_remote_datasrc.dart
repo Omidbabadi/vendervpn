@@ -11,12 +11,13 @@ abstract class AdmobRemoteDatasrc {
   Future<void> init();
   Future<void> loadInterstitialAd(
     VoidCallback onAdLoaded,
-    VoidCallback onAdFailed, {
-    required VoidCallback onAdShowedFullScreenContent,
+    VoidCallback onAdFailed,
+  );
+  Future<void> showInterstitialAd({
     required VoidCallback onAdDismissedFullScreenContent,
     required VoidCallback onAdFailedToShowFullScreenContent,
+    required VoidCallback onAdShowedFullScreenContent,
   });
-  Future<void> showInterstitialAd();
   Future<void> showBannerAd(double width);
   Future<void> loadRewardedAd();
   Future<void> showRewardedAd();
@@ -38,7 +39,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   Future<void> init() async {
     try {
       await _mobileAds.initialize();
-      debugPrint('Ad mob Initialized');
+      debugPrint('Ad mob Initialized ');
     } catch (e) {
       throw AdmobException(null, message: 'Admob initialization failed');
     }
@@ -47,129 +48,161 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   @override
   Future<void> loadInterstitialAd(
     VoidCallback onAdLoaded,
-    VoidCallback onAdFailed, {
+    VoidCallback onAdFailed,
+  ) async {
+    final completer = Completer<void>();
 
-    required VoidCallback onAdShowedFullScreenContent,
-    required VoidCallback onAdDismissedFullScreenContent,
-    required VoidCallback onAdFailedToShowFullScreenContent,
-  }) async {
-    try {
-      InterstitialAd.load(
-        adUnitId: CoreUtils.interstitialAdId!,
-        request: request,
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            _interstitialAd = ad;
-            _numInterstitialLoadAttempts = 0;
-            _interstitialAd!.setImmersiveMode(true);
-            _showInterstitialAd(
-              onAdShowedFullScreenContent,
-              onAdDismissedFullScreenContent,
-              onAdFailedToShowFullScreenContent,
-            );
-            onAdLoaded();
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            _numInterstitialLoadAttempts += 1;
-            _interstitialAd = null;
-            Cache.instance.setInterstitialAd(null);
+    void attemptLoad() {
+      try {
+        InterstitialAd.load(
+          adUnitId: CoreUtils.interstitialAdId!,
+          request: request,
+          adLoadCallback: InterstitialAdLoadCallback(
+            onAdLoaded: (InterstitialAd ad) {
+              _interstitialAd = ad;
+              _numInterstitialLoadAttempts = 0;
+              _interstitialAd!.setImmersiveMode(true);
 
-            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
-              init();
-            }
-            debugPrint(error.message);
-            onAdFailed();
+              onAdLoaded();
+              if (!completer.isCompleted) {
+                completer.complete();
+              }
+            },
+            onAdFailedToLoad: (LoadAdError error) {
+              _numInterstitialLoadAttempts += 1;
+              _interstitialAd = null;
+              Cache.instance.setInterstitialAd(null);
 
-            throw AdmobException(error, message: error.message);
-          },
-        ),
-      );
-    } on AdmobException {
-      rethrow;
-    } catch (e) {
-      throw AdmobException(null, message: e.toString());
+              if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+                attemptLoad();
+                return;
+              }
+              _numInterstitialLoadAttempts = 0;
+              debugPrint(error.message);
+              onAdFailed();
+
+              if (!completer.isCompleted) {
+                completer.completeError(
+                  AdmobException(error, message: error.message),
+                );
+              }
+            },
+          ),
+        );
+      } catch (e) {
+        _numInterstitialLoadAttempts = 0;
+        onAdFailed();
+        if (!completer.isCompleted) {
+          completer.completeError(AdmobException(null, message: e.toString()));
+        }
+      }
     }
-  }
 
-  _showInterstitialAd(
-    VoidCallback onAdDismissedFullScreenContent,
-    VoidCallback onAdFailedToShowFullScreenContent,
-    VoidCallback onAdShowedFullScreenContent,
-  ) {
-    if (_interstitialAd == null) return;
-
-    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-
-      
-
-      onAdShowedFullScreenContent:
-          (InterstitialAd ad) => onAdShowedFullScreenContent,
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        onAdDismissedFullScreenContent();
-        ad.dispose();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        onAdFailedToShowFullScreenContent();
-        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
+    attemptLoad();
+    return completer.future.timeout(
+      const Duration(seconds: 12),
+      onTimeout: () {
+        _numInterstitialLoadAttempts = 0;
+        onAdFailed();
+        throw const AdmobException(
+          null,
+          message: 'Interstitial ad load timed out',
+        );
       },
     );
-    _interstitialAd!.show();
   }
 
   @override
-  Future<void> showInterstitialAd() async {
-    if (_interstitialAd == null) return;
+  Future<void> showInterstitialAd({
+    required VoidCallback onAdDismissedFullScreenContent,
+    required VoidCallback onAdFailedToShowFullScreenContent,
+    required VoidCallback onAdShowedFullScreenContent,
+  }) async {
+    if (_interstitialAd == null) {
+      onAdFailedToShowFullScreenContent();
+      return;
+    }
 
-    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent:
-          (InterstitialAd ad) => debugPrint('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        debugPrint('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        init();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-      },
-    );
-    _interstitialAd!.show();
+    final completer = Completer<void>();
+    try {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdShowedFullScreenContent:
+            (InterstitialAd ad) => onAdShowedFullScreenContent(),
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          ad.dispose();
+          _interstitialAd = null;
+          onAdDismissedFullScreenContent();
+          if (!completer.isCompleted) {
+            completer.complete();
+          }
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
+          ad.dispose();
+          _interstitialAd = null;
+          onAdFailedToShowFullScreenContent();
+          if (!completer.isCompleted) {
+            completer.completeError(
+              AdmobException(error, message: error.message),
+            );
+          }
+        },
+      );
+      await _interstitialAd!.show();
+      await completer.future;
+    } on AdmobException {
+      rethrow;
+    } catch (e) {
+      _interstitialAd = null;
+      onAdFailedToShowFullScreenContent();
+      throw AdmobException(null, message: e.toString());
+    }
   }
 
   @override
   Future<void> showBannerAd(double width) async {
     try {
-      final size =
-          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-            width.truncate(),
-          );
+      final size = await AdSize.getLargeAnchoredAdaptiveBannerAdSize(
+        width.truncate(),
+      );
 
       if (size == null) {
-        throw AdmobException(
+        throw const AdmobException(
           null,
           message: 'Unable to get width of anchored banner',
         );
       }
+      final adUnitId = CoreUtils.bannerAdUnitId ?? Constants.androidBannerAdIdTest;
+      final completer = Completer<void>();
       await BannerAd(
-        size: AdSize.fullBanner,
-        adUnitId: Constants.androidBannerAdIdTest,
+        size: size,
+        adUnitId: adUnitId,
         listener: BannerAdListener(
           onAdLoaded: (ad) {
             Cache.instance.setBannerAd(ad as BannerAd);
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
           },
           onAdClicked: (ad) {
             debugPrint('Ad Clicked');
           },
           onAdFailedToLoad: (ad, loadError) {
-            throw AdmobException(
-              loadError,
-              message: 'Banner Ad Failed To Load: ${loadError.message}',
-            );
+            ad.dispose();
+            debugPrint('Banner Ad Failed To Load: ${loadError.message}');
+            if (!completer.isCompleted) {
+              completer.completeError(
+                AdmobException(
+                  loadError,
+                  message: 'Banner Ad Failed To Load: ${loadError.message}',
+                ),
+              );
+            }
           },
         ),
         request: const AdRequest(),
       ).load();
+      await completer.future;
     } on AdmobException {
       rethrow;
     } catch (e, s) {

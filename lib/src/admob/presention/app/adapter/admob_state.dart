@@ -45,6 +45,21 @@ final class BannerAdLoaded extends AdmobState {
   const BannerAdLoaded();
 }
 
+final class RewardedAdLoading extends AdmobState {
+  const RewardedAdLoading();
+}
+
+final class RewardedAdLoaded extends AdmobState {
+  const RewardedAdLoaded();
+}
+
+final class RewardedAdShowing extends AdmobState {
+  const RewardedAdShowing();
+}
+
+final class RewardedAdShowed extends AdmobState {
+  const RewardedAdShowed();
+}
 
 final class AdmobError extends AdmobState {
   const AdmobError(this.message);

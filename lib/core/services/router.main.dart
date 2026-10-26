@@ -9,11 +9,10 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (_, __) {
+      builder: (_, _) {
         return const SplashScreen();
       },
     ),
-
     GoRoute(
       path: StatusScreen.path,
       builder: (_, state) {
@@ -21,7 +20,6 @@ final router = GoRouter(
         return StatusScreen(status: extra);
       },
     ),
-
     ShellRoute(
       builder: (context, state, child) {
         return DashboardScreen(state: state, child: child);
@@ -29,20 +27,20 @@ final router = GoRouter(
       routes: [
         GoRoute(
           path: HomeView.path,
-          builder: (_, __) {
+          builder: (_, _) {
             return const HomeView();
           },
         ),
         GoRoute(
-          path: XrayVpnScreen.path,
-          builder: (_, __) {
-            return const XrayVpnScreen();
+          path: NodesView.path,
+          builder: (_, _) {
+            return const NodesView();
           },
         ),
         GoRoute(
-          path: ServerListScreen.path,
-          builder: (_, __) {
-            return const ServerListScreen();
+          path: SettingsView.path,
+          builder: (_, _) {
+            return const SettingsView();
           },
         ),
       ],

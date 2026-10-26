@@ -6,21 +6,57 @@ part of 'banner_ad.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$loadedBannerAdHash() => r'5abcd20462d0c16ded30ebccad7023fa3fd45b11';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [LoadedBannerAd].
 @ProviderFor(LoadedBannerAd)
-final loadedBannerAdProvider =
-    NotifierProvider<LoadedBannerAd, BannerAd?>.internal(
-  LoadedBannerAd.new,
-  name: r'loadedBannerAdProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$loadedBannerAdHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final loadedBannerAdProvider = LoadedBannerAdProvider._();
 
-typedef _$LoadedBannerAd = Notifier<BannerAd?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+final class LoadedBannerAdProvider
+    extends $NotifierProvider<LoadedBannerAd, BannerAd?> {
+  LoadedBannerAdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'loadedBannerAdProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$loadedBannerAdHash();
+
+  @$internal
+  @override
+  LoadedBannerAd create() => LoadedBannerAd();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BannerAd? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BannerAd?>(value),
+    );
+  }
+}
+
+String _$loadedBannerAdHash() => r'bcdd75eaea328f0c4e8a742ed0fd3ff6f8324fcf';
+
+abstract class _$LoadedBannerAd extends $Notifier<BannerAd?> {
+  BannerAd? build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<BannerAd?, BannerAd?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<BannerAd?, BannerAd?>,
+              BannerAd?,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

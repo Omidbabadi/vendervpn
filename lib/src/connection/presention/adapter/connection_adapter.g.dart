@@ -6,168 +6,57 @@ part of 'connection_adapter.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$connectionAdapterHash() => r'40b74d48ffe5dc9ed353196b61e8add379141caf';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$ConnectionAdapter extends BuildlessNotifier<ConnectionState> {
-  late final GlobalKey<State<StatefulWidget>>? familyKey;
-
-  ConnectionState build([
-    GlobalKey<State<StatefulWidget>>? familyKey,
-  ]);
-}
-
-/// See also [ConnectionAdapter].
 @ProviderFor(ConnectionAdapter)
-const connectionAdapterProvider = ConnectionAdapterFamily();
+final connectionAdapterProvider = ConnectionAdapterProvider._();
 
-/// See also [ConnectionAdapter].
-class ConnectionAdapterFamily extends Family<ConnectionState> {
-  /// See also [ConnectionAdapter].
-  const ConnectionAdapterFamily();
-
-  /// See also [ConnectionAdapter].
-  ConnectionAdapterProvider call([
-    GlobalKey<State<StatefulWidget>>? familyKey,
-  ]) {
-    return ConnectionAdapterProvider(
-      familyKey,
-    );
-  }
-
-  @override
-  ConnectionAdapterProvider getProviderOverride(
-    covariant ConnectionAdapterProvider provider,
-  ) {
-    return call(
-      provider.familyKey,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'connectionAdapterProvider';
-}
-
-/// See also [ConnectionAdapter].
-class ConnectionAdapterProvider
-    extends NotifierProviderImpl<ConnectionAdapter, ConnectionState> {
-  /// See also [ConnectionAdapter].
-  ConnectionAdapterProvider([
-    GlobalKey<State<StatefulWidget>>? familyKey,
-  ]) : this._internal(
-          () => ConnectionAdapter()..familyKey = familyKey,
-          from: connectionAdapterProvider,
-          name: r'connectionAdapterProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$connectionAdapterHash,
-          dependencies: ConnectionAdapterFamily._dependencies,
-          allTransitiveDependencies:
-              ConnectionAdapterFamily._allTransitiveDependencies,
-          familyKey: familyKey,
-        );
-
-  ConnectionAdapterProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.familyKey,
-  }) : super.internal();
-
-  final GlobalKey<State<StatefulWidget>>? familyKey;
-
-  @override
-  ConnectionState runNotifierBuild(
-    covariant ConnectionAdapter notifier,
-  ) {
-    return notifier.build(
-      familyKey,
-    );
-  }
-
-  @override
-  Override overrideWith(ConnectionAdapter Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: ConnectionAdapterProvider._internal(
-        () => create()..familyKey = familyKey,
-        from: from,
-        name: null,
+final class ConnectionAdapterProvider
+    extends $NotifierProvider<ConnectionAdapter, ConnectionState> {
+  ConnectionAdapterProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectionAdapterProvider',
+        isAutoDispose: false,
         dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        familyKey: familyKey,
-      ),
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$connectionAdapterHash();
+
+  @$internal
+  @override
+  ConnectionAdapter create() => ConnectionAdapter();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ConnectionState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ConnectionState>(value),
     );
   }
-
-  @override
-  NotifierProviderElement<ConnectionAdapter, ConnectionState> createElement() {
-    return _ConnectionAdapterProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is ConnectionAdapterProvider && other.familyKey == familyKey;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, familyKey.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
 }
 
-mixin ConnectionAdapterRef on NotifierProviderRef<ConnectionState> {
-  /// The parameter `familyKey` of this provider.
-  GlobalKey<State<StatefulWidget>>? get familyKey;
-}
+String _$connectionAdapterHash() => r'eed9dcaae76d79e16376ac785b17b7d7a294d542';
 
-class _ConnectionAdapterProviderElement
-    extends NotifierProviderElement<ConnectionAdapter, ConnectionState>
-    with ConnectionAdapterRef {
-  _ConnectionAdapterProviderElement(super.provider);
-
+abstract class _$ConnectionAdapter extends $Notifier<ConnectionState> {
+  ConnectionState build();
+  @$mustCallSuper
   @override
-  GlobalKey<State<StatefulWidget>>? get familyKey =>
-      (origin as ConnectionAdapterProvider).familyKey;
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<ConnectionState, ConnectionState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ConnectionState, ConnectionState>,
+              ConnectionState,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
 }
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

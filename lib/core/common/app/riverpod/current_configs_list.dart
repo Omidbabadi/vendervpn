@@ -14,4 +14,10 @@ class CurrentConfigsList extends _$CurrentConfigsList {
     if (state != configs) state = configs;
   }
 
+  void updateConfigPing(String id, int ping) {
+    state = [
+      for (final config in state)
+        if (config.id == id) config.copyWith(ping: ping) else config,
+    ];
+  }
 }

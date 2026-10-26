@@ -18,8 +18,14 @@ class LoadedBannerAd extends _$LoadedBannerAd {
     }
   }
 
-  loadBannerAd(BannerAd bannerAd) {
+  void loadBannerAd(BannerAd bannerAd) {
     state = bannerAd;
     debugPrint('banner ad in ad mob provider');
+  }
+
+  void clearBannerAd() {
+    state?.dispose();
+    Cache.instance.resetBannerAd();
+    state = null;
   }
 }

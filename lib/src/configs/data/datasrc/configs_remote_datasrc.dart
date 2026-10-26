@@ -1,7 +1,8 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
+import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
 
 import '../../../../core/common/entities/config.dart';
@@ -15,50 +16,82 @@ abstract class ConfigsRemoteDatasrc {
 class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
   const ConfigsRemoteDatasrcImpl(this._client);
   final Client _client;
+
   @override
   Future<List<Config>> getConfigs() async {
     final TablesDB tablesDB = TablesDB(_client);
-    final id = sl<CacheHelper>().id;
     final List<Map<String, String>> cacheConfig = [];
+    final List<ConfigModel> allConfigs = [];
+
     try {
-      final url = await tablesDB.listRows(
+      final response = await tablesDB.listRows(
         databaseId: '68cfc4e70012fb5e5417',
         tableId: 'url',
       );
-      if (url.rows.isEmpty) {
-        throw ServerException(message: 'No Configs Found', statusCode: 404);
+      if (response.rows.isEmpty) {
+        throw const ServerException(
+          message: 'No Configs Found',
+          statusCode: 404,
+        );
       }
-      final data =
-          (url.rows).map((e) {
-            final config = e.data['url'] as String;
-            final V2RayURL parser = V2ray.parseFromURL(config);
-            final fullJson = parser.getFullConfiguration();
-            final configModel = ConfigModel(
-              configjson: fullJson,
-              importedFrom: 's',
-              remark: parser.remark,
-              port: parser.port,
-              address: parser.address,
-              uri: parser.url,
-              dateAdded: DateTime.now().toString(),
-              id: e.$id,
-              country: e.data['country'] as String,
-              isSelected: id == e.$id,
-              serverIp: e.data['serverIp'] as String? ?? 'N/A',
-              ping: -1  
-            );
-            final configs = configModel.toMap(configModel);
-            cacheConfig.add(configs);
-            return configModel;
-          }).toList();
 
-      sl<CacheHelper>().cacheConfigs(cacheConfig);
-      return data.cast<Config>();
+      for (final row in response.rows) {
+        final rawData = row.data;
+        final dynamic rawLinksField =
+            rawData['v2raylinks'] ??
+            rawData['v2rayLinks'] ??
+            rawData['v2ray_links'] ??
+            rawData['url'];
+
+        final List<String> extractedLinks = [];
+        if (rawLinksField is List) {
+          for (final item in rawLinksField) {
+            if (item != null) {
+              extractedLinks.addAll(
+                V2rayImportHelper.extractLinksFromPayload(item.toString()),
+              );
+            }
+          }
+        } else if (rawLinksField != null) {
+          extractedLinks.addAll(
+            V2rayImportHelper.extractLinksFromPayload(rawLinksField.toString()),
+          );
+        }
+
+        final createdAt =
+            (rawData['createdAt'] ??
+                    rawData['created_at'] ??
+                    rawData['\$createdAt'] ??
+                    row.$createdAt)
+                .toString();
+
+        final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
+          links: extractedLinks,
+          importedFrom: 'cloud',
+          forcedIdPrefix: row.$id,
+          createdAt: createdAt,
+        );
+
+        for (final model in parsedModels) {
+          cacheConfig.add(model.toMap(model));
+          allConfigs.add(model);
+        }
+      }
+
+      if (allConfigs.isEmpty) {
+        throw const ServerException(
+          message: 'No valid V2Ray links found in server response',
+          statusCode: 404,
+        );
+      }
+
+      await sl<CacheHelper>().cacheConfigs(cacheConfig);
+      return allConfigs.cast<Config>();
     } on ServerException {
       rethrow;
     } catch (e) {
-      print(e);
-      throw ServerException(
+      debugPrint('ConfigsRemoteDatasrcImpl error: $e');
+      throw const ServerException(
         message: 'Getting Configs From Server Failed',
         statusCode: 500,
       );

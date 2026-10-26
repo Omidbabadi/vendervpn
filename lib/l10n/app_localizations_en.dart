@@ -72,7 +72,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get succesful => 'Successful';
 
   @override
-  String get delete_config_content => 'Config Will Remove Permanently, Are You Sure ?';
+  String get delete_config_content =>
+      'Config Will Remove Permanently, Are You Sure ?';
 
   @override
   String get delete => 'Delete';
@@ -121,4 +122,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loading_content => 'Please Wait a Moment';
+
+  @override
+  String get connecting => 'Connecting...';
+
+  @override
+  String get idle => 'Idle';
+
+  @override
+  String get failed_to_load_configs => 'Failed To Load Configs';
+
+  @override
+  String get server => 'Server: ';
+
+  @override
+  String get ip_label => 'IP: ';
+
+  @override
+  String get retry => 'Retry';
 }

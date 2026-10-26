@@ -1,25 +1,31 @@
 import '../utils/typedefs.dart';
 
-abstract class UsecaseWithParams<Type, Params> {
+abstract class UsecaseWithParams<T, Params> {
   const UsecaseWithParams();
 
-  ResultFuture<Type> call(Params params);
+  ResultFuture<T> call(Params params);
 }
 
-abstract class UsecaseWithOutParams<Type> {
+abstract class UsecaseWithOutParams<T> {
   const UsecaseWithOutParams();
 
-  ResultFuture<Type> call();
+  ResultFuture<T> call();
 }
 
-abstract class UsecaseWithOutParamsNotFuture<Type> {
+abstract class UsecaseWithOutParamsNotFuture<T> {
   const UsecaseWithOutParamsNotFuture();
 
-  Type call();
+  T call();
 }
 
-abstract class UsecaseWithOutParamsGeter<Type> {
+abstract class UsecaseWithOutParamsGeter<T> {
   const UsecaseWithOutParamsGeter();
 
-  Type get call;
+  T get call;
+}
+
+abstract class UsecaseWithOutParamsFuture<T> {
+  const UsecaseWithOutParamsFuture();
+
+  Future<T> call();
 }

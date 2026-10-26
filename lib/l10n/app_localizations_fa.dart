@@ -72,7 +72,8 @@ class AppLocalizationsFa extends AppLocalizations {
   String get succesful => 'موفق';
 
   @override
-  String get delete_config_content => 'این کانفیگ برای همیشه پاک خواهد شد.آیا مطمئن هستید؟';
+  String get delete_config_content =>
+      'این کانفیگ برای همیشه پاک خواهد شد.آیا مطمئن هستید؟';
 
   @override
   String get delete => 'حذف';
@@ -117,8 +118,26 @@ class AppLocalizationsFa extends AppLocalizations {
   String get select_config => 'لطفا ابتدا یک سرور را انتخاب کنید';
 
   @override
-  String get loading_title => 'Loading...';
+  String get loading_title => 'در حال بارگذاری...';
 
   @override
   String get loading_content => 'در حال بارگذاری...لطفا صبر کنید';
+
+  @override
+  String get connecting => 'در حال اتصال...';
+
+  @override
+  String get idle => 'آماده';
+
+  @override
+  String get failed_to_load_configs => 'خطا در دریافت کانفیگ‌ها';
+
+  @override
+  String get server => 'سرور: ';
+
+  @override
+  String get ip_label => 'آی‌پی: ';
+
+  @override
+  String get retry => 'تلاش مجدد';
 }

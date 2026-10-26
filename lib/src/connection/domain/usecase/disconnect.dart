@@ -1,10 +1,10 @@
 import 'package:vendervpn/core/usecase/usecase.dart';
 import 'package:vendervpn/src/connection/domain/repo/connection_repo.dart';
 
-class Disconnect extends UsecaseWithOutParamsNotFuture<void> {
+class Disconnect extends UsecaseWithOutParamsFuture<void> {
   const Disconnect(this._repo);
   final ConnectionRepo _repo;
 
   @override
-  void call() => _repo.disconnect();
+  Future<void> call() => _repo.disconnect();
 }

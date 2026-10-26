@@ -26,20 +26,10 @@ class AdmobRepoImpl implements AdmobRepo {
   @override
   ResultFuture<void> loadInterstitialAd(
     VoidCallback onAdLoaded,
-    VoidCallback onAdFailed,{
-   required VoidCallback onAdShowedFullScreenContent,
-
-  required  VoidCallback onAdDismissedFullScreenContent,
-  required  VoidCallback onAdFailedToShowFullScreenContent,}
+    VoidCallback onAdFailed,
   ) async {
     try {
-      await _remoteDatasrc.loadInterstitialAd(
-        onAdLoaded,
-        onAdFailed,
-       onAdShowedFullScreenContent: onAdShowedFullScreenContent,
-       onAdDismissedFullScreenContent: onAdDismissedFullScreenContent,
-        onAdFailedToShowFullScreenContent:onAdFailedToShowFullScreenContent ,
-      );
+      await _remoteDatasrc.loadInterstitialAd(onAdLoaded, onAdFailed);
       return Right(null);
     } on AdmobException catch (e) {
       return Left(AdmobFailure.fromException(e));
@@ -47,9 +37,17 @@ class AdmobRepoImpl implements AdmobRepo {
   }
 
   @override
-  ResultFuture<void> showInterstitialAd() async {
+  ResultFuture<void> showInterstitialAd({
+    required VoidCallback onAdDismissedFullScreenContent,
+    required VoidCallback onAdFailedToShowFullScreenContent,
+    required VoidCallback onAdShowedFullScreenContent,
+  }) async {
     try {
-      await _remoteDatasrc.showInterstitialAd();
+      await _remoteDatasrc.showInterstitialAd(
+        onAdDismissedFullScreenContent: onAdDismissedFullScreenContent,
+        onAdFailedToShowFullScreenContent: onAdFailedToShowFullScreenContent,
+        onAdShowedFullScreenContent: onAdShowedFullScreenContent,
+      );
       return Right(null);
     } on AdmobException catch (e) {
       return Left(AdmobFailure.fromException(e));
@@ -71,17 +69,29 @@ class AdmobRepoImpl implements AdmobRepo {
   ResultFuture<void> loadRewardedAd() async {
     try {
       await _remoteDatasrc.loadRewardedAd();
-      return Right(null);
+      return const Right(null);
     } catch (e) {
       return Left(
-        AdmobFailure.fromException(AdmobException(null, message: 'test')),
+        AdmobFailure.fromException(
+          AdmobException(null, message: e.toString()),
+        ),
       );
     }
   }
 
   @override
-  ResultFuture<void> showRewardedAd() {
-    // TODO: implement showRewardedAd
-    throw UnimplementedError();
+  ResultFuture<void> showRewardedAd() async {
+    try {
+      await _remoteDatasrc.showRewardedAd();
+      return const Right(null);
+    } on AdmobException catch (e) {
+      return Left(AdmobFailure.fromException(e));
+    } catch (e) {
+      return Left(
+        AdmobFailure.fromException(
+          AdmobException(null, message: e.toString()),
+        ),
+      );
+    }
   }
 }

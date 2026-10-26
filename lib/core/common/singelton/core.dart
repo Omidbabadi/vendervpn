@@ -11,11 +11,18 @@ class Cache {
   BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
+  bool _isVpnDisconnected = true;
+
+  void cacheVpnState(String state) {}
+
+  bool get isVpnDisconnected => _isVpnDisconnected;
+  void setVpnDisconnected(bool value) {
+    _isVpnDisconnected = value;
+  }
 
   Map<String, String> _map = {};
   Map<String, String> get map => _map;
 
-  //interstitial ad
   InterstitialAd? get interstitialAd => _interstitialAd;
   void setInterstitialAd(InterstitialAd? ad) {
     _interstitialAd = ad;

@@ -10,7 +10,7 @@ abstract class Constants {
       'ca-app-pub-3940256099942544/1033173712';
 
   static const androidBannerAdIdTest = 'ca-app-pub-3940256099942544/9214589741';
-  static const iosBannerAdIdTest = '';
+  static const iosBannerAdIdTest = 'ca-app-pub-3940256099942544/2934735716';
   static const androidRewardedAdTest = 'ca-app-pub-3940256099942544/5224354917';
 
   static const List<String> subnets = [

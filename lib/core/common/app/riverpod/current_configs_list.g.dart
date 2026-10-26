@@ -6,22 +6,58 @@ part of 'current_configs_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(CurrentConfigsList)
+final currentConfigsListProvider = CurrentConfigsListProvider._();
+
+final class CurrentConfigsListProvider
+    extends $NotifierProvider<CurrentConfigsList, List<Config>> {
+  CurrentConfigsListProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentConfigsListProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentConfigsListHash();
+
+  @$internal
+  @override
+  CurrentConfigsList create() => CurrentConfigsList();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Config> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Config>>(value),
+    );
+  }
+}
+
 String _$currentConfigsListHash() =>
     r'059ae75a5cca702d2a9d2c0c653d5a0b9e14b73c';
 
-/// See also [CurrentConfigsList].
-@ProviderFor(CurrentConfigsList)
-final currentConfigsListProvider =
-    NotifierProvider<CurrentConfigsList, List<Config>>.internal(
-  CurrentConfigsList.new,
-  name: r'currentConfigsListProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentConfigsListHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$CurrentConfigsList = Notifier<List<Config>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+abstract class _$CurrentConfigsList extends $Notifier<List<Config>> {
+  List<Config> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<Config>, List<Config>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<Config>, List<Config>>,
+              List<Config>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

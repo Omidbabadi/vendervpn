@@ -16,19 +16,86 @@ class CacheHelper {
   static const _permissionKey = 'permission_key';
   static const _vpnStateKey = 'vpn_state_key';
   static const _configs = 'configs';
+  static const _localConfigs = 'local_configs';
+  static const _subscriptionUrls = 'subscription_urls';
+  static const _ipCountryCache = 'ip_country_cache';
+  static const _localeKey = 'app_locale';
 
   Future<void> cacheVpnState(String state) async {
     await _pref.setString(_vpnStateKey, state);
   }
 
-  String? get vpnState => _pref.getString(_vpnStateKey) ?? 'DISCONNECTED';
+  String get vpnState => _pref.getString(_vpnStateKey) ?? 'DISCONNECTED';
 
   Future<void> cacheConfigs(List<Map<String, String>> configs) async {
-    final config =
-        configs.map((e) {
-          return json.encode(e);
-        }).toList();
-    await _pref.setStringList(_configs, config);
+    final encoded = configs.map(json.encode).toList();
+    await _pref.setStringList(_configs, encoded);
+  }
+
+  List<Map<String, dynamic>> get configs {
+    final list = _pref.getStringList(_configs);
+    if (list == null) return [];
+    return list.map((e) => Map<String, dynamic>.from(json.decode(e))).toList();
+  }
+
+  Future<void> cacheLocalConfigs(List<Map<String, String>> configs) async {
+    final encoded = configs.map(json.encode).toList();
+    await _pref.setStringList(_localConfigs, encoded);
+  }
+
+  List<Map<String, dynamic>> get localConfigs {
+    final list = _pref.getStringList(_localConfigs);
+    if (list == null) return [];
+    return list.map((e) => Map<String, dynamic>.from(json.decode(e))).toList();
+  }
+
+  Future<void> cacheSubscriptions(List<Map<String, dynamic>> subs) async {
+    final encoded = subs.map(json.encode).toList();
+    await _pref.setStringList(_subscriptionUrls, encoded);
+  }
+
+  List<Map<String, dynamic>> get subscriptions {
+    final list = _pref.getStringList(_subscriptionUrls);
+    if (list == null) return [];
+    final result = <Map<String, dynamic>>[];
+    for (final raw in list) {
+      try {
+        final decoded = json.decode(raw);
+        if (decoded is Map) {
+          result.add(Map<String, dynamic>.from(decoded));
+          continue;
+        }
+      } catch (_) {
+        // Legacy plain URL entry
+      }
+      if (raw.trim().isNotEmpty) {
+        final uri = Uri.tryParse(raw.trim());
+        result.add({
+          'id': 'sub_${raw.trim().hashCode.abs()}',
+          'name': uri?.host.isNotEmpty == true ? uri!.host : 'Subscription',
+          'url': raw.trim(),
+          'intervalHours': 6,
+          'lastUpdated': DateTime.now().toIso8601String(),
+        });
+      }
+    }
+    return result;
+  }
+
+  Map<String, String> get ipCountryMap {
+    final raw = _pref.getString(_ipCountryCache);
+    if (raw == null || raw.isEmpty) return {};
+    try {
+      return Map<String, String>.from(json.decode(raw) as Map);
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<void> cacheIpCountry(String hostOrIp, String countryCode) async {
+    final map = ipCountryMap;
+    map[hostOrIp] = countryCode;
+    await _pref.setString(_ipCountryCache, json.encode(map));
   }
 
   Future<void> cachePermission(bool permission) async {
@@ -49,15 +116,6 @@ class CacheHelper {
     Cache.instance.setThemeMode(theme);
   }
 
-  List<Map<String, dynamic>> get configs {
-    final configs = _pref.getStringList(_configs);
-    if (configs == null) return [];
-
-    return configs.map((e) {
-      return Map<String, dynamic>.from(json.decode(e));
-    }).toList();
-  }
-
   bool get permission => _pref.getBool(_permissionKey) ?? false;
 
   bool get firstTimer => _pref.getBool(_isFirstTimer) ?? true;
@@ -71,5 +129,9 @@ class CacheHelper {
     return theme;
   }
 
-  //_pref.getString(_themeMode)?.stringToTheme ?? ThemeMode.system;
+  Future<void> cacheLocale(String languageCode) async {
+    await _pref.setString(_localeKey, languageCode);
+  }
+
+  String get localeCode => _pref.getString(_localeKey) ?? 'en';
 }

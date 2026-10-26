@@ -21,7 +21,7 @@ class Config {
 
   final String? serverIp;
 
-  final int ping;
+  final int? ping;
 
   const Config({
     required this.configjson,
@@ -51,4 +51,32 @@ class Config {
       country = 'Test String',
       serverIp = 'Test String',
       ping = -1;
+
+  Config copyWith({
+    String? configjson,
+    String? importedFrom,
+    String? remark,
+    int? port,
+    String? address,
+    String? uri,
+    String? dateAdded,
+    String? id,
+    String? country,
+    bool? isSelected,
+    String? serverIp,
+    int? ping,
+  }) => Config(
+    configjson: configjson ?? this.configjson,
+    importedFrom: importedFrom ?? this.importedFrom,
+    remark: remark ?? this.remark,
+    port: port ?? this.port,
+    address: address ?? this.address,
+    uri: uri ?? this.uri,
+    dateAdded: dateAdded ?? this.dateAdded,
+    id: id ?? this.id,
+    isSelected: isSelected ?? this.isSelected,
+    country: country ?? this.country,
+    serverIp: serverIp ?? this.serverIp,
+    ping: ping ?? this.ping,
+  );
 }

@@ -3,7 +3,7 @@ import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 
 abstract class ConnectionRepo {
-  ResultFuture<bool> initialize();
+  ResultFuture<void> initialize();
   ResultFuture<void> connect(
     String config,
     String remark,
@@ -11,7 +11,8 @@ abstract class ConnectionRepo {
     List<String>? bypassSubnets,
     List<String>? blockedApps,
   );
-  void disconnect();
+  Future disconnect();
   ResultFuture<int> ping(String config);
   ValueNotifier<V2RayStatus> get connectionStatus;
+  ResultFuture<bool> requestPermission();
 }

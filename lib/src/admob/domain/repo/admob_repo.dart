@@ -6,14 +6,12 @@ abstract class AdmobRepo {
   ResultFuture<void> loadInterstitialAd(
     VoidCallback onAdLoaded,
     VoidCallback onAdFailed,
-{
-
-    required VoidCallback onAdShowedFullScreenContent,
+  );
+  ResultFuture<void> showInterstitialAd({
     required VoidCallback onAdDismissedFullScreenContent,
     required VoidCallback onAdFailedToShowFullScreenContent,
-  }
-  );
-  ResultFuture<void> showInterstitialAd();
+    required VoidCallback onAdShowedFullScreenContent,
+  });
   ResultFuture<void> showBannerAd(double width);
   ResultFuture<void> loadRewardedAd();
   ResultFuture<void> showRewardedAd();
