@@ -169,6 +169,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
   }
 
   Future<bool> _runAdmobGate(int attemptId) async {
+    return true;
     final adService = ref.read(admobAdapterProvider.notifier);
     final gateCompleter = Completer<bool>();
 

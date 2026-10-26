@@ -42,6 +42,7 @@ class AdmobAdapter extends _$AdmobAdapter {
   bool get _isV2rayStarted => !Cache.instance.isVpnDisconnected;
 
   Future<bool> init() async {
+    return false;
     if (!_isV2rayStarted) {
       debugPrint('Blocked AdMob init: V2Ray TUN has not started yet.');
       return false;
@@ -66,6 +67,7 @@ class AdmobAdapter extends _$AdmobAdapter {
   }
 
   Future<void> loadInterstitialAd(LoadInterstitialAdParams params) async {
+    return;
     if (!_isV2rayStarted) {
       debugPrint('Blocked InterstitialAd load: V2Ray TUN has not started yet.');
       params.onAdFailed();
@@ -89,6 +91,7 @@ class AdmobAdapter extends _$AdmobAdapter {
   }
 
   Future<void> showInterstitialAd(ShowInterstitialAdParams params) async {
+    return;
     if (!_isV2rayStarted) {
       params.onAdFailedToShowFullScreenContent();
       return;
@@ -106,6 +109,7 @@ class AdmobAdapter extends _$AdmobAdapter {
   }
 
   Future<void> showBannerAd(double width) async {
+    return;
     if (!_isV2rayStarted) {
       debugPrint('Blocked BannerAd load: V2Ray TUN has not started yet.');
       return;
@@ -129,6 +133,7 @@ class AdmobAdapter extends _$AdmobAdapter {
   }
 
   Future<void> loadRewardedAd() async {
+    return;
     if (!_isV2rayStarted) return;
     final ok = await init();
     if (!ok || !_isV2rayStarted) return;
@@ -145,6 +150,7 @@ class AdmobAdapter extends _$AdmobAdapter {
   }
 
   Future<void> showRewardedAd() async {
+    return;
     if (!_isV2rayStarted) return;
     state = const RewardedAdShowing();
     final result = await _showRewardedAd.call();
