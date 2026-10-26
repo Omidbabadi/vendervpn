@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,6 +34,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
     with SingleTickerProviderStateMixin {
   late final ValueNotifier<StatusUtils> _statusNotifier;
   late final AnimationController _ringController;
+  Timer? _strainCompletionTimer;
 
   @override
   void initState() {
@@ -47,6 +50,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
 
   @override
   void dispose() {
+    _strainCompletionTimer?.cancel();
     _ringController.dispose();
     _statusNotifier.dispose();
     super.dispose();
@@ -92,16 +96,30 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
     };
 
     ref.listen(connectionAdapterProvider, (p, next) {
+      _strainCompletionTimer?.cancel();
       if (next is ConnectionStateConnecting) {
         _statusNotifier.value = StatusUtils(
           texts[Status.connecting]!,
           Status.connecting,
         )..showBackButton = false;
       } else if (next is ConnectionStateConnected) {
-        _statusNotifier.value = StatusUtils(
-          texts[Status.success]!,
-          Status.success,
-        )..showBackButton = true;
+        final remaining = OrbFaceWidget.remainingStrainDuration;
+        if (remaining > Duration.zero) {
+          // Let the 3s strained visual animation finish on StatusScreen so the user
+          // clearly sees the face strain and then morph into the connected mood.
+          _strainCompletionTimer = Timer(remaining, () {
+            if (!mounted) return;
+            _statusNotifier.value = StatusUtils(
+              texts[Status.success]!,
+              Status.success,
+            )..showBackButton = true;
+          });
+        } else {
+          _statusNotifier.value = StatusUtils(
+            texts[Status.success]!,
+            Status.success,
+          )..showBackButton = true;
+        }
       } else if (next is ConnectionStateError) {
         _statusNotifier.value = StatusUtils(
           next.message.isNotEmpty ? next.message : texts[Status.error]!,
@@ -134,199 +152,242 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
             status.status == Status.loading;
         final mood = _moodForStatus(status.status);
 
-        final accentColor =
+        final targetAccentColor =
             isSuccess
-                ? Colours.orbEmerald
+                ? Colours.orbCyan
                 : isErrorOrConfigsError
                 ? Colours.orbRose
                 : Colours.orbViolet;
 
-        return Scaffold(
-          backgroundColor: scaffoldBg,
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(22, 12, 22, 24),
-              child: Column(
-                children: [
-                  // ─── Top Bar ───
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return TweenAnimationBuilder<Color?>(
+          tween: ColorTween(end: targetAccentColor),
+          duration: const Duration(milliseconds: 520),
+          curve: Curves.easeInOutCubic,
+          builder: (context, animatedAccent, _) {
+            final accentColor = animatedAccent ?? targetAccentColor;
+
+            return Scaffold(
+              backgroundColor: scaffoldBg,
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 12, 22, 24),
+                  child: Column(
                     children: [
-                      if (!isConnecting)
-                        GestureDetector(
-                          onTap: () => context.go(HomeView.path),
-                          child: Container(
-                            width: 42,
-                            height: 42,
+                      // ─── Top Bar ───
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 320),
+                            transitionBuilder:
+                                (child, anim) => ScaleTransition(
+                                  scale: anim,
+                                  child: FadeTransition(
+                                    opacity: anim,
+                                    child: child,
+                                  ),
+                                ),
+                            child:
+                                !isConnecting
+                                    ? GestureDetector(
+                                      key: const ValueKey('back_btn'),
+                                      onTap: () => context.go(HomeView.path),
+                                      child: Container(
+                                        width: 42,
+                                        height: 42,
+                                        decoration: BoxDecoration(
+                                          color: surfaceColor,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colours.subtleBorder(
+                                              context,
+                                            ),
+                                          ),
+                                          boxShadow: Colours.softCardShadow(
+                                            context,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.arrow_back_ios_new_rounded,
+                                          size: 17,
+                                          color: textColor,
+                                        ),
+                                      ),
+                                    )
+                                    : const SizedBox(
+                                      key: ValueKey('back_placeholder'),
+                                      width: 42,
+                                      height: 42,
+                                    ),
+                          ),
+
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 7,
+                            ),
                             decoration: BoxDecoration(
                               color: surfaceColor,
-                              shape: BoxShape.circle,
+                              borderRadius: BorderRadius.circular(999),
                               border: Border.all(
                                 color: Colours.subtleBorder(context),
                               ),
                               boxShadow: Colours.softCardShadow(context),
                             ),
-                            child: Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              size: 17,
-                              color: textColor,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 7,
+                                  height: 7,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: accentColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 7),
+                                Text(
+                                  'VPN State',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: textColor.withValues(alpha: 0.8),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        )
-                      else
-                        const SizedBox(width: 42, height: 42),
-
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 7,
-                        ),
-                        decoration: BoxDecoration(
-                          color: surfaceColor,
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                            color: Colours.subtleBorder(context),
-                          ),
-                          boxShadow: Colours.softCardShadow(context),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 7,
-                              height: 7,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: accentColor,
-                              ),
-                            ),
-                            const SizedBox(width: 7),
-                            Text(
-                              'VPN State',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: textColor.withValues(alpha: 0.8),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 42, height: 42),
-                    ],
-                  ),
-
-                  const Spacer(),
-
-                  // ─── Dot-Matrix Headline (Single Word) ───
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: DotMatrixText(
-                      text: _dotMatrixHeadline(status.status),
-                      dotSize: 3.4,
-                      dotSpacing: 1.5,
-                      charSpacing: 6.5,
-                      activeColor: textColor,
-                      inactiveColor: textColor.withValues(alpha: 0.08),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    status.message,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Colours.subtitleGrey,
-                    ),
-                  ),
-                  if (isConnecting) ...[
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colours.pastelAmberBg,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.info_outline_rounded,
-                            size: 15,
-                            color: Colours.pastelAmberFg,
-                          ),
-                          SizedBox(width: 6),
-                          Flexible(
-                            child: Text(
-                              'Please stay on this screen until the ad loads',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w700,
-                                color: Colours.pastelAmberFg,
-                              ),
-                            ),
-                          ),
+                          const SizedBox(width: 42, height: 42),
                         ],
                       ),
-                    ),
-                  ],
-                  const SizedBox(height: 24),
 
-                  // ─── Center Animated Orb Face + Sonar Rings ───
-                  SizedBox(
-                    width: 250,
-                    height: 250,
-                    child: AnimatedBuilder(
-                      animation: _ringController,
-                      builder: (context, child) {
-                        final p = _ringController.value;
-                        return Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Expanding sonar ring 1
-                            Container(
-                              width: 170 + (p * 75),
-                              height: 170 + (p * 75),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: accentColor.withValues(
-                                    alpha: (1.0 - p) * 0.28,
-                                  ),
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                            // Expanding sonar ring 2
-                            Container(
-                              width: 170 + (((p + 0.5) % 1.0) * 75),
-                              height: 170 + (((p + 0.5) % 1.0) * 75),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: accentColor.withValues(
-                                    alpha: (1.0 - ((p + 0.5) % 1.0)) * 0.22,
-                                  ),
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                            child!,
-                          ],
-                        );
-                      },
-                      child: OrbFaceWidget(
-                        mood: mood,
-                        size: 210,
-                        showSatellites: true,
+                      const Spacer(),
+
+                      // ─── Dot-Matrix Headline (Single Word) ───
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 380),
+                        child: FittedBox(
+                          key: ValueKey(_dotMatrixHeadline(status.status)),
+                          fit: BoxFit.scaleDown,
+                          child: DotMatrixText(
+                            text: _dotMatrixHeadline(status.status),
+                            dotSize: 3.4,
+                            dotSpacing: 1.5,
+                            charSpacing: 6.5,
+                            activeColor: textColor,
+                            inactiveColor: textColor.withValues(alpha: 0.08),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                      const SizedBox(height: 10),
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 320),
+                        child: Text(
+                          status.message,
+                          key: ValueKey(status.message),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colours.subtitleGrey,
+                          ),
+                        ),
+                      ),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 320),
+                        curve: Curves.easeInOutCubic,
+                        child:
+                            isConnecting
+                                ? Padding(
+                                  padding: const EdgeInsets.only(top: 12),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colours.pastelAmberBg,
+                                      borderRadius: BorderRadius.circular(999),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.info_outline_rounded,
+                                          size: 15,
+                                          color: Colours.pastelAmberFg,
+                                        ),
+                                        SizedBox(width: 6),
+                                        Flexible(
+                                          child: Text(
+                                            'Please stay on this screen until the ad loads',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 11.5,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colours.pastelAmberFg,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                : const SizedBox.shrink(),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // ─── Center Animated Orb Face + Sonar Rings ───
+                      SizedBox(
+                        width: 250,
+                        height: 250,
+                        child: AnimatedBuilder(
+                          animation: _ringController,
+                          builder: (context, child) {
+                            final p = _ringController.value;
+                            return Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Expanding sonar ring 1
+                                Container(
+                                  width: 170 + (p * 75),
+                                  height: 170 + (p * 75),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: accentColor.withValues(
+                                        alpha: (1.0 - p) * 0.28,
+                                      ),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                // Expanding sonar ring 2
+                                Container(
+                                  width: 170 + (((p + 0.5) % 1.0) * 75),
+                                  height: 170 + (((p + 0.5) % 1.0) * 75),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: accentColor.withValues(
+                                        alpha:
+                                            (1.0 - ((p + 0.5) % 1.0)) * 0.22,
+                                      ),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                child!,
+                              ],
+                            );
+                          },
+                          child: OrbFaceWidget(
+                            mood: mood,
+                            size: 210,
+                            showSatellites: true,
+                          ),
+                        ),
+                      ),
 
                   const Spacer(),
 
@@ -506,32 +567,34 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                         ),
                       ],
                     )
-                  else if (!isConnecting)
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: accentColor,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(999),
+                      else if (!isConnecting)
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: accentColor,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                            ),
+                            onPressed: () => context.go(HomeView.path),
+                            child: const Text(
+                              'Continue to Home',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
-                        onPressed: () => context.go(HomeView.path),
-                        child: const Text(
-                          'Continue to Home',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
