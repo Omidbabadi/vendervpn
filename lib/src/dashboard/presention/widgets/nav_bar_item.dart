@@ -17,34 +17,90 @@ class NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Colours.classicAdabtiveTextColor(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // High-contrast dark pill in light mode, sleek elevated pill in dark mode
+    final activePillColor =
+        isDark ? const Color(0xFF222228) : const Color(0xFF141416);
+    final inactiveCircleColor =
+        isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.black.withValues(alpha: 0.04);
+    final inactiveIconColor = Colours.classicAdabtiveTextColor(context);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 220),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+        height: 46,
+        padding: EdgeInsets.symmetric(horizontal: selected ? 14 : 13),
         decoration: BoxDecoration(
-          color: selected ? Colours.softChipBg(context) : Colors.transparent,
+          color: selected ? activePillColor : inactiveCircleColor,
           borderRadius: BorderRadius.circular(999),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 18,
-              color: selected ? Colours.orbEmerald : Colours.subtitleGrey,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12.5,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                color: selected ? textColor : Colours.subtitleGrey,
+            // Glowing gradient orb when selected (like the "Ask Pulse" icon), plain icon when unselected
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              width: selected ? 28 : 20,
+              height: selected ? 28 : 20,
+              decoration:
+                  selected
+                      ? BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFFF6FD8), // Pink/Magenta
+                            Color(0xFF7B42F6), // Violet (or Colours.orbViolet)
+                            Color(
+                              0xFF42E695,
+                            ), // Emerald accent (or Colours.orbEmerald)
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colours.orbViolet.withValues(alpha: 0.45),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      )
+                      : null,
+              child: Icon(
+                icon,
+                size: selected ? 15 : 20,
+                color: selected ? Colors.white : inactiveIconColor,
               ),
+            ),
+
+            // Animated label that expands only for the selected item
+            AnimatedSize(
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOutCubic,
+              child:
+                  selected
+                      ? Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 4),
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                      )
+                      : const SizedBox.shrink(),
             ),
           ],
         ),

@@ -1,89 +1,125 @@
 {
-    "language": "تغییر زبان",
-    
-    "change_language_title": "لطفا زبان خود را انتخاب کنید ",
-
-    "confirm": "تایید",
-
-    "cancel": "لغو",
-
-    "delete_config_content" : "این کانفیگ برای همیشه پاک خواهد شد.آیا مطمئن هستید؟",
-
-    "permission": "مجوز داده نشد",
-    
-     "connect":"اتصال",
-    
-     "serverdelay":"تست سرور",
-     
-     "wait":"صبر کنید...",
-    
-     "import_from_clipboard":"اصافه کردن از کلیپبرد ",
-
-     "import_from_qrcode":"qrcode اضافه کردن از",
-    
-     "vpnstatus":"وضعیت اتصال :",
-    
-     "vpnstatus_connect":"متصل",
-    
-     "vpnstatus_not_connect":"متصل نیست",
-     
-     "traffic_information":"اتصلاعات اتصال :",
-     
-     "speed":"سرعت :",
-     
-     "traffic":"ترافیک :",
-     
-     "actions":"اعمال :",
-     
-     "disconnect":"قطع اتصال",
-     
-     "ping":"تست سرور",
-     
-     "error":"خطا",
-     
-     "succesful":"موفق",
-
-     "delete" : "حذف",
-
-     "delete_selected_config" : "امکان حذف این کانفیگ وجود ندارد",
-
-     "remove": "حذف شد",
-
-     "import_sub":"گروه اشتراک اضافه شد" ,
-    
-     "import_sub_link":"اضافه کردن گروه اشتراک",
-    
-     "subscription_settings":"تنظیمات گروه اشتراک",
-    
-     "no_subscription_found":"کانفیگی یافت نشد",
-
-     "update_subscription": "بروزرسانی گروه اشنراک",
-     
-     "server_issue": "خطای سرور",
-
-     "get_servers": "بروزرسانی سرور ها",
-     
-     "founded_servers": "بروزرسانی انجام شد",
-
-     "change_theme": "تغییر پوسته",
-
-     "next": "ادامه",
-
-     "select_config": "لطفا ابتدا یک سرور را انتخاب کنید",
-
-     "loading_title": "در حال بارگذاری...",
-
-     "loading_content": "در حال بارگذاری...لطفا صبر کنید",
-
-     "connecting": "در حال اتصال...",
-
-     "idle": "آماده",
-
-     "failed_to_load_configs": "خطا در دریافت کانفیگ‌ها",
-
-     "server": "سرور: ",
-
-     "ip_label": "آی‌پی: ",
-
-     "retry": "تلاش مجدد"
-    }
+  "@@locale": "fa",
+  "language": "تغییر زبان",
+  "change_language_title": "لطفاً زبان مورد نظر خود را انتخاب کنید",
+  "confirm": "تایید",
+  "cancel": "لغو",
+  "delete_config_content": "این کانفیگ برای همیشه پاک خواهد شد. آیا مطمئن هستید؟",
+  "permission": "مجوز داده نشد",
+  "connect": "اتصال",
+  "serverdelay": "تست سرور",
+  "wait": "صبر کنید...",
+  "import_from_clipboard": "افزودن از کلیپ‌بورد",
+  "import_from_qrcode": "افزودن با کد QR",
+  "vpnstatus": "وضعیت اتصال :",
+  "vpnstatus_connect": "متصل",
+  "vpnstatus_not_connect": "متصل نیست",
+  "traffic_information": "اطلاعات اتصال :",
+  "speed": "سرعت :",
+  "traffic": "ترافیک :",
+  "actions": "عملیات :",
+  "disconnect": "قطع اتصال",
+  "ping": "تست سرور",
+  "error": "خطا",
+  "succesful": "اتصال برقرار شد",
+  "delete": "حذف",
+  "delete_selected_config": "امکان حذف این کانفیگ وجود ندارد",
+  "remove": "حذف شد",
+  "import_sub": "اشتراک اضافه شد",
+  "import_sub_link": "افزودن از لینک اشتراک",
+  "subscription_settings": "تنظیمات گروه اشتراک",
+  "no_subscription_found": "کانفیگی یافت نشد",
+  "update_subscription": "بروزرسانی اشتراک‌ها",
+  "server_issue": "خطای سرور",
+  "get_servers": "دریافت سرورها",
+  "founded_servers": "سرورها بروزرسانی شدند",
+  "change_theme": "تغییر پوسته",
+  "next": "ادامه",
+  "select_config": "لطفاً ابتدا یک سرور را انتخاب کنید",
+  "loading_title": "در حال بارگذاری...",
+  "loading_content": "لطفاً چند لحظه صبر کنید",
+  "connecting": "در حال اتصال...",
+  "idle": "آماده اتصال",
+  "failed_to_load_configs": "خطا در دریافت کانفیگ‌ها",
+  "server": "سرور: ",
+  "ip_label": "آی‌پی: ",
+  "retry": "تلاش مجدد",
+  "nav_home": "خانه",
+  "nav_nodes": "سرورها",
+  "nav_settings": "تنظیمات",
+  "session_duration": "مدت زمان اتصال",
+  "node_latency_ms": "پینگ سرور (ms)",
+  "available_nodes": "سرورهای موجود",
+  "resolving_vpn_location": "در حال شناسایی موقعیت VPN...",
+  "connected_tunnel": "تونل متصل",
+  "your_location_prefix": "موقعیت شما",
+  "detecting_location": "در حال شناسایی موقعیت...",
+  "connected_ip_label": "آی‌پی متصل",
+  "resolving_endpoint": "در حال دریافت آی‌پی سرور...",
+  "your_ip_label": "آی‌پی شما",
+  "resolving": "در حال بررسی...",
+  "unknown": "نامشخص",
+  "real_ip_label": "واقعی",
+  "connected_route_label": "متصل",
+  "target_node_label": "سرور انتخابی",
+  "none_label": "هیچ‌کدام",
+  "switch_node": "تغییر",
+  "vpn_state_badge": "وضعیت VPN",
+  "establishing_tunnel": "در حال برقراری تونل...",
+  "stay_until_ad_loads": "لطفاً تا نمایش تبلیغ در این صفحه بمانید",
+  "local_nodes_btn": "سرورهای محلی",
+  "continue_to_home": "بازگشت به خانه",
+  "preferences_subtitle": "شخصی‌سازی",
+  "settings_title": "تنظیمات",
+  "theme_appearance": "پوسته برنامه",
+  "theme_light": "روشن",
+  "theme_dark": "تیره",
+  "theme_system": "سیستم",
+  "app_language": "زبان برنامه",
+  "tunnel_endpoints_subtitle": "نقاط اتصال تونل",
+  "nodes_title": "سرورها",
+  "ping_all": "تست پینگ همه",
+  "cloud_nodes_tab": "سرورهای ابری",
+  "local_nodes_tab": "سرورهای محلی",
+  "clipboard_action": "کلیپ‌بورد",
+  "qr_code_action": "کد QR",
+  "sub_url_action": "لینک اشتراک",
+  "no_cloud_nodes": "هنوز سرور ابری دریافت نشده است",
+  "no_local_nodes": "هنوز سرور محلی اضافه نشده است",
+  "no_cloud_nodes_hint": "برای دریافت سرورها روی دکمه همگام‌سازی بالا بزنید",
+  "no_local_nodes_hint": "از طریق کلیپ‌بورد، کد QR یا لینک اشتراک سرور اضافه کنید",
+  "clipboard_empty_title": "کلیپ‌بورد خالی است",
+  "clipboard_empty_msg": "ابتدا یک لینک V2Ray یا آدرس اشتراک را کپی کنید.",
+  "nodes_imported_title": "سرورها اضافه شدند",
+  "nodes_imported_msg": "سرور(های) V2Ray از کلیپ‌بورد اضافه شد.",
+  "invalid_format_title": "فرمت نامعتبر",
+  "invalid_format_msg": "لینک معتبری از نوع vmess، vless، trojan، ss یا hy2 یافت نشد.",
+  "import_failed_title": "خطا در افزودن",
+  "add_subscription_url": "افزودن لینک اشتراک",
+  "auto_syncs_subtitle": "همگام‌سازی خودکار کانفیگ‌های V2Ray طبق زمان‌بندی شما",
+  "subscription_name_label": "نام اشتراک",
+  "subscription_name_hint": "مثلاً سرورهای ویژه اروپا",
+  "subscription_url_label": "لینک اشتراک (URL)",
+  "auto_update_interval": "بازه بروزرسانی خودکار",
+  "manual_interval": "دستی",
+  "every_n_hours": "هر",
+  "save_and_fetch_configs": "ذخیره و دریافت کانفیگ‌ها",
+  "subscription_synced_title": "اشتراک همگام‌سازی شد",
+  "no_nodes_found_title": "سروری یافت نشد",
+  "no_nodes_found_msg": "هیچ سرور معتبر V2Ray از این لینک استخراج نشد.",
+  "subscription_error_title": "خطای اشتراک",
+  "qr_node_added_title": "سرور QR اضافه شد",
+  "qr_node_added_msg": "سرور(های) اسکن شده به سرورهای محلی اضافه شد.",
+  "invalid_qr_title": "کد QR نامعتبر",
+  "invalid_qr_msg": "کد اسکن شده حاوی لینک معتبر V2Ray یا اشتراک نبود.",
+  "qr_scan_error_title": "خطا در اسکن QR",
+  "scan_v2ray_qr_title": "اسکن کد QR سرور",
+  "scan_v2ray_qr_subtitle": "دوربین را مقابل کد QR کانفیگ یا اشتراک قرار دهید",
+  "direct_imports": "سرورهای مستقیم",
+  "subscription_updated_title": "اشتراک بروزرسانی شد",
+  "sync_failed_title": "خطا در همگام‌سازی",
+  "subscription_removed_title": "اشتراک حذف شد",
+  "no_nodes_in_sub": "سروری در این اشتراک نیست. برای دریافت، دکمه بروزرسانی را بزنید.",
+  "tunnel_active_title": "تونل فعال است",
+  "tunnel_active_msg": "پیش از تغییر سرور، ابتدا اتصال فعلی را قطع کنید."
+}

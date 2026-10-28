@@ -1,4 +1,5 @@
 {
+  "@@locale": "en",
   "language": "Change Language",
   "@language": {
     "description": "The current Language"
@@ -99,7 +100,7 @@
   "@remove": {
     "description": "remove config"
   },
-  "import_sub": "Subcription Imported",
+  "import_sub": "Subscription Imported",
   "@import_sub": {
     "description": "import configs from subs"
   },
@@ -119,40 +120,34 @@
   "@update_subscription": {
     "description": "Update Subscriptions"
   },
-   "server_issue": "Server Issue",
+  "server_issue": "Server Issue",
   "@server_issue": {
     "description": "Server Issue"
   },
-
-   "get_servers": "fetch servers",
+  "get_servers": "fetch servers",
   "@get_servers": {
     "description": "get servers from backend"
   },
-
-   "founded_servers": "Servers Found",
+  "founded_servers": "Servers Found",
   "@founded_servers": {
     "description": "numbers of server from server"
   },
-
   "change_theme": "Toggle theme",
   "@change_theme": {
     "description": "toggle dark/light theme"
   },
-
   "next": "Next",
   "@next": {
     "description": "next button"
   },
-  "select_config": "Please Select A Configs First",
+  "select_config": "Please Select A Config First",
   "@select_config": {
     "description": "click on connect button without selecting a config"
   },
-
   "loading_title": "Loading...",
   "@loading_title": {
     "description": "text for loading state title"
   },
-
   "loading_content": "Please Wait a Moment",
   "@loading_content": {
     "description": "text for loading state content"
@@ -180,5 +175,83 @@
   "retry": "Retry",
   "@retry": {
     "description": "Retry button label"
-  }
+  },
+  "nav_home": "Home",
+  "nav_nodes": "Nodes",
+  "nav_settings": "Setting",
+  "session_duration": "Session Duration",
+  "node_latency_ms": "Node Latency (ms)",
+  "available_nodes": "Available Nodes",
+  "resolving_vpn_location": "Resolving VPN Location...",
+  "connected_tunnel": "Connected Tunnel",
+  "your_location_prefix": "Your Location",
+  "detecting_location": "Detecting Location...",
+  "connected_ip_label": "Connected IP",
+  "resolving_endpoint": "Resolving endpoint...",
+  "your_ip_label": "Your IP",
+  "resolving": "Resolving...",
+  "unknown": "Unknown",
+  "real_ip_label": "Real",
+  "connected_route_label": "Connected",
+  "target_node_label": "Target Node",
+  "none_label": "None",
+  "switch_node": "Switch",
+  "vpn_state_badge": "VPN State",
+  "establishing_tunnel": "Establishing Tunnel...",
+  "stay_until_ad_loads": "Please stay on this screen until the ad loads",
+  "local_nodes_btn": "Local Nodes",
+  "continue_to_home": "Continue to Home",
+  "preferences_subtitle": "Preferences",
+  "settings_title": "Settings",
+  "theme_appearance": "Theme Appearance",
+  "theme_light": "Light",
+  "theme_dark": "Dark",
+  "theme_system": "System",
+  "app_language": "App Language",
+  "tunnel_endpoints_subtitle": "Tunnel Endpoints",
+  "nodes_title": "Nodes",
+  "ping_all": "Ping All",
+  "cloud_nodes_tab": "Cloud Nodes",
+  "local_nodes_tab": "Local Nodes",
+  "clipboard_action": "Clipboard",
+  "qr_code_action": "QR Code",
+  "sub_url_action": "Sub URL",
+  "no_cloud_nodes": "No cloud nodes synced yet",
+  "no_local_nodes": "No local nodes imported yet",
+  "no_cloud_nodes_hint": "Tap the sync icon above to fetch Appwrite nodes",
+  "no_local_nodes_hint": "Import from Clipboard, QR Code, or Subscription URL",
+  "clipboard_empty_title": "Clipboard Empty",
+  "clipboard_empty_msg": "Copy a V2Ray link or subscription URL first.",
+  "nodes_imported_title": "Nodes Imported",
+  "nodes_imported_msg": "Added V2Ray node(s) from clipboard.",
+  "invalid_format_title": "Invalid Format",
+  "invalid_format_msg": "No valid vmess://, vless://, trojan://, ss://, or hy2:// links found.",
+  "import_failed_title": "Import Failed",
+  "add_subscription_url": "Add Subscription URL",
+  "auto_syncs_subtitle": "Auto-syncs V2Ray configs on your chosen schedule",
+  "subscription_name_label": "Subscription Name",
+  "subscription_name_hint": "e.g. Premium EU Nodes",
+  "subscription_url_label": "Subscription URL",
+  "auto_update_interval": "Auto-Update Interval",
+  "manual_interval": "Manual",
+  "every_n_hours": "Every",
+  "save_and_fetch_configs": "Save & Fetch Configs",
+  "subscription_synced_title": "Subscription Synced",
+  "no_nodes_found_title": "No Nodes Found",
+  "no_nodes_found_msg": "Could not parse any V2Ray nodes from that URL.",
+  "subscription_error_title": "Subscription Error",
+  "qr_node_added_title": "QR Node Added",
+  "qr_node_added_msg": "Scanned & imported V2Ray node(s) into Local Nodes.",
+  "invalid_qr_title": "Invalid QR Code",
+  "invalid_qr_msg": "Scanned QR code did not contain a valid V2Ray URI or subscription.",
+  "qr_scan_error_title": "QR Scan Error",
+  "scan_v2ray_qr_title": "Scan V2Ray QR Code",
+  "scan_v2ray_qr_subtitle": "Point camera at a vmess, vless, trojan, ss, or sub QR",
+  "direct_imports": "Direct Imports",
+  "subscription_updated_title": "Subscription Updated",
+  "sync_failed_title": "Sync Failed",
+  "subscription_removed_title": "Subscription Removed",
+  "no_nodes_in_sub": "No nodes in this subscription. Tap refresh to sync.",
+  "tunnel_active_title": "Tunnel Active",
+  "tunnel_active_msg": "Disconnect current session before switching nodes."
 }

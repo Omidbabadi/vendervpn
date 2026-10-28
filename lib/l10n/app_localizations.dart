@@ -251,7 +251,7 @@ abstract class AppLocalizations {
   /// import configs from subs
   ///
   /// In en, this message translates to:
-  /// **'Subcription Imported'**
+  /// **'Subscription Imported'**
   String get import_sub;
 
   /// imported configs from subs successful
@@ -311,7 +311,7 @@ abstract class AppLocalizations {
   /// click on connect button without selecting a config
   ///
   /// In en, this message translates to:
-  /// **'Please Select A Configs First'**
+  /// **'Please Select A Config First'**
   String get select_config;
 
   /// text for loading state title
@@ -361,6 +361,474 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// No description provided for @nav_home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get nav_home;
+
+  /// No description provided for @nav_nodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Nodes'**
+  String get nav_nodes;
+
+  /// No description provided for @nav_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting'**
+  String get nav_settings;
+
+  /// No description provided for @session_duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Duration'**
+  String get session_duration;
+
+  /// No description provided for @node_latency_ms.
+  ///
+  /// In en, this message translates to:
+  /// **'Node Latency (ms)'**
+  String get node_latency_ms;
+
+  /// No description provided for @available_nodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Nodes'**
+  String get available_nodes;
+
+  /// No description provided for @resolving_vpn_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolving VPN Location...'**
+  String get resolving_vpn_location;
+
+  /// No description provided for @connected_tunnel.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected Tunnel'**
+  String get connected_tunnel;
+
+  /// No description provided for @your_location_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Location'**
+  String get your_location_prefix;
+
+  /// No description provided for @detecting_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Detecting Location...'**
+  String get detecting_location;
+
+  /// No description provided for @connected_ip_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected IP'**
+  String get connected_ip_label;
+
+  /// No description provided for @resolving_endpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolving endpoint...'**
+  String get resolving_endpoint;
+
+  /// No description provided for @your_ip_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Your IP'**
+  String get your_ip_label;
+
+  /// No description provided for @resolving.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolving...'**
+  String get resolving;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// No description provided for @real_ip_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Real'**
+  String get real_ip_label;
+
+  /// No description provided for @connected_route_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connected_route_label;
+
+  /// No description provided for @target_node_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Node'**
+  String get target_node_label;
+
+  /// No description provided for @none_label.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get none_label;
+
+  /// No description provided for @switch_node.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch'**
+  String get switch_node;
+
+  /// No description provided for @vpn_state_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN State'**
+  String get vpn_state_badge;
+
+  /// No description provided for @establishing_tunnel.
+  ///
+  /// In en, this message translates to:
+  /// **'Establishing Tunnel...'**
+  String get establishing_tunnel;
+
+  /// No description provided for @stay_until_ad_loads.
+  ///
+  /// In en, this message translates to:
+  /// **'Please stay on this screen until the ad loads'**
+  String get stay_until_ad_loads;
+
+  /// No description provided for @local_nodes_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Nodes'**
+  String get local_nodes_btn;
+
+  /// No description provided for @continue_to_home.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Home'**
+  String get continue_to_home;
+
+  /// No description provided for @preferences_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences_subtitle;
+
+  /// No description provided for @settings_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings_title;
+
+  /// No description provided for @theme_appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Appearance'**
+  String get theme_appearance;
+
+  /// No description provided for @theme_light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get theme_light;
+
+  /// No description provided for @theme_dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get theme_dark;
+
+  /// No description provided for @theme_system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get theme_system;
+
+  /// No description provided for @app_language.
+  ///
+  /// In en, this message translates to:
+  /// **'App Language'**
+  String get app_language;
+
+  /// No description provided for @tunnel_endpoints_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunnel Endpoints'**
+  String get tunnel_endpoints_subtitle;
+
+  /// No description provided for @nodes_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Nodes'**
+  String get nodes_title;
+
+  /// No description provided for @ping_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Ping All'**
+  String get ping_all;
+
+  /// No description provided for @cloud_nodes_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Nodes'**
+  String get cloud_nodes_tab;
+
+  /// No description provided for @local_nodes_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Nodes'**
+  String get local_nodes_tab;
+
+  /// No description provided for @clipboard_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Clipboard'**
+  String get clipboard_action;
+
+  /// No description provided for @qr_code_action.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code'**
+  String get qr_code_action;
+
+  /// No description provided for @sub_url_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub URL'**
+  String get sub_url_action;
+
+  /// No description provided for @no_cloud_nodes.
+  ///
+  /// In en, this message translates to:
+  /// **'No cloud nodes synced yet'**
+  String get no_cloud_nodes;
+
+  /// No description provided for @no_local_nodes.
+  ///
+  /// In en, this message translates to:
+  /// **'No local nodes imported yet'**
+  String get no_local_nodes;
+
+  /// No description provided for @no_cloud_nodes_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the sync icon above to fetch Appwrite nodes'**
+  String get no_cloud_nodes_hint;
+
+  /// No description provided for @no_local_nodes_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from Clipboard, QR Code, or Subscription URL'**
+  String get no_local_nodes_hint;
+
+  /// No description provided for @clipboard_empty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Clipboard Empty'**
+  String get clipboard_empty_title;
+
+  /// No description provided for @clipboard_empty_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy a V2Ray link or subscription URL first.'**
+  String get clipboard_empty_msg;
+
+  /// No description provided for @nodes_imported_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Nodes Imported'**
+  String get nodes_imported_title;
+
+  /// No description provided for @nodes_imported_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Added V2Ray node(s) from clipboard.'**
+  String get nodes_imported_msg;
+
+  /// No description provided for @invalid_format_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Format'**
+  String get invalid_format_title;
+
+  /// No description provided for @invalid_format_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'No valid vmess://, vless://, trojan://, ss://, or hy2:// links found.'**
+  String get invalid_format_msg;
+
+  /// No description provided for @import_failed_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Failed'**
+  String get import_failed_title;
+
+  /// No description provided for @add_subscription_url.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Subscription URL'**
+  String get add_subscription_url;
+
+  /// No description provided for @auto_syncs_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-syncs V2Ray configs on your chosen schedule'**
+  String get auto_syncs_subtitle;
+
+  /// No description provided for @subscription_name_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Name'**
+  String get subscription_name_label;
+
+  /// No description provided for @subscription_name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Premium EU Nodes'**
+  String get subscription_name_hint;
+
+  /// No description provided for @subscription_url_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription URL'**
+  String get subscription_url_label;
+
+  /// No description provided for @auto_update_interval.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Update Interval'**
+  String get auto_update_interval;
+
+  /// No description provided for @manual_interval.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get manual_interval;
+
+  /// No description provided for @every_n_hours.
+  ///
+  /// In en, this message translates to:
+  /// **'Every'**
+  String get every_n_hours;
+
+  /// No description provided for @save_and_fetch_configs.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Fetch Configs'**
+  String get save_and_fetch_configs;
+
+  /// No description provided for @subscription_synced_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Synced'**
+  String get subscription_synced_title;
+
+  /// No description provided for @no_nodes_found_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No Nodes Found'**
+  String get no_nodes_found_title;
+
+  /// No description provided for @no_nodes_found_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not parse any V2Ray nodes from that URL.'**
+  String get no_nodes_found_msg;
+
+  /// No description provided for @subscription_error_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Error'**
+  String get subscription_error_title;
+
+  /// No description provided for @qr_node_added_title.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Node Added'**
+  String get qr_node_added_title;
+
+  /// No description provided for @qr_node_added_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned & imported V2Ray node(s) into Local Nodes.'**
+  String get qr_node_added_msg;
+
+  /// No description provided for @invalid_qr_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid QR Code'**
+  String get invalid_qr_title;
+
+  /// No description provided for @invalid_qr_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned QR code did not contain a valid V2Ray URI or subscription.'**
+  String get invalid_qr_msg;
+
+  /// No description provided for @qr_scan_error_title.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Scan Error'**
+  String get qr_scan_error_title;
+
+  /// No description provided for @scan_v2ray_qr_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan V2Ray QR Code'**
+  String get scan_v2ray_qr_title;
+
+  /// No description provided for @scan_v2ray_qr_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Point camera at a vmess, vless, trojan, ss, or sub QR'**
+  String get scan_v2ray_qr_subtitle;
+
+  /// No description provided for @direct_imports.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct Imports'**
+  String get direct_imports;
+
+  /// No description provided for @subscription_updated_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Updated'**
+  String get subscription_updated_title;
+
+  /// No description provided for @sync_failed_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Failed'**
+  String get sync_failed_title;
+
+  /// No description provided for @subscription_removed_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Removed'**
+  String get subscription_removed_title;
+
+  /// No description provided for @no_nodes_in_sub.
+  ///
+  /// In en, this message translates to:
+  /// **'No nodes in this subscription. Tap refresh to sync.'**
+  String get no_nodes_in_sub;
+
+  /// No description provided for @tunnel_active_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunnel Active'**
+  String get tunnel_active_title;
+
+  /// No description provided for @tunnel_active_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect current session before switching nodes.'**
+  String get tunnel_active_msg;
 }
 
 class _AppLocalizationsDelegate
