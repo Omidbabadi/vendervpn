@@ -6,6 +6,7 @@ import 'package:vendervpn/core/common/app/riverpod/current_locale.dart';
 import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 
 class SettingsView extends ConsumerWidget {
   const SettingsView({super.key});
@@ -18,6 +19,7 @@ class SettingsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currentTheme = ref.watch(currentThemeProvider);
     final currentLocale = ref.watch(currentLocaleProvider);
 
@@ -31,9 +33,9 @@ class SettingsView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header
-          const Text(
-            'Preferences',
-            style: TextStyle(
+          Text(
+            l10n.preferences_subtitle,
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Colours.subtitleGrey,
@@ -41,7 +43,7 @@ class SettingsView extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Settings',
+            l10n.settings_title,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w800,
@@ -79,7 +81,7 @@ class SettingsView extends ConsumerWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Theme Appearance',
+                      l10n.theme_appearance,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -99,7 +101,7 @@ class SettingsView extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: _OptionPill(
-                          label: 'Light',
+                          label: l10n.theme_light,
                           icon: Icons.light_mode_rounded,
                           selected: currentTheme == ThemeMode.light,
                           onTap: () => _setTheme(ThemeMode.light),
@@ -107,7 +109,7 @@ class SettingsView extends ConsumerWidget {
                       ),
                       Expanded(
                         child: _OptionPill(
-                          label: 'Dark',
+                          label: l10n.theme_dark,
                           icon: Icons.dark_mode_rounded,
                           selected: currentTheme == ThemeMode.dark,
                           onTap: () => _setTheme(ThemeMode.dark),
@@ -115,7 +117,7 @@ class SettingsView extends ConsumerWidget {
                       ),
                       Expanded(
                         child: _OptionPill(
-                          label: 'System',
+                          label: l10n.theme_system,
                           icon: Icons.auto_awesome_rounded,
                           selected: currentTheme == ThemeMode.system,
                           onTap: () => _setTheme(ThemeMode.system),
@@ -157,7 +159,7 @@ class SettingsView extends ConsumerWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'App Language',
+                      l10n.app_language,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,

@@ -6,6 +6,7 @@ import '../../../../../core/common/app/riverpod/local_configs_list.dart';
 import '../../../../../core/common/entities/config.dart';
 import '../../../../../core/res/styles/colors.dart';
 import '../../../../../core/utils/core_utils.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../home/presentation/views/widgets/config_tile.dart';
 
 class SubscriptionExpansionCard extends ConsumerWidget {
@@ -32,13 +33,14 @@ class SubscriptionExpansionCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final isImporting = ref.watch(nodesViewUiStateProvider).isImporting;
     final intervalLabel =
         subscription != null
             ? (subscription!.intervalHours > 0
-                ? 'Every ${subscription!.intervalHours}h'
-                : 'Manual')
-            : 'Sub URL';
+                ? '${l10n.every_n_hours} ${subscription!.intervalHours}h'
+                : l10n.manual_interval)
+            : l10n.sub_url_action;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
@@ -122,7 +124,7 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                         Text(
                           subscription != null
                               ? '$intervalLabel • ${subscription!.url}'
-                              : '${nodes.length} node(s) from subscription',
+                              : '${nodes.length} • ${l10n.sub_url_action}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -150,16 +152,15 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                           CoreUtils.showSnackBar(
                             context,
                             false,
-                            title: 'Subscription Updated',
-                            message:
-                                'Synced $count node(s) from "${subscription!.name}".',
+                            title: l10n.subscription_updated_title,
+                            message: '"${subscription!.name}" ($count)',
                           );
                         } catch (e) {
                           if (!context.mounted) return;
                           CoreUtils.showSnackBar(
                             context,
                             true,
-                            title: 'Sync Failed',
+                            title: l10n.sync_failed_title,
                             message: e.toString(),
                           );
                         } finally {
@@ -193,9 +194,8 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                         CoreUtils.showSnackBar(
                           context,
                           false,
-                          title: 'Subscription Removed',
-                          message:
-                              'Removed "${subscription!.name}" and its nodes.',
+                          title: l10n.subscription_removed_title,
+                          message: '"${subscription!.name}"',
                         );
                       },
                       child: Container(
@@ -249,11 +249,11 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                           ),
                           const SizedBox(height: 10),
                           if (nodes.isEmpty)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Text(
-                                'No nodes in this subscription. Tap refresh to sync.',
-                                style: TextStyle(
+                                l10n.no_nodes_in_sub,
+                                style: const TextStyle(
                                   fontSize: 12,
                                   color: Colours.subtitleGrey,
                                 ),

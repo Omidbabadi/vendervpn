@@ -11,6 +11,7 @@ import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 
 class ConfigTile extends ConsumerWidget {
@@ -57,6 +58,7 @@ class ConfigTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedConfig = ref.watch(currentConfigProvider);
     final isSelected = selectedConfig?.id == config.id;
     final isPinging = ref.watch(pingingNodeIdsProvider).contains(config.id);
@@ -72,8 +74,8 @@ class ConfigTile extends ConsumerWidget {
           CoreUtils.showSnackBar(
             context,
             true,
-            title: 'Tunnel Active',
-            message: 'Disconnect current session before switching nodes.',
+            title: l10n.tunnel_active_title,
+            message: l10n.tunnel_active_msg,
           );
           return;
         }

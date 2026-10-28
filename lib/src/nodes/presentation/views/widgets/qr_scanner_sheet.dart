@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 
 class QrScannerSheet extends StatefulWidget {
   const QrScannerSheet({super.key});
@@ -51,6 +52,7 @@ class _QrScannerSheetState extends State<QrScannerSheet>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final surfaceColor = Colours.cardSurface(context);
     final textColor = Colours.classicAdabtiveTextColor(context);
 
@@ -75,29 +77,31 @@ class _QrScannerSheetState extends State<QrScannerSheet>
           // Top Header + Torch & Camera Flip Controls
           Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Scan V2Ray QR Code',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      color: textColor,
-                      letterSpacing: -0.3,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.scan_v2ray_qr_title,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: textColor,
+                        letterSpacing: -0.3,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  const Text(
-                    'Point camera at a vmess, vless, trojan, ss, or sub QR',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      color: Colours.subtitleGrey,
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n.scan_v2ray_qr_subtitle,
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        color: Colours.subtitleGrey,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               IconButton(
                 onPressed: () => _scannerController.toggleTorch(),
                 style: IconButton.styleFrom(

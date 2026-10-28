@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/common/app/riverpod/local_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/config_tile.dart';
 import 'package:vendervpn/src/nodes/presentation/views/widgets/subscription_expansion_card.dart';
 
 class LocalNodesGroupedList extends ConsumerWidget {
   const LocalNodesGroupedList({
+    super.key,
     required this.localConfigs,
     required this.subscriptions,
     required this.isConnected,
@@ -21,6 +23,7 @@ class LocalNodesGroupedList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final textColor = Colours.classicAdabtiveTextColor(context);
     final surfaceColor = Colours.cardSurface(context);
 
@@ -61,7 +64,7 @@ class LocalNodesGroupedList extends ConsumerWidget {
         final name = entry.key.substring(4);
         groupEntries.add((
           key: entry.key,
-          name: name.isNotEmpty ? name : 'Subscription',
+          name: name.isNotEmpty ? name : l10n.sub_url_action,
           sub: null,
           nodes: entry.value,
         ));
@@ -99,7 +102,7 @@ class LocalNodesGroupedList extends ConsumerWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Direct Imports (${directNodes.length})',
+                    '${l10n.direct_imports} (${directNodes.length})',
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,

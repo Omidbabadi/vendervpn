@@ -36,7 +36,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       final vpnState = cache.vpnState;
       // Ensure local configs are initialized on startup
       final localConfigs = ref.read(localConfigsListProvider);
-      print(vpnState);
       if (vpnState == 'CONNECTED') {
         Cache.instance.setVpnDisconnected(false);
         final cachedConfigs = cache.configs;

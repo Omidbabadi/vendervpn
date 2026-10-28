@@ -7,6 +7,7 @@ import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/config_tile.dart';
@@ -20,6 +21,7 @@ class NodesView extends ConsumerWidget {
   static const path = '/nodes';
 
   Future<void> _importFromClipboard(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final uiState = ref.read(nodesViewUiStateProvider);
     if (uiState.isImporting) return;
     ref.read(nodesViewUiStateProvider.notifier).setImporting(true);
@@ -31,8 +33,8 @@ class NodesView extends ConsumerWidget {
         CoreUtils.showSnackBar(
           context,
           true,
-          title: 'Clipboard Empty',
-          message: 'Copy a V2Ray link or subscription URL first.',
+          title: l10n.clipboard_empty_title,
+          message: l10n.clipboard_empty_msg,
         );
         return;
       }
@@ -45,16 +47,15 @@ class NodesView extends ConsumerWidget {
         CoreUtils.showSnackBar(
           context,
           false,
-          title: 'Nodes Imported',
-          message: 'Added $count V2Ray node(s) from clipboard.',
+          title: l10n.nodes_imported_title,
+          message: '${l10n.nodes_imported_msg} ($count)',
         );
       } else {
         CoreUtils.showSnackBar(
           context,
           true,
-          title: 'Invalid Format',
-          message:
-              'No valid vmess://, vless://, trojan://, ss://, or hy2:// links found.',
+          title: l10n.invalid_format_title,
+          message: l10n.invalid_format_msg,
         );
       }
     } catch (e) {
@@ -62,7 +63,7 @@ class NodesView extends ConsumerWidget {
       CoreUtils.showSnackBar(
         context,
         true,
-        title: 'Import Failed',
+        title: l10n.import_failed_title,
         message: e.toString(),
       );
     } finally {
@@ -74,6 +75,7 @@ class NodesView extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final urlController = TextEditingController();
     ref.read(nodesViewUiStateProvider.notifier).setSubIntervalHours(6);
@@ -89,6 +91,7 @@ class NodesView extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
+        final modalL10n = AppLocalizations.of(ctx)!;
         return Consumer(
           builder: (ctx, modalRef, _) {
             final selectedIntervalHours =
@@ -137,7 +140,7 @@ class NodesView extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Add Subscription URL',
+                                modalL10n.add_subscription_url,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -145,9 +148,9 @@ class NodesView extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(height: 2),
-                              const Text(
-                                'Auto-syncs V2Ray configs on your chosen schedule',
-                                style: TextStyle(
+                              Text(
+                                modalL10n.auto_syncs_subtitle,
+                                style: const TextStyle(
                                   fontSize: 11.5,
                                   color: Colours.subtitleGrey,
                                 ),
@@ -165,12 +168,12 @@ class NodesView extends ConsumerWidget {
                       textInputAction: TextInputAction.next,
                       style: TextStyle(color: textColor, fontSize: 13),
                       decoration: InputDecoration(
-                        labelText: 'Subscription Name',
+                        labelText: modalL10n.subscription_name_label,
                         labelStyle: const TextStyle(
                           color: Colours.subtitleGrey,
                           fontSize: 12,
                         ),
-                        hintText: 'e.g. Premium EU Nodes',
+                        hintText: modalL10n.subscription_name_hint,
                         hintStyle: const TextStyle(color: Colours.subtitleGrey),
                         prefixIcon: const Icon(
                           Icons.label_outline_rounded,
@@ -193,7 +196,7 @@ class NodesView extends ConsumerWidget {
                       autofocus: true,
                       style: TextStyle(color: textColor, fontSize: 13),
                       decoration: InputDecoration(
-                        labelText: 'Subscription URL',
+                        labelText: modalL10n.subscription_url_label,
                         labelStyle: const TextStyle(
                           color: Colours.subtitleGrey,
                           fontSize: 12,
@@ -245,7 +248,7 @@ class NodesView extends ConsumerWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Auto-Update Interval',
+                          modalL10n.auto_update_interval,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -260,7 +263,9 @@ class NodesView extends ConsumerWidget {
                           intervalOptions.map((hours) {
                             final isSelected = selectedIntervalHours == hours;
                             final label =
-                                hours == 0 ? 'Manual' : 'Every ${hours}h';
+                                hours == 0
+                                    ? modalL10n.manual_interval
+                                    : '${modalL10n.every_n_hours} ${hours}h';
                             return Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(
@@ -328,9 +333,9 @@ class NodesView extends ConsumerWidget {
                             url: urlController.text.trim(),
                             intervalHours: selectedIntervalHours,
                           )),
-                      child: const Text(
-                        'Save & Fetch Configs',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                      child: Text(
+                        modalL10n.save_and_fetch_configs,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
                   ],
@@ -370,20 +375,20 @@ class NodesView extends ConsumerWidget {
       if (count > 0) {
         final intervalText =
             result.intervalHours > 0
-                ? 'Auto-updates every ${result.intervalHours}h.'
-                : 'Manual update mode.';
+                ? '${l10n.every_n_hours} ${result.intervalHours}h'
+                : l10n.manual_interval;
         CoreUtils.showSnackBar(
           context,
           false,
-          title: 'Subscription Synced',
-          message: 'Imported $count node(s). $intervalText',
+          title: l10n.subscription_synced_title,
+          message: '($count) • $intervalText',
         );
       } else {
         CoreUtils.showSnackBar(
           context,
           true,
-          title: 'No Nodes Found',
-          message: 'Could not parse any V2Ray nodes from that URL.',
+          title: l10n.no_nodes_found_title,
+          message: l10n.no_nodes_found_msg,
         );
       }
     } catch (e) {
@@ -391,7 +396,7 @@ class NodesView extends ConsumerWidget {
       CoreUtils.showSnackBar(
         context,
         true,
-        title: 'Subscription Error',
+        title: l10n.subscription_error_title,
         message: e.toString(),
       );
     } finally {
@@ -400,6 +405,7 @@ class NodesView extends ConsumerWidget {
   }
 
   Future<void> _showQrScannerSheet(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final qrPayload = await showModalBottomSheet<String>(
       context: context,
       useRootNavigator: true,
@@ -419,16 +425,15 @@ class NodesView extends ConsumerWidget {
         CoreUtils.showSnackBar(
           context,
           false,
-          title: 'QR Node Added',
-          message: 'Scanned & imported $count V2Ray node(s) into Local Nodes.',
+          title: l10n.qr_node_added_title,
+          message: '${l10n.qr_node_added_msg} ($count)',
         );
       } else {
         CoreUtils.showSnackBar(
           context,
           true,
-          title: 'Invalid QR Code',
-          message:
-              'Scanned QR code did not contain a valid V2Ray URI or subscription.',
+          title: l10n.invalid_qr_title,
+          message: l10n.invalid_qr_msg,
         );
       }
     } catch (e) {
@@ -436,7 +441,7 @@ class NodesView extends ConsumerWidget {
       CoreUtils.showSnackBar(
         context,
         true,
-        title: 'QR Scan Error',
+        title: l10n.qr_scan_error_title,
         message: e.toString(),
       );
     } finally {
@@ -475,6 +480,7 @@ class NodesView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     ref.watch(currentThemeProvider);
     final uiState = ref.watch(nodesViewUiStateProvider);
     final selectedTab = uiState.selectedTab;
@@ -504,9 +510,9 @@ class NodesView extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Tunnel Endpoints',
-                    style: TextStyle(
+                  Text(
+                    l10n.tunnel_endpoints_subtitle,
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: Colours.subtitleGrey,
@@ -517,7 +523,7 @@ class NodesView extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'Nodes',
+                        l10n.nodes_title,
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
@@ -576,7 +582,7 @@ class NodesView extends ConsumerWidget {
                         ),
                       const SizedBox(width: 5),
                       Text(
-                        'Ping All',
+                        l10n.ping_all,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -642,7 +648,7 @@ class NodesView extends ConsumerWidget {
               children: [
                 Expanded(
                   child: TabPillButton(
-                    title: 'Cloud Nodes (${cloudConfigs.length})',
+                    title: '${l10n.cloud_nodes_tab} (${cloudConfigs.length})',
                     icon: Icons.cloud_done_outlined,
                     selected: selectedTab == 0,
                     onTap:
@@ -653,7 +659,7 @@ class NodesView extends ConsumerWidget {
                 ),
                 Expanded(
                   child: TabPillButton(
-                    title: 'Local Nodes (${localConfigs.length})',
+                    title: '${l10n.local_nodes_tab} (${localConfigs.length})',
                     icon: Icons.folder_special_outlined,
                     selected: selectedTab == 1,
                     onTap:
@@ -674,7 +680,7 @@ class NodesView extends ConsumerWidget {
                 Expanded(
                   child: ImportActionCard(
                     icon: Icons.content_paste_go_rounded,
-                    label: 'Clipboard',
+                    label: l10n.clipboard_action,
                     accent: Colours.orbEmerald,
                     onTap: () => _importFromClipboard(context, ref),
                   ),
@@ -683,7 +689,7 @@ class NodesView extends ConsumerWidget {
                 Expanded(
                   child: ImportActionCard(
                     icon: Icons.qr_code_scanner_rounded,
-                    label: 'QR Code',
+                    label: l10n.qr_code_action,
                     accent: Colours.orbCoral,
                     onTap: () => _showQrScannerSheet(context, ref),
                   ),
@@ -692,7 +698,7 @@ class NodesView extends ConsumerWidget {
                 Expanded(
                   child: ImportActionCard(
                     icon: Icons.rss_feed_rounded,
-                    label: 'Sub URL',
+                    label: l10n.sub_url_action,
                     accent: Colours.orbViolet,
                     onTap: () => _showSubscriptionDialog(context, ref),
                   ),
@@ -727,8 +733,8 @@ class NodesView extends ConsumerWidget {
                           const SizedBox(height: 12),
                           Text(
                             selectedTab == 0
-                                ? 'No cloud nodes synced yet'
-                                : 'No local nodes imported yet',
+                                ? l10n.no_cloud_nodes
+                                : l10n.no_local_nodes,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -738,8 +744,8 @@ class NodesView extends ConsumerWidget {
                           const SizedBox(height: 6),
                           Text(
                             selectedTab == 0
-                                ? 'Tap the sync icon above to fetch Appwrite nodes'
-                                : 'Import from Clipboard, QR Code, or Subscription URL',
+                                ? l10n.no_cloud_nodes_hint
+                                : l10n.no_local_nodes_hint,
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colours.subtitleGrey,
