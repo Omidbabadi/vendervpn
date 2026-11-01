@@ -7,6 +7,187 @@ import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
 
+class SubscriptionUserInfo {
+  const SubscriptionUserInfo({
+    required this.upload,
+    required this.download,
+    required this.total,
+    required this.expire,
+    this.announce,
+    this.hasTrafficData = true,
+  });
+
+  final int upload;
+  final int download;
+  final int total;
+  final int expire;
+  final String? announce;
+  final bool hasTrafficData;
+
+  int get used => upload + download;
+  bool get isUnlimitedTraffic => total <= 0;
+  bool get isUnlimitedExpire => expire <= 0;
+  bool get hasAnnounce => announce != null && announce!.trim().isNotEmpty;
+
+  double? get usageRatio {
+    if (total <= 0) return null;
+    return (used / total).clamp(0.0, 1.0);
+  }
+
+  DateTime? get expireDate {
+    if (expire <= 0) return null;
+    final ms = expire > 100000000000 ? expire : expire * 1000;
+    return DateTime.fromMillisecondsSinceEpoch(ms);
+  }
+
+  bool get isExpired {
+    final dt = expireDate;
+    if (dt == null) return false;
+    return DateTime.now().isAfter(dt);
+  }
+
+  SubscriptionUserInfo copyWith({
+    int? upload,
+    int? download,
+    int? total,
+    int? expire,
+    String? announce,
+    bool? hasTrafficData,
+  }) {
+    return SubscriptionUserInfo(
+      upload: upload ?? this.upload,
+      download: download ?? this.download,
+      total: total ?? this.total,
+      expire: expire ?? this.expire,
+      announce: announce ?? this.announce,
+      hasTrafficData: hasTrafficData ?? this.hasTrafficData,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'upload': upload,
+    'download': download,
+    'total': total,
+    'expire': expire,
+    'hasTrafficData': hasTrafficData,
+    if (announce != null && announce!.trim().isNotEmpty) 'announce': announce,
+  };
+
+  factory SubscriptionUserInfo.fromMap(Map<String, dynamic> map) {
+    final rawAnnounce = (map['announce'] as String?)?.trim();
+    return SubscriptionUserInfo(
+      upload: int.tryParse((map['upload'] ?? '0').toString()) ?? 0,
+      download: int.tryParse((map['download'] ?? '0').toString()) ?? 0,
+      total: int.tryParse((map['total'] ?? '0').toString()) ?? 0,
+      expire: int.tryParse((map['expire'] ?? '0').toString()) ?? 0,
+      hasTrafficData: map['hasTrafficData'] as bool? ?? true,
+      announce:
+          (rawAnnounce != null && rawAnnounce.isNotEmpty) ? rawAnnounce : null,
+    );
+  }
+
+  /// Parses an `Announce` header or comment value such as:
+  /// `base64:2YTYt9mB2Kcg...` or plain text.
+  static String? tryParseAnnounce(String? rawValue) {
+    if (rawValue == null || rawValue.trim().isEmpty) return null;
+    var cleaned = rawValue.trim();
+
+    if (cleaned.toLowerCase().startsWith('announce:')) {
+      cleaned = cleaned.substring('announce:'.length).trim();
+    } else if (cleaned.toLowerCase().startsWith('#announce:')) {
+      cleaned = cleaned.substring('#announce:'.length).trim();
+    }
+
+    if (cleaned.toLowerCase().startsWith('base64:')) {
+      final b64Payload = cleaned.substring('base64:'.length).trim();
+      final decoded = V2rayImportHelper.tryDecodeBase64String(b64Payload);
+      if (decoded != null && decoded.trim().isNotEmpty) {
+        return decoded.trim();
+      }
+    }
+
+    return cleaned.isNotEmpty ? cleaned : null;
+  }
+
+  /// Parses a `Subscription-Userinfo` header string such as:
+  /// `upload=65973995349; download=832599811771; total=0; expire=0`
+  static SubscriptionUserInfo? tryParse(
+    String? rawHeader, {
+    String? rawAnnounce,
+  }) {
+    final parsedAnnounce = tryParseAnnounce(rawAnnounce);
+
+    int? upload;
+    int? download;
+    int? total;
+    int? expire;
+
+    if (rawHeader != null && rawHeader.trim().isNotEmpty) {
+      var cleaned = rawHeader.trim();
+      final colonIdx = cleaned.indexOf(':');
+      if (colonIdx != -1 &&
+          cleaned.substring(0, colonIdx).toLowerCase().contains('userinfo')) {
+        cleaned = cleaned.substring(colonIdx + 1).trim();
+      }
+
+      final parts = cleaned.split(RegExp(r'[;,]'));
+      for (final part in parts) {
+        final kv = part.split('=');
+        if (kv.length != 2) continue;
+        final key = kv[0].trim().toLowerCase();
+        final valStr = kv[1].trim();
+        final val = int.tryParse(valStr) ?? double.tryParse(valStr)?.round();
+        if (val == null) continue;
+        switch (key) {
+          case 'upload':
+            upload = val;
+          case 'download':
+            download = val;
+          case 'total':
+            total = val;
+          case 'expire':
+            expire = val;
+        }
+      }
+    }
+
+    final hasTraffic =
+        upload != null || download != null || total != null || expire != null;
+
+    if (!hasTraffic && parsedAnnounce == null) {
+      return null;
+    }
+
+    return SubscriptionUserInfo(
+      upload: upload ?? 0,
+      download: download ?? 0,
+      total: total ?? 0,
+      expire: expire ?? 0,
+      announce: parsedAnnounce,
+      hasTrafficData: hasTraffic,
+    );
+  }
+
+  static String formatBytes(int bytes) {
+    if (bytes <= 0) return '0 B';
+    const kb = 1024.0;
+    const mb = kb * 1024.0;
+    const gb = mb * 1024.0;
+    const tb = gb * 1024.0;
+
+    if (bytes >= tb) {
+      return '${(bytes / tb).toStringAsFixed(2)} TB';
+    } else if (bytes >= gb) {
+      return '${(bytes / gb).toStringAsFixed(2)} GB';
+    } else if (bytes >= mb) {
+      return '${(bytes / mb).toStringAsFixed(1)} MB';
+    } else if (bytes >= kb) {
+      return '${(bytes / kb).toStringAsFixed(1)} KB';
+    }
+    return '$bytes B';
+  }
+}
+
 class V2rayImportHelper {
   const V2rayImportHelper._();
 
@@ -69,8 +250,101 @@ class V2rayImportHelper {
     return [];
   }
 
-  /// Fetches a V2Ray subscription URL and extracts all V2Ray links.
-  static Future<List<String>> fetchSubscriptionLinks(String subUrl) async {
+  /// Extracts `Subscription-Userinfo` and `Announce` from HTTP response headers (case-insensitive).
+  static SubscriptionUserInfo? _extractUserInfoFromHeaders(
+    HttpHeaders headers,
+  ) {
+    String? rawUserInfo = headers.value('subscription-userinfo');
+    String? rawAnnounce =
+        headers.value('announce') ?? headers.value('x-announce');
+
+    headers.forEach((name, values) {
+      if (values.isEmpty) return;
+      final lower = name.toLowerCase();
+      if (rawUserInfo == null && lower == 'subscription-userinfo') {
+        rawUserInfo = values.join('; ');
+      } else if (rawAnnounce == null &&
+          (lower == 'announce' || lower == 'x-announce')) {
+        rawAnnounce = values.join('\n');
+      }
+    });
+
+    return SubscriptionUserInfo.tryParse(
+      rawUserInfo,
+      rawAnnounce: rawAnnounce,
+    );
+  }
+
+  /// Extracts an `#announce:` comment line from raw or base64-decoded subscription payload.
+  static String? _extractAnnounceFromBody(String rawBody) {
+    final trimmed = rawBody.trim();
+    if (trimmed.isEmpty) return null;
+
+    String? scanLines(String text) {
+      for (final line in text.split(RegExp(r'[\r\n]+'))) {
+        final l = line.trim();
+        if (l.toLowerCase().startsWith('#announce:') ||
+            l.toLowerCase().startsWith('announce:')) {
+          return SubscriptionUserInfo.tryParseAnnounce(l);
+        }
+      }
+      return null;
+    }
+
+    final direct = scanLines(trimmed);
+    if (direct != null) return direct;
+
+    final decoded = _tryDecodeBase64(trimmed);
+    if (decoded != null) {
+      return scanLines(decoded);
+    }
+    return null;
+  }
+
+  /// Sends a lightweight `HEAD` request (like `curl -sI`) to retrieve
+  /// `Subscription-Userinfo` and `Announce` headers from [subUrl].
+  static Future<SubscriptionUserInfo?> fetchSubscriptionUserInfo(
+    String subUrl,
+  ) async {
+    final uri = Uri.tryParse(subUrl.trim());
+    if (uri == null || (!uri.isScheme('http') && !uri.isScheme('https'))) {
+      return null;
+    }
+
+    final client = HttpClient();
+    client.connectionTimeout = const Duration(seconds: 10);
+    try {
+      final request = await client.headUrl(uri);
+      request.headers.set(
+        HttpHeaders.userAgentHeader,
+        'VenderVPN/1.0 (v2rayNG; clash.meta; Flutter)',
+      );
+      final response = await request.close();
+      await response.drain<void>();
+      final info = _extractUserInfoFromHeaders(response.headers);
+      if (info != null) return info;
+
+      // Fallback to GET headers if the server does not return headers on HEAD
+      final getReq = await client.getUrl(uri);
+      getReq.headers.set(
+        HttpHeaders.userAgentHeader,
+        'VenderVPN/1.0 (v2rayNG; clash.meta; Flutter)',
+      );
+      final getRes = await getReq.close();
+      await getRes.drain<void>();
+      return _extractUserInfoFromHeaders(getRes.headers);
+    } catch (e) {
+      debugPrint('Failed to fetch subscription userinfo: $e');
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Fetches a V2Ray subscription URL, extracting all V2Ray links as well as
+  /// `Subscription-Userinfo` and `Announce` headers/comments.
+  static Future<({List<String> links, SubscriptionUserInfo? userInfo})>
+  fetchSubscription(String subUrl) async {
     final uri = Uri.tryParse(subUrl.trim());
     if (uri == null || (!uri.isScheme('http') && !uri.isScheme('https'))) {
       throw const FormatException('Invalid subscription URL');
@@ -82,17 +356,65 @@ class V2rayImportHelper {
       final request = await client.getUrl(uri);
       request.headers.set(
         HttpHeaders.userAgentHeader,
-        'VenderVPN/1.0 (v2rayNG; Flutter)',
+        'VenderVPN/1.0 (v2rayNG; clash.meta; Flutter)',
       );
       final response = await request.close();
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw HttpException('Subscription returned HTTP ${response.statusCode}');
       }
+      var userInfo = _extractUserInfoFromHeaders(response.headers);
       final body = await response.transform(utf8.decoder).join();
-      return extractLinksFromPayload(body);
+      final links = extractLinksFromPayload(body);
+
+      // If GET did not include `Subscription-Userinfo` or `Announce`, try HEAD (`curl -sI`)
+      if (userInfo == null || !userInfo.hasAnnounce) {
+        try {
+          final headReq = await client.headUrl(uri);
+          headReq.headers.set(
+            HttpHeaders.userAgentHeader,
+            'VenderVPN/1.0 (v2rayNG; clash.meta; Flutter)',
+          );
+          final headRes = await headReq.close();
+          await headRes.drain<void>();
+          final headInfo = _extractUserInfoFromHeaders(headRes.headers);
+          if (userInfo == null) {
+            userInfo = headInfo;
+          } else if (headInfo != null) {
+            userInfo = userInfo.copyWith(
+              announce: userInfo.announce ?? headInfo.announce,
+            );
+          }
+        } catch (_) {}
+      }
+
+      // Also check `#announce:` inside the subscription body if header wasn't present
+      if (userInfo == null || !userInfo.hasAnnounce) {
+        final bodyAnnounce = _extractAnnounceFromBody(body);
+        if (bodyAnnounce != null) {
+          userInfo =
+              userInfo != null
+                  ? userInfo.copyWith(announce: bodyAnnounce)
+                  : SubscriptionUserInfo(
+                    upload: 0,
+                    download: 0,
+                    total: 0,
+                    expire: 0,
+                    announce: bodyAnnounce,
+                    hasTrafficData: false,
+                  );
+        }
+      }
+
+      return (links: links, userInfo: userInfo);
     } finally {
       client.close();
     }
+  }
+
+  /// Fetches a V2Ray subscription URL and extracts all V2Ray links.
+  static Future<List<String>> fetchSubscriptionLinks(String subUrl) async {
+    final result = await fetchSubscription(subUrl);
+    return result.links;
   }
 
   /// Returns the full V2Ray JSON configuration string with both the default
@@ -223,6 +545,8 @@ class V2rayImportHelper {
     }
     return null;
   }
+
+  static String? tryDecodeBase64String(String input) => _tryDecodeBase64(input);
 
   static String? _tryDecodeBase64(String input) {
     try {

@@ -20,11 +20,13 @@ class ConfigTile extends ConsumerWidget {
     required this.config,
     required this.isConnected,
     this.isLocal = false,
+    this.isFastest = false,
   });
 
   final Config config;
   final bool isConnected;
   final bool isLocal;
+  final bool isFastest;
 
   Future<void> _testPing(WidgetRef ref) async {
     final pingingSet = ref.read(pingingNodeIdsProvider);
@@ -186,6 +188,27 @@ class ConfigTile extends ConsumerWidget {
                               fontSize: 9.5,
                               fontWeight: FontWeight.w700,
                               color: Colours.pastelLilacFg,
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (isFastest && ping > 0) ...[
+                        const SizedBox(width: 5),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colours.pastelMintBg,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            l10n.fastest_badge,
+                            style: const TextStyle(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w800,
+                              color: Colours.pastelMintFg,
                             ),
                           ),
                         ),

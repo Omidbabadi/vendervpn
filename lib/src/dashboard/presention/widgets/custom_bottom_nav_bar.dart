@@ -5,6 +5,7 @@ import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/dashboard/presention/widgets/nav_bar_item.dart';
+import 'package:vendervpn/src/dashboard/presention/widgets/nav_connect_button.dart';
 
 class CustomBottomNavBar extends ConsumerWidget {
   const CustomBottomNavBar({

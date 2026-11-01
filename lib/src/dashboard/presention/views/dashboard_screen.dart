@@ -137,6 +137,56 @@ class DashboardScreen extends ConsumerWidget {
                         ),
                       ),
 
+                      // Center Brand + BETA Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: Colours.subtleBorder(context),
+                          ),
+                          boxShadow: Colours.softCardShadow(context),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'VenderVPN',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w800,
+                                color: textColor,
+                                letterSpacing: -0.2,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 1.5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colours.pastelLilacBg,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: const Text(
+                                'BETA',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colours.pastelLilacFg,
+                                  letterSpacing: 0.6,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
                       // Top-right circular theme toggle button (like Reference Image 1 top-right icon)
                       GestureDetector(
                         onTap: () {

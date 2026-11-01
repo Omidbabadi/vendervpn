@@ -17,6 +17,7 @@ class SubscriptionItem {
     required this.url,
     required this.intervalHours,
     required this.lastUpdated,
+    this.userInfo,
   });
 
   final String id;
@@ -24,6 +25,7 @@ class SubscriptionItem {
   final String url;
   final int intervalHours;
   final DateTime lastUpdated;
+  final SubscriptionUserInfo? userInfo;
 
   bool get isDueForUpdate {
     if (intervalHours <= 0) return false;
@@ -37,6 +39,7 @@ class SubscriptionItem {
     String? url,
     int? intervalHours,
     DateTime? lastUpdated,
+    SubscriptionUserInfo? userInfo,
   }) {
     return SubscriptionItem(
       id: id ?? this.id,
@@ -44,6 +47,7 @@ class SubscriptionItem {
       url: url ?? this.url,
       intervalHours: intervalHours ?? this.intervalHours,
       lastUpdated: lastUpdated ?? this.lastUpdated,
+      userInfo: userInfo ?? this.userInfo,
     );
   }
 
@@ -53,6 +57,7 @@ class SubscriptionItem {
     'url': url,
     'intervalHours': intervalHours,
     'lastUpdated': lastUpdated.toIso8601String(),
+    if (userInfo != null) 'userInfo': userInfo!.toMap(),
   };
 
   factory SubscriptionItem.fromMap(Map<String, dynamic> map) {
@@ -61,6 +66,7 @@ class SubscriptionItem {
     final fallbackName =
         (uri != null && uri.host.isNotEmpty) ? uri.host : 'Subscription';
     final rawName = (map['name'] as String? ?? '').trim();
+    final rawUserInfo = map['userInfo'];
     return SubscriptionItem(
       id: map['id'] as String? ?? 'sub_${url.hashCode.abs()}',
       name: rawName.isNotEmpty ? rawName : fallbackName,
@@ -70,6 +76,12 @@ class SubscriptionItem {
       lastUpdated:
           DateTime.tryParse(map['lastUpdated'] as String? ?? '') ??
           DateTime.now(),
+      userInfo:
+          rawUserInfo is Map
+              ? SubscriptionUserInfo.fromMap(
+                Map<String, dynamic>.from(rawUserInfo),
+              )
+              : null,
     );
   }
 }
@@ -94,6 +106,7 @@ class SubscriptionsList extends Notifier<List<SubscriptionItem>> {
     required String name,
     required String url,
     required int intervalHours,
+    SubscriptionUserInfo? userInfo,
   }) async {
     final cleanUrl = url.trim();
     final uri = Uri.tryParse(cleanUrl);
@@ -102,12 +115,21 @@ class SubscriptionsList extends Notifier<List<SubscriptionItem>> {
     final cleanName = name.trim().isNotEmpty ? name.trim() : fallbackName;
     final id = 'sub_${cleanUrl.hashCode.abs()}';
 
+    SubscriptionUserInfo? previousUserInfo;
+    for (final s in state) {
+      if (s.id == id || s.url == cleanUrl) {
+        previousUserInfo = s.userInfo;
+        break;
+      }
+    }
+
     final item = SubscriptionItem(
       id: id,
       name: cleanName,
       url: cleanUrl,
       intervalHours: intervalHours,
       lastUpdated: DateTime.now(),
+      userInfo: userInfo ?? previousUserInfo,
     );
 
     final updated = [
@@ -120,10 +142,28 @@ class SubscriptionsList extends Notifier<List<SubscriptionItem>> {
     return item;
   }
 
-  Future<void> markUpdated(String id) async {
+  Future<void> markUpdated(
+    String id, {
+    SubscriptionUserInfo? userInfo,
+  }) async {
     final updated = [
       for (final s in state)
-        if (s.id == id) s.copyWith(lastUpdated: DateTime.now()) else s,
+        if (s.id == id)
+          s.copyWith(lastUpdated: DateTime.now(), userInfo: userInfo)
+        else
+          s,
+    ];
+    state = updated;
+    await _persist(updated);
+  }
+
+  Future<void> updateUserInfo(
+    String id,
+    SubscriptionUserInfo userInfo,
+  ) async {
+    final updated = [
+      for (final s in state)
+        if (s.id == id) s.copyWith(userInfo: userInfo) else s,
     ];
     state = updated;
     await _persist(updated);
@@ -214,13 +254,15 @@ class LocalConfigsList extends Notifier<List<Config>> {
   }
 
   /// Checks all saved subscriptions and automatically re-fetches any whose
-  /// configured `intervalHours` has elapsed since `lastUpdated`.
+  /// configured `intervalHours` has elapsed since `lastUpdated`, or fetches
+  /// missing `Subscription-Userinfo` headers for previously saved subscriptions.
   Future<int> checkAndRefreshDueSubscriptions() async {
     if (_isCheckingAutoSync) return 0;
     _isCheckingAutoSync = true;
     var totalUpdated = 0;
     try {
       final subs = ref.read(subscriptionsListProvider);
+      final subsNotifier = ref.read(subscriptionsListProvider.notifier);
       for (final sub in subs) {
         if (sub.isDueForUpdate) {
           try {
@@ -228,6 +270,19 @@ class LocalConfigsList extends Notifier<List<Config>> {
             totalUpdated += count;
           } catch (e) {
             debugPrint('Auto-sync failed for subscription "${sub.name}": $e');
+          }
+        } else if (sub.userInfo == null) {
+          try {
+            final info = await V2rayImportHelper.fetchSubscriptionUserInfo(
+              sub.url,
+            );
+            if (info != null) {
+              await subsNotifier.updateUserInfo(sub.id, info);
+            }
+          } catch (e) {
+            debugPrint(
+              'Userinfo fetch failed for subscription "${sub.name}": $e',
+            );
           }
         }
       }
@@ -267,20 +322,20 @@ class LocalConfigsList extends Notifier<List<Config>> {
     int intervalHours = 6,
   }) async {
     final cleanUrl = subUrl.trim();
-    final links = await V2rayImportHelper.fetchSubscriptionLinks(cleanUrl);
-    if (links.isEmpty) return 0;
+    final subsNotifier = ref.read(subscriptionsListProvider.notifier);
+    final fetched = await V2rayImportHelper.fetchSubscription(cleanUrl);
+    if (fetched.links.isEmpty) return 0;
 
-    final subItem = await ref
-        .read(subscriptionsListProvider.notifier)
-        .upsertSubscription(
-          name: name ?? '',
-          url: cleanUrl,
-          intervalHours: intervalHours,
-        );
+    final subItem = await subsNotifier.upsertSubscription(
+      name: name ?? '',
+      url: cleanUrl,
+      intervalHours: intervalHours,
+      userInfo: fetched.userInfo,
+    );
 
     final sourceTag = 'sub:${subItem.name}';
     final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
-      links: links,
+      links: fetched.links,
       importedFrom: sourceTag,
     );
     if (parsedModels.isEmpty) return 0;
@@ -293,17 +348,18 @@ class LocalConfigsList extends Notifier<List<Config>> {
   }
 
   Future<int> refreshSubscription(SubscriptionItem sub) async {
-    final links = await V2rayImportHelper.fetchSubscriptionLinks(sub.url);
-    if (links.isEmpty) return 0;
+    final subsNotifier = ref.read(subscriptionsListProvider.notifier);
+    final fetched = await V2rayImportHelper.fetchSubscription(sub.url);
+    if (fetched.links.isEmpty) return 0;
 
     final sourceTag = 'sub:${sub.name}';
     final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
-      links: links,
+      links: fetched.links,
       importedFrom: sourceTag,
     );
     if (parsedModels.isEmpty) return 0;
 
-    await ref.read(subscriptionsListProvider.notifier).markUpdated(sub.id);
+    await subsNotifier.markUpdated(sub.id, userInfo: fetched.userInfo);
     await _replaceSubscriptionNodesAndPersist(
       sourceTag: sourceTag,
       newModels: parsedModels,
@@ -445,6 +501,7 @@ class NodesViewUiState {
     this.selectedTab = 0,
     this.isImporting = false,
     this.isPingingAll = false,
+    this.isAutoConnectingFastest = false,
     this.subIntervalHours = 6,
     this.collapsedSubKeys = const <String>{},
   });
@@ -452,6 +509,7 @@ class NodesViewUiState {
   final int selectedTab;
   final bool isImporting;
   final bool isPingingAll;
+  final bool isAutoConnectingFastest;
   final int subIntervalHours;
   final Set<String> collapsedSubKeys;
 
@@ -459,6 +517,7 @@ class NodesViewUiState {
     int? selectedTab,
     bool? isImporting,
     bool? isPingingAll,
+    bool? isAutoConnectingFastest,
     int? subIntervalHours,
     Set<String>? collapsedSubKeys,
   }) {
@@ -466,6 +525,8 @@ class NodesViewUiState {
       selectedTab: selectedTab ?? this.selectedTab,
       isImporting: isImporting ?? this.isImporting,
       isPingingAll: isPingingAll ?? this.isPingingAll,
+      isAutoConnectingFastest:
+          isAutoConnectingFastest ?? this.isAutoConnectingFastest,
       subIntervalHours: subIntervalHours ?? this.subIntervalHours,
       collapsedSubKeys: collapsedSubKeys ?? this.collapsedSubKeys,
     );
@@ -484,6 +545,8 @@ class NodesViewUiStateNotifier extends Notifier<NodesViewUiState> {
   void setSelectedTab(int tab) => state = state.copyWith(selectedTab: tab);
   void setImporting(bool value) => state = state.copyWith(isImporting: value);
   void setPingingAll(bool value) => state = state.copyWith(isPingingAll: value);
+  void setAutoConnectingFastest(bool value) =>
+      state = state.copyWith(isAutoConnectingFastest: value);
   void setSubIntervalHours(int hours) =>
       state = state.copyWith(subIntervalHours: hours);
 
