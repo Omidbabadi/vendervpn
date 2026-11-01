@@ -20,6 +20,10 @@ class CacheHelper {
   static const _subscriptionUrls = 'subscription_urls';
   static const _ipCountryCache = 'ip_country_cache';
   static const _localeKey = 'app_locale';
+  static const _perAppProxyEnabledKey = 'per_app_proxy_enabled';
+  static const _perAppProxyModeKey = 'per_app_proxy_mode';
+  static const _perAppProxyAppsKey = 'per_app_proxy_apps';
+  static const _proxyOnlyModeKey = 'proxy_only_mode';
 
   Future<void> cacheVpnState(String state) async {
     await _pref.setString(_vpnStateKey, state);
@@ -134,4 +138,31 @@ class CacheHelper {
   }
 
   String get localeCode => _pref.getString(_localeKey) ?? 'en';
+
+  Future<void> cachePerAppProxyEnabled(bool enabled) async {
+    await _pref.setBool(_perAppProxyEnabledKey, enabled);
+  }
+
+  bool get perAppProxyEnabled =>
+      _pref.getBool(_perAppProxyEnabledKey) ?? false;
+
+  Future<void> cachePerAppProxyMode(String mode) async {
+    await _pref.setString(_perAppProxyModeKey, mode);
+  }
+
+  String get perAppProxyMode =>
+      _pref.getString(_perAppProxyModeKey) ?? 'per_app';
+
+  Future<void> cachePerAppProxyApps(List<String> apps) async {
+    await _pref.setStringList(_perAppProxyAppsKey, apps);
+  }
+
+  List<String> get perAppProxyApps =>
+      _pref.getStringList(_perAppProxyAppsKey) ?? const <String>[];
+
+  Future<void> cacheProxyOnlyMode(bool proxyOnly) async {
+    await _pref.setBool(_proxyOnlyModeKey, proxyOnly);
+  }
+
+  bool get proxyOnlyMode => _pref.getBool(_proxyOnlyModeKey) ?? false;
 }

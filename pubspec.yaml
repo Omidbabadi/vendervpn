@@ -1,5 +1,5 @@
 name: vendervpn
-description: "A new Flutter project."
+description: "VenderVPN — V2Ray VPN & Proxy Client (Beta)"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -13,10 +13,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # Read more about Android versioning at https://developer.android.com/studio/publish/versioning
 # In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
 # Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# https://developer.apple.com/library/archive/documentation/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.0-beta.1+1
 
 environment:
   sdk: ^3.7.2
@@ -61,6 +61,7 @@ dependencies:
   toastification: ^3.0.3
   flutter_web_auth_2: ^5.1.0
   mobile_scanner: ^7.0.0
+  installed_apps: ^2.2.1
   
 
 dev_dependencies:

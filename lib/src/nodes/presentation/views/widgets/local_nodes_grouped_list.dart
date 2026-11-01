@@ -8,6 +8,7 @@ import 'package:vendervpn/src/nodes/presentation/views/widgets/subscription_expa
 
 class LocalNodesGroupedList extends ConsumerWidget {
   const LocalNodesGroupedList({
+    super.key,
     required this.localConfigs,
     required this.subscriptions,
     required this.isConnected,

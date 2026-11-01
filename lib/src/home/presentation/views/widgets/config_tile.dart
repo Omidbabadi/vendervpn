@@ -11,6 +11,7 @@ import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 
 class ConfigTile extends ConsumerWidget {
@@ -19,11 +20,13 @@ class ConfigTile extends ConsumerWidget {
     required this.config,
     required this.isConnected,
     this.isLocal = false,
+    this.isFastest = false,
   });
 
   final Config config;
   final bool isConnected;
   final bool isLocal;
+  final bool isFastest;
 
   Future<void> _testPing(WidgetRef ref) async {
     final pingingSet = ref.read(pingingNodeIdsProvider);
@@ -57,6 +60,7 @@ class ConfigTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedConfig = ref.watch(currentConfigProvider);
     final isSelected = selectedConfig?.id == config.id;
     final isPinging = ref.watch(pingingNodeIdsProvider).contains(config.id);
@@ -184,6 +188,27 @@ class ConfigTile extends ConsumerWidget {
                               fontSize: 9.5,
                               fontWeight: FontWeight.w700,
                               color: Colours.pastelLilacFg,
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (isFastest && ping > 0) ...[
+                        const SizedBox(width: 5),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colours.pastelMintBg,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            l10n.fastest_badge,
+                            style: const TextStyle(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w800,
+                              color: Colours.pastelMintFg,
                             ),
                           ),
                         ),

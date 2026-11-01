@@ -10,6 +10,7 @@ import 'package:vendervpn/src/admob/domain/usecase/show_interstitial_ad.dart';
 import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
 import 'package:vendervpn/src/connection/domain/usecase/ping.dart';
 import 'package:vendervpn/src/ip/presention/adapter/ip_provider.dart';
+import 'package:vendervpn/src/per_app_proxy/presention/app/adpter/per_app_proxy_adapter.dart';
 
 import '../../../../core/common/entities/config.dart';
 import '../../../../core/services/injection_container.dart';
@@ -110,11 +111,14 @@ class ConnectionAdapter extends _$ConnectionAdapter
     state = const ConnectionStateConnecting();
 
     await _initializeV2ay.call();
-    final per = await requestPermission();
-    if (!per || !ref.mounted || attemptId != _activeAttemptId) {
-      debugPrint('Error: VPN Permission Denied');
-      state = const ConnectionStateDisconnected();
-      return;
+    final proxyOnly = ref.read(perAppProxyProvider).proxyOnly;
+    if (!proxyOnly) {
+      final per = await requestPermission();
+      if (!per || !ref.mounted || attemptId != _activeAttemptId) {
+        debugPrint('Error: VPN Permission Denied');
+        state = const ConnectionStateDisconnected();
+        return;
+      }
     }
 
     if (ref.read(ipSessionProvider).beforeTun == null) {
@@ -124,11 +128,19 @@ class ConnectionAdapter extends _$ConnectionAdapter
 
     _isWaitingForAdmob = true;
 
+    final blockedApps =
+        proxyOnly
+            ? const <String>[]
+            : await ref
+                .read(perAppProxyProvider.notifier)
+                .resolveBlockedAppsForVpn();
+    if (!ref.mounted || attemptId != _activeAttemptId) return;
+
     final params = ConnectionsParams(
-      blockedApps: [],
+      blockedApps: blockedApps,
       bypassSubnets: [],
       config: config.configjson,
-      proxyOnly: false,
+      proxyOnly: proxyOnly,
       remark: config.remark,
     );
 

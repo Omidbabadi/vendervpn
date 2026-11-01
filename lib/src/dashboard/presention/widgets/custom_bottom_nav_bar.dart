@@ -4,6 +4,7 @@ import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/dashboard/presention/widgets/nav_bar_item.dart';
+import 'package:vendervpn/src/dashboard/presention/widgets/nav_connect_button.dart';
 
 class CustomBottomNavBar extends ConsumerWidget {
   const CustomBottomNavBar({
@@ -90,27 +91,10 @@ class CustomBottomNavBar extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Container(
-            height: 70,
-            width: 70,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color:
-                  connectionState is ConnectionStateConnected
-                      ? Colours.orbEmerald
-                      : Colours.subtitleGrey,
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(999),
-              onTap: () {
-                _toggleTunnel(adapter, isConnected, isConnecting);
-              },
-              child: Icon(
-                connectionState is ConnectionStateConnected
-                    ? Icons.flash_off
-                    : Icons.flash_on,
-              ),
-            ),
+          NavConnectButton(
+            isConnected: isConnected,
+            isConnecting: isConnecting,
+            onTap: () => _toggleTunnel(adapter, isConnected, isConnecting),
           ),
         ],
       ),

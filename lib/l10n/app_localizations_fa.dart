@@ -385,4 +385,113 @@ class AppLocalizationsFa extends AppLocalizations {
   @override
   String get tunnel_active_msg =>
       'پیش از تغییر سرور، ابتدا اتصال فعلی را قطع کنید.';
+
+  @override
+  String get fastest_server => 'سریع‌ترین سرور';
+
+  @override
+  String get fastest_server_desc => 'تست خودکار پینگ و اتصال به بهترین سرور';
+
+  @override
+  String get finding_fastest_server => 'در حال بررسی و یافتن سریع‌ترین سرور...';
+
+  @override
+  String get fastest_server_connected => 'به سریع‌ترین سرور متصل هستید';
+
+  @override
+  String get no_reachable_servers =>
+      'هیچ سرور در دسترسی یافت نشد. لطفاً اینترنت خود را بررسی کنید.';
+
+  @override
+  String get auto_connect => 'اتصال خودکار';
+
+  @override
+  String get fastest_server_found_title => 'سریع‌ترین سرور انتخاب شد';
+
+  @override
+  String get fastest_badge => 'سریع‌ترین';
+
+  @override
+  String get unlimited => 'نامحدود';
+
+  @override
+  String get expired => 'منقضی شده';
+
+  @override
+  String get days_left => 'روز مانده';
+
+  @override
+  String get hours_left => 'ساعت مانده';
+
+  @override
+  String get never_expires => 'بدون انقضا';
+
+  @override
+  String get used_label => 'مصرف شده';
+
+  @override
+  String get per_app_proxy_title => 'پروکسی برنامه‌ها';
+
+  @override
+  String get per_app_proxy_subtitle =>
+      'مدیریت عبور ترافیک برنامه‌ها از تونل VPN';
+
+  @override
+  String get per_app_mode_proxy => 'فقط انتخاب‌شده‌ها';
+
+  @override
+  String get per_app_mode_bypass => 'حالت استثنا (Bypass)';
+
+  @override
+  String get per_app_mode_proxy_desc =>
+      'فقط برنامه‌های انتخاب‌شده از تونل VPN استفاده می‌کنند';
+
+  @override
+  String get per_app_mode_bypass_desc =>
+      'برنامه‌های انتخاب‌شده از تونل VPN عبور نمی‌کنند';
+
+  @override
+  String get manage_apps => 'انتخاب برنامه‌ها';
+
+  @override
+  String get selected_apps_count => 'انتخاب شده';
+
+  @override
+  String get search_apps_hint => 'جستجوی نام برنامه یا پکیج...';
+
+  @override
+  String get show_system_apps => 'برنامه‌های سیستمی';
+
+  @override
+  String get clear_selection => 'پاک کردن';
+
+  @override
+  String get no_apps_found => 'برنامه‌ای یافت نشد';
+
+  @override
+  String get loading_apps => 'در حال بارگذاری برنامه‌های نصب‌شده...';
+
+  @override
+  String get reconnect_to_apply =>
+      'برای اعمال تغییرات، اتصال VPN را مجدداً برقرار کنید';
+
+  @override
+  String get connection_mode_title => 'حالت اتصال';
+
+  @override
+  String get connection_mode_subtitle =>
+      'انتخاب بین تونل سراسری VPN یا پروکسی محلی';
+
+  @override
+  String get vpn_mode_label => 'حالت VPN';
+
+  @override
+  String get proxy_mode_label => 'حالت پروکسی';
+
+  @override
+  String get vpn_mode_desc => 'عبور ترافیک دستگاه از طریق رابط سراسری TUN';
+
+  @override
+  String get proxy_mode_desc =>
+      'اجرای پروکسی محلی SOCKS5 (127.0.0.1:10807) و HTTP (127.0.0.1:10809) بدون تونل VPN';
 }

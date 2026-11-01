@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/app/riverpod/local_configs_list.dart';
 import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
+import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/config_tile.dart';
+import 'package:vendervpn/src/nodes/presentation/views/widgets/fastest_server_card.dart';
 import 'package:vendervpn/src/nodes/presentation/views/widgets/import_action_card.dart';
 import 'package:vendervpn/src/nodes/presentation/views/widgets/local_nodes_grouped_list.dart';
 import 'package:vendervpn/src/nodes/presentation/views/widgets/qr_scanner_sheet.dart';
@@ -20,9 +24,12 @@ class NodesView extends ConsumerWidget {
   static const path = '/nodes';
 
   Future<void> _importFromClipboard(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final uiState = ref.read(nodesViewUiStateProvider);
     if (uiState.isImporting) return;
-    ref.read(nodesViewUiStateProvider.notifier).setImporting(true);
+    final uiNotifier = ref.read(nodesViewUiStateProvider.notifier);
+    final localConfigsNotifier = ref.read(localConfigsListProvider.notifier);
+    uiNotifier.setImporting(true);
     try {
       final data = await Clipboard.getData(Clipboard.kTextPlain);
       final text = data?.text?.trim() ?? '';
@@ -31,30 +38,30 @@ class NodesView extends ConsumerWidget {
         CoreUtils.showSnackBar(
           context,
           true,
-          title: 'Clipboard Empty',
-          message: 'Copy a V2Ray link or subscription URL first.',
+          title: l10n.clipboard_empty_title,
+          message: l10n.clipboard_empty_msg,
         );
         return;
       }
 
-      final count = await ref
-          .read(localConfigsListProvider.notifier)
-          .importFromRawPayload(text, source: 'clipboard');
+      final count = await localConfigsNotifier.importFromRawPayload(
+        text,
+        source: 'clipboard',
+      );
       if (!context.mounted) return;
       if (count > 0) {
         CoreUtils.showSnackBar(
           context,
           false,
-          title: 'Nodes Imported',
-          message: 'Added $count V2Ray node(s) from clipboard.',
+          title: l10n.nodes_imported_title,
+          message: '${l10n.nodes_imported_msg} ($count)',
         );
       } else {
         CoreUtils.showSnackBar(
           context,
           true,
-          title: 'Invalid Format',
-          message:
-              'No valid vmess://, vless://, trojan://, ss://, or hy2:// links found.',
+          title: l10n.invalid_format_title,
+          message: l10n.invalid_format_msg,
         );
       }
     } catch (e) {
@@ -62,11 +69,11 @@ class NodesView extends ConsumerWidget {
       CoreUtils.showSnackBar(
         context,
         true,
-        title: 'Import Failed',
+        title: l10n.import_failed_title,
         message: e.toString(),
       );
     } finally {
-      ref.read(nodesViewUiStateProvider.notifier).setImporting(false);
+      uiNotifier.setImporting(false);
     }
   }
 
@@ -342,48 +349,47 @@ class NodesView extends ConsumerWidget {
       },
     );
 
-    if (result == null || result.url.isEmpty) return;
-    ref.read(nodesViewUiStateProvider.notifier).setImporting(true);
+    if (result == null || result.url.isEmpty || !context.mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    final uiNotifier = ref.read(nodesViewUiStateProvider.notifier);
+    final localConfigsNotifier = ref.read(localConfigsListProvider.notifier);
+    uiNotifier.setImporting(true);
     try {
       final rawUrl = result.url;
       final int count;
       if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
-        count = await ref
-            .read(localConfigsListProvider.notifier)
-            .importSubscriptionUrl(
-              rawUrl,
-              name: result.name,
-              intervalHours: result.intervalHours,
-            );
+        count = await localConfigsNotifier.importSubscriptionUrl(
+          rawUrl,
+          name: result.name,
+          intervalHours: result.intervalHours,
+        );
       } else {
-        count = await ref
-            .read(localConfigsListProvider.notifier)
-            .importFromRawPayload(
-              rawUrl,
-              source:
-                  result.name.isNotEmpty
-                      ? 'sub:${result.name}'
-                      : 'subscription',
-            );
+        count = await localConfigsNotifier.importFromRawPayload(
+          rawUrl,
+          source:
+              result.name.isNotEmpty
+                  ? 'sub:${result.name}'
+                  : 'subscription',
+        );
       }
       if (!context.mounted) return;
       if (count > 0) {
         final intervalText =
             result.intervalHours > 0
-                ? 'Auto-updates every ${result.intervalHours}h.'
-                : 'Manual update mode.';
+                ? '${l10n.every_n_hours} ${result.intervalHours}h'
+                : l10n.manual_interval;
         CoreUtils.showSnackBar(
           context,
           false,
-          title: 'Subscription Synced',
-          message: 'Imported $count node(s). $intervalText',
+          title: l10n.subscription_synced_title,
+          message: '($count) • $intervalText',
         );
       } else {
         CoreUtils.showSnackBar(
           context,
           true,
-          title: 'No Nodes Found',
-          message: 'Could not parse any V2Ray nodes from that URL.',
+          title: l10n.no_nodes_found_title,
+          message: l10n.no_nodes_found_msg,
         );
       }
     } catch (e) {
@@ -391,11 +397,11 @@ class NodesView extends ConsumerWidget {
       CoreUtils.showSnackBar(
         context,
         true,
-        title: 'Subscription Error',
+        title: l10n.subscription_error_title,
         message: e.toString(),
       );
     } finally {
-      ref.read(nodesViewUiStateProvider.notifier).setImporting(false);
+      uiNotifier.setImporting(false);
     }
   }
 
@@ -408,27 +414,30 @@ class NodesView extends ConsumerWidget {
       builder: (_) => const QrScannerSheet(),
     );
 
-    if (qrPayload == null || qrPayload.isEmpty) return;
-    ref.read(nodesViewUiStateProvider.notifier).setImporting(true);
+    if (qrPayload == null || qrPayload.isEmpty || !context.mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    final uiNotifier = ref.read(nodesViewUiStateProvider.notifier);
+    final localConfigsNotifier = ref.read(localConfigsListProvider.notifier);
+    uiNotifier.setImporting(true);
     try {
-      final count = await ref
-          .read(localConfigsListProvider.notifier)
-          .importFromRawPayload(qrPayload, source: 'qrcode');
+      final count = await localConfigsNotifier.importFromRawPayload(
+        qrPayload,
+        source: 'qrcode',
+      );
       if (!context.mounted) return;
       if (count > 0) {
         CoreUtils.showSnackBar(
           context,
           false,
-          title: 'QR Node Added',
-          message: 'Scanned & imported $count V2Ray node(s) into Local Nodes.',
+          title: l10n.qr_node_added_title,
+          message: '${l10n.qr_node_added_msg} ($count)',
         );
       } else {
         CoreUtils.showSnackBar(
           context,
           true,
-          title: 'Invalid QR Code',
-          message:
-              'Scanned QR code did not contain a valid V2Ray URI or subscription.',
+          title: l10n.invalid_qr_title,
+          message: l10n.invalid_qr_msg,
         );
       }
     } catch (e) {
@@ -436,45 +445,201 @@ class NodesView extends ConsumerWidget {
       CoreUtils.showSnackBar(
         context,
         true,
-        title: 'QR Scan Error',
+        title: l10n.qr_scan_error_title,
         message: e.toString(),
       );
     } finally {
-      ref.read(nodesViewUiStateProvider.notifier).setImporting(false);
+      uiNotifier.setImporting(false);
+    }
+  }
+
+  Future<void> _connectToFastestServer(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final uiState = ref.read(nodesViewUiStateProvider);
+    if (uiState.isAutoConnectingFastest || uiState.isPingingAll) return;
+
+    // Capture all notifiers before any await gaps so they remain valid even if
+    // DashboardScreen/NodesView unmounts when navigating to StatusScreen.
+    final uiNotifier = ref.read(nodesViewUiStateProvider.notifier);
+    final cloudConfigsNotifier = ref.read(currentConfigsListProvider.notifier);
+    final configsAdapter = ref.read(configsAdapterProvider.notifier);
+    final connAdapter = ref.read(connectionAdapterProvider.notifier);
+    final currentConfigNotifier = ref.read(currentConfigProvider.notifier);
+
+    uiNotifier.setAutoConnectingFastest(true);
+
+    try {
+      var cloudNodes = ref.read(currentConfigsListProvider);
+      if (cloudNodes.isEmpty) {
+        await configsAdapter.getConfigs();
+        if (!context.mounted) return;
+        cloudNodes = ref.read(currentConfigsListProvider);
+      }
+
+      if (cloudNodes.isEmpty) {
+        if (context.mounted) {
+          CoreUtils.showSnackBar(
+            context,
+            true,
+            title: l10n.server_issue,
+            message: l10n.no_cloud_nodes,
+          );
+        }
+        return;
+      }
+
+      final measuredPings = <String, int>{};
+
+      // Ping all cloud nodes in parallel batches of 3
+      const batchSize = 3;
+      for (var i = 0; i < cloudNodes.length; i += batchSize) {
+        final batch = cloudNodes.skip(i).take(batchSize).toList();
+        await Future.wait(
+          batch.map((node) async {
+            try {
+              final delay = await connAdapter
+                  .ping(node.configjson)
+                  .timeout(
+                    const Duration(milliseconds: 3500),
+                    onTimeout: () => -1,
+                  );
+              measuredPings[node.id] = delay;
+              cloudConfigsNotifier.updateConfigPing(node.id, delay);
+            } catch (_) {
+              measuredPings[node.id] = -1;
+              cloudConfigsNotifier.updateConfigPing(node.id, -1);
+            }
+          }),
+        );
+      }
+
+      final updatedList = [
+        for (final node in cloudNodes)
+          node.copyWith(ping: measuredPings[node.id] ?? node.ping),
+      ];
+      final reachable =
+          updatedList.where((c) => (c.ping ?? -1) > 0).toList();
+
+      if (reachable.isEmpty) {
+        if (context.mounted) {
+          CoreUtils.showSnackBar(
+            context,
+            true,
+            title: l10n.server_issue,
+            message: l10n.no_reachable_servers,
+          );
+        }
+        return;
+      }
+
+      reachable.sort((a, b) => a.ping!.compareTo(b.ping!));
+      final fastestNode = reachable.first;
+
+      // Clear the "finding fastest server" flag as soon as we found the node,
+      // before startConnection() navigates away from NodesView.
+      uiNotifier.setAutoConnectingFastest(false);
+
+      if (!context.mounted) return;
+
+      final connectionState = ref.read(connectionAdapterProvider);
+      final isConnected = connectionState is ConnectionStateConnected;
+      final currentConfig = ref.read(currentConfigProvider);
+
+      if (isConnected && currentConfig?.id == fastestNode.id) {
+        CoreUtils.showSnackBar(
+          context,
+          false,
+          title: l10n.fastest_server,
+          message:
+              '${l10n.fastest_server_connected} (${fastestNode.remark} • ${fastestNode.ping} ms)',
+        );
+        return;
+      }
+
+      if (isConnected) {
+        await connAdapter.stopConnection();
+        await Future.delayed(const Duration(milliseconds: 250));
+      }
+
+      await currentConfigNotifier.setCurrentConfig(fastestNode);
+
+      if (context.mounted) {
+        CoreUtils.showSnackBar(
+          context,
+          false,
+          title: l10n.fastest_server_found_title,
+          message: '${fastestNode.remark} • ${fastestNode.ping} ms',
+        );
+      }
+
+      await connAdapter.startConnection();
+    } catch (e) {
+      if (context.mounted) {
+        CoreUtils.showSnackBar(
+          context,
+          true,
+          title: l10n.error,
+          message: e.toString(),
+        );
+      }
+    } finally {
+      uiNotifier.setAutoConnectingFastest(false);
     }
   }
 
   Future<void> _pingAllActiveTab(WidgetRef ref) async {
     final uiState = ref.read(nodesViewUiStateProvider);
-    if (uiState.isPingingAll) return;
-    ref.read(nodesViewUiStateProvider.notifier).setPingingAll(true);
-    try {
-      final selectedTab = uiState.selectedTab;
-      final list =
-          selectedTab == 0
-              ? ref.read(currentConfigsListProvider)
-              : ref.read(localConfigsListProvider);
-      final connAdapter = ref.read(connectionAdapterProvider.notifier);
+    if (uiState.isPingingAll || uiState.isAutoConnectingFastest) return;
+    final uiNotifier = ref.read(nodesViewUiStateProvider.notifier);
+    final cloudConfigsNotifier = ref.read(currentConfigsListProvider.notifier);
+    final localConfigsNotifier = ref.read(localConfigsListProvider.notifier);
+    final connAdapter = ref.read(connectionAdapterProvider.notifier);
+    final selectedTab = uiState.selectedTab;
+    final list =
+        selectedTab == 0
+            ? ref.read(currentConfigsListProvider)
+            : ref.read(localConfigsListProvider);
 
-      for (final node in list) {
-        final delay = await connAdapter.ping(node.configjson);
-        if (selectedTab == 0) {
-          ref
-              .read(currentConfigsListProvider.notifier)
-              .updateConfigPing(node.id, delay);
-        } else {
-          ref
-              .read(localConfigsListProvider.notifier)
-              .updateConfigPing(node.id, delay);
-        }
+    uiNotifier.setPingingAll(true);
+    try {
+      const batchSize = 3;
+      for (var i = 0; i < list.length; i += batchSize) {
+        final batch = list.skip(i).take(batchSize).toList();
+        await Future.wait(
+          batch.map((node) async {
+            try {
+              final delay = await connAdapter
+                  .ping(node.configjson)
+                  .timeout(
+                    const Duration(milliseconds: 3500),
+                    onTimeout: () => -1,
+                  );
+              if (selectedTab == 0) {
+                cloudConfigsNotifier.updateConfigPing(node.id, delay);
+              } else {
+                localConfigsNotifier.updateConfigPing(node.id, delay);
+              }
+            } catch (_) {
+              if (selectedTab == 0) {
+                cloudConfigsNotifier.updateConfigPing(node.id, -1);
+              } else {
+                localConfigsNotifier.updateConfigPing(node.id, -1);
+              }
+            }
+          }),
+        );
       }
     } finally {
-      ref.read(nodesViewUiStateProvider.notifier).setPingingAll(false);
+      uiNotifier.setPingingAll(false);
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     ref.watch(currentThemeProvider);
     final uiState = ref.watch(nodesViewUiStateProvider);
     final selectedTab = uiState.selectedTab;
@@ -488,6 +653,16 @@ class NodesView extends ConsumerWidget {
     final isCloudSyncing = configsState is ConfigsLoading;
     final connectionState = ref.watch(connectionAdapterProvider);
     final isConnected = connectionState is ConnectionStateConnected;
+    final selectedConfig = ref.watch(currentConfigProvider);
+
+    Config? fastestCloudNode;
+    var minPing = 999999;
+    for (final node in cloudConfigs) {
+      if (node.ping != null && node.ping! > 0 && node.ping! < minPing) {
+        minPing = node.ping!;
+        fastestCloudNode = node;
+      }
+    }
 
     final textColor = Colours.classicAdabtiveTextColor(context);
     final surfaceColor = Colours.cardSurface(context);
@@ -504,9 +679,9 @@ class NodesView extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Tunnel Endpoints',
-                    style: TextStyle(
+                  Text(
+                    l10n.tunnel_endpoints_subtitle,
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: Colours.subtitleGrey,
@@ -517,7 +692,7 @@ class NodesView extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'Nodes',
+                        l10n.nodes_title,
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
@@ -576,7 +751,7 @@ class NodesView extends ConsumerWidget {
                         ),
                       const SizedBox(width: 5),
                       Text(
-                        'Ping All',
+                        l10n.ping_all,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -642,7 +817,7 @@ class NodesView extends ConsumerWidget {
               children: [
                 Expanded(
                   child: TabPillButton(
-                    title: 'Cloud Nodes (${cloudConfigs.length})',
+                    title: '${l10n.cloud_nodes_tab} (${cloudConfigs.length})',
                     icon: Icons.cloud_done_outlined,
                     selected: selectedTab == 0,
                     onTap:
@@ -653,7 +828,7 @@ class NodesView extends ConsumerWidget {
                 ),
                 Expanded(
                   child: TabPillButton(
-                    title: 'Local Nodes (${localConfigs.length})',
+                    title: '${l10n.local_nodes_tab} (${localConfigs.length})',
                     icon: Icons.folder_special_outlined,
                     selected: selectedTab == 1,
                     onTap:
@@ -674,7 +849,7 @@ class NodesView extends ConsumerWidget {
                 Expanded(
                   child: ImportActionCard(
                     icon: Icons.content_paste_go_rounded,
-                    label: 'Clipboard',
+                    label: l10n.clipboard_action,
                     accent: Colours.orbEmerald,
                     onTap: () => _importFromClipboard(context, ref),
                   ),
@@ -683,7 +858,7 @@ class NodesView extends ConsumerWidget {
                 Expanded(
                   child: ImportActionCard(
                     icon: Icons.qr_code_scanner_rounded,
-                    label: 'QR Code',
+                    label: l10n.qr_code_action,
                     accent: Colours.orbCoral,
                     onTap: () => _showQrScannerSheet(context, ref),
                   ),
@@ -692,7 +867,7 @@ class NodesView extends ConsumerWidget {
                 Expanded(
                   child: ImportActionCard(
                     icon: Icons.rss_feed_rounded,
-                    label: 'Sub URL',
+                    label: l10n.sub_url_action,
                     accent: Colours.orbViolet,
                     onTap: () => _showSubscriptionDialog(context, ref),
                   ),
@@ -727,8 +902,8 @@ class NodesView extends ConsumerWidget {
                           const SizedBox(height: 12),
                           Text(
                             selectedTab == 0
-                                ? 'No cloud nodes synced yet'
-                                : 'No local nodes imported yet',
+                                ? l10n.no_cloud_nodes
+                                : l10n.no_local_nodes,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -738,8 +913,8 @@ class NodesView extends ConsumerWidget {
                           const SizedBox(height: 6),
                           Text(
                             selectedTab == 0
-                                ? 'Tap the sync icon above to fetch Appwrite nodes'
-                                : 'Import from Clipboard, QR Code, or Subscription URL',
+                                ? l10n.no_cloud_nodes_hint
+                                : l10n.no_local_nodes_hint,
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colours.subtitleGrey,
@@ -753,12 +928,27 @@ class NodesView extends ConsumerWidget {
                     ? ListView.builder(
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.only(bottom: 120),
-                      itemCount: activeList.length,
+                      itemCount: activeList.length + 1,
                       itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return FastestServerCard(
+                            fastestNode: fastestCloudNode,
+                            isAutoConnecting: uiState.isAutoConnectingFastest,
+                            isConnected: isConnected,
+                            isSelected:
+                                fastestCloudNode != null &&
+                                selectedConfig?.id == fastestCloudNode.id,
+                            onTap: () => _connectToFastestServer(context, ref),
+                          );
+                        }
+                        final config = activeList[index - 1];
                         return ConfigTile(
-                          config: activeList[index],
+                          config: config,
                           isConnected: isConnected,
                           isLocal: false,
+                          isFastest:
+                              fastestCloudNode != null &&
+                              config.id == fastestCloudNode.id,
                         );
                       },
                     )

@@ -3,6 +3,7 @@ import 'package:vendervpn/core/res/styles/colors.dart';
 
 class TabPillButton extends StatelessWidget {
   const TabPillButton({
+    super.key,
     required this.title,
     required this.icon,
     required this.selected,

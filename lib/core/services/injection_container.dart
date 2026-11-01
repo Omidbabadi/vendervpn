@@ -33,4 +33,8 @@ import '../../src/connection/domain/usecase/disconnect.dart';
 import '../../src/connection/domain/usecase/get_vpn_state.dart';
 import '../../src/connection/domain/usecase/initialize_v2ay.dart';
 import '../../src/connection/domain/usecase/request_permission.dart';
+import '../../src/per_app_proxy/data/datasrs/per_app_proxy_datasrc.dart';
+import '../../src/per_app_proxy/data/repo/per_app_proxy_repo_impl.dart';
+import '../../src/per_app_proxy/domain/repo/per_app_proxy_repo.dart';
+import '../../src/per_app_proxy/domain/usecases/get_installed_app.dart';
 part 'injection_container.main.dart';

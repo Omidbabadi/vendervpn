@@ -8,6 +8,16 @@ Future<void> init() async {
   await _configsInit();
   await _adMobInit();
   await _ipInit();
+  await _perAppProxyInit();
+}
+
+Future<void> _perAppProxyInit() async {
+  sl
+    ..registerLazySingleton(() => GetInstalledApp(sl()))
+    ..registerLazySingleton<PerAppProxyRepo>(() => PerAppProxyRepoImpl(sl()))
+    ..registerLazySingleton<PerAppProxyDatasrc>(
+      () => PerAppProxyDatasrcImpl(sl()),
+    );
 }
 
 Future<void> _ipInit() async {
