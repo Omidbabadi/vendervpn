@@ -8,6 +8,7 @@ import '../../../../../core/common/app/riverpod/local_configs_list.dart';
 import '../../../../../core/common/entities/config.dart';
 import '../../../../../core/res/styles/colors.dart';
 import '../../../../../core/utils/core_utils.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../home/presentation/views/widgets/config_tile.dart';
 
 class SubscriptionExpansionCard extends ConsumerWidget {
@@ -42,7 +43,6 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                 ? '${l10n.every_n_hours} ${subscription!.intervalHours}h'
                 : l10n.manual_interval)
             : l10n.sub_url_action;
-    final userInfo = subscription?.userInfo;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
@@ -140,88 +140,61 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                             ),
                           ],
                         ),
-                      ),
-                      if (subscription != null) ...[
-                        const SizedBox(width: 6),
-                        GestureDetector(
-                          onTap: () async {
-                            HapticFeedback.lightImpact();
-                            final uiNotifier = ref.read(
-                              nodesViewUiStateProvider.notifier,
-                            );
-                            final localConfigsNotifier = ref.read(
-                              localConfigsListProvider.notifier,
-                            );
-                            uiNotifier.setImporting(true);
-                            try {
-                              final count = await localConfigsNotifier
-                                  .refreshSubscription(subscription!);
-                              if (!context.mounted) return;
-                              CoreUtils.showSnackBar(
-                                context,
-                                false,
-                                title: l10n.subscription_updated_title,
-                                message:
-                                    '${subscription!.name} ($count)',
-                              );
-                            } catch (e) {
-                              if (!context.mounted) return;
-                              CoreUtils.showSnackBar(
-                                context,
-                                true,
-                                title: l10n.sync_failed_title,
-                                message: e.toString(),
-                              );
-                            } finally {
-                              uiNotifier.setImporting(false);
-                            }
-                          },
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: Colours.softChipBg(context),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.refresh_rounded,
-                              size: 16,
-                              color: textColor.withValues(alpha: 0.75),
-                            ),
+                        const SizedBox(height: 3),
+                        Text(
+                          subscription != null
+                              ? '$intervalLabel • ${subscription!.url}'
+                              : '${nodes.length} • ${l10n.sub_url_action}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colours.subtitleGrey,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(width: 6),
-                        GestureDetector(
-                          onTap: () async {
-                            HapticFeedback.lightImpact();
-                            final localConfigsNotifier = ref.read(
-                              localConfigsListProvider.notifier,
-                            );
-                            await localConfigsNotifier
-                                .removeSubscriptionAndNodes(subscription!);
-                            if (!context.mounted) return;
-                            CoreUtils.showSnackBar(
-                              context,
-                              false,
-                              title: l10n.subscription_removed_title,
-                              message: subscription!.name,
-                            );
-                          },
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: Colours.pastelRoseBg.withValues(
-                                alpha: 0.7,
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.delete_outline_rounded,
-                              size: 16,
-                              color: Colours.pastelRoseFg,
-                            ),
-                          ),
+                      ],
+                    ),
+                  ),
+                  if (subscription != null) ...[
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: () async {
+                        HapticFeedback.lightImpact();
+                        ref
+                            .read(nodesViewUiStateProvider.notifier)
+                            .setImporting(true);
+                        try {
+                          final count = await ref
+                              .read(localConfigsListProvider.notifier)
+                              .refreshSubscription(subscription!);
+                          if (!context.mounted) return;
+                          CoreUtils.showSnackBar(
+                            context,
+                            false,
+                            title: l10n.subscription_updated_title,
+                            message: '"${subscription!.name}" ($count)',
+                          );
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          CoreUtils.showSnackBar(
+                            context,
+                            true,
+                            title: l10n.sync_failed_title,
+                            message: e.toString(),
+                          );
+                        } finally {
+                          ref
+                              .read(nodesViewUiStateProvider.notifier)
+                              .setImporting(false);
+                        }
+                      },
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: Colours.softChipBg(context),
+                          shape: BoxShape.circle,
                         ),
                       ],
                       const SizedBox(width: 6),
@@ -229,9 +202,38 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                         turns: isExpanded ? 0.5 : 0.0,
                         duration: const Duration(milliseconds: 200),
                         child: Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          size: 22,
-                          color: textColor.withValues(alpha: 0.7),
+                          Icons.refresh_rounded,
+                          size: 16,
+                          color: textColor.withValues(alpha: 0.75),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: () async {
+                        HapticFeedback.lightImpact();
+                        await ref
+                            .read(localConfigsListProvider.notifier)
+                            .removeSubscriptionAndNodes(subscription!);
+                        if (!context.mounted) return;
+                        CoreUtils.showSnackBar(
+                          context,
+                          false,
+                          title: l10n.subscription_removed_title,
+                          message: '"${subscription!.name}"',
+                        );
+                      },
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: Colours.pastelRoseBg.withValues(alpha: 0.7),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 16,
+                          color: Colours.pastelRoseFg,
                         ),
                       ),
                     ],

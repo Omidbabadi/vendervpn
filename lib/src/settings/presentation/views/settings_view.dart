@@ -7,9 +7,6 @@ import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
-import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
-import 'package:vendervpn/src/per_app_proxy/presention/app/adpter/per_app_proxy_adapter.dart';
-import 'package:vendervpn/src/per_app_proxy/presention/views/per_app_proxy_sheet.dart';
 
 class SettingsView extends ConsumerWidget {
   const SettingsView({super.key});

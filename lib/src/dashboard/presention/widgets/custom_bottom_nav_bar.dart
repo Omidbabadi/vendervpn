@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
+import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/dashboard/presention/widgets/nav_bar_item.dart';
@@ -91,10 +92,26 @@ class CustomBottomNavBar extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          NavConnectButton(
-            isConnected: isConnected,
-            isConnecting: isConnecting,
-            onTap: () => _toggleTunnel(adapter, isConnected, isConnecting),
+          InkWell(
+            onTap: () {
+              _toggleTunnel(adapter, isConnected, isConnecting);
+            },
+            child: Container(
+              height: 70,
+              width: 70,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color:
+                    connectionState is ConnectionStateConnected
+                        ? Colours.orbEmerald
+                        : Colours.subtitleGrey,
+              ),
+              child: Icon(
+                connectionState is ConnectionStateConnected
+                    ? Icons.flash_off
+                    : Icons.flash_on,
+              ),
+            ),
           ),
         ],
       ),
