@@ -9,6 +9,7 @@ import 'package:vendervpn/core/common/app/riverpod/local_configs_list.dart';
 import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
+import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/connection_status.dart';
 
@@ -40,9 +41,7 @@ class HomeView extends ConsumerWidget {
         final heroValue =
             isConnected
                 ? status.duration
-                : (ping > 0
-                    ? '$ping'
-                    : totalNodes.toString().padLeft(3, '0'));
+                : (ping > 0 ? '$ping' : totalNodes.toString().padLeft(3, '0'));
 
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),

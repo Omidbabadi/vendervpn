@@ -142,10 +142,7 @@ class SubscriptionsList extends Notifier<List<SubscriptionItem>> {
     return item;
   }
 
-  Future<void> markUpdated(
-    String id, {
-    SubscriptionUserInfo? userInfo,
-  }) async {
+  Future<void> markUpdated(String id, {SubscriptionUserInfo? userInfo}) async {
     final updated = [
       for (final s in state)
         if (s.id == id)
@@ -157,10 +154,7 @@ class SubscriptionsList extends Notifier<List<SubscriptionItem>> {
     await _persist(updated);
   }
 
-  Future<void> updateUserInfo(
-    String id,
-    SubscriptionUserInfo userInfo,
-  ) async {
+  Future<void> updateUserInfo(String id, SubscriptionUserInfo userInfo) async {
     final updated = [
       for (final s in state)
         if (s.id == id) s.copyWith(userInfo: userInfo) else s,
@@ -181,9 +175,7 @@ class SubscriptionsList extends Notifier<List<SubscriptionItem>> {
   }
 
   Future<void> _persist(List<SubscriptionItem> items) async {
-    await _cacheHelper.cacheSubscriptions(
-      items.map((e) => e.toMap()).toList(),
-    );
+    await _cacheHelper.cacheSubscriptions(items.map((e) => e.toMap()).toList());
   }
 }
 
@@ -370,8 +362,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
   Future<void> removeSubscriptionAndNodes(SubscriptionItem sub) async {
     final sourceTag = 'sub:${sub.name}';
     await ref.read(subscriptionsListProvider.notifier).removeById(sub.id);
-    final remaining =
-        state.where((c) => c.importedFrom != sourceTag).toList();
+    final remaining = state.where((c) => c.importedFrom != sourceTag).toList();
     state = remaining;
     await _persistState(remaining);
   }
@@ -382,9 +373,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
   }) async {
     // Keep nodes from other sources; replace nodes belonging to this subscription
     final retained = state.where((c) => c.importedFrom != sourceTag).toList();
-    final existingByUri = <String, Config>{
-      for (final c in retained) c.uri: c,
-    };
+    final existingByUri = <String, Config>{for (final c in retained) c.uri: c};
     for (final model in newModels) {
       existingByUri[model.uri] = model;
     }
@@ -400,9 +389,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
   }
 
   Future<void> _mergeAndPersist(List<ConfigModel> newModels) async {
-    final existingByUri = <String, Config>{
-      for (final c in state) c.uri: c,
-    };
+    final existingByUri = <String, Config>{for (final c in state) c.uri: c};
     for (final model in newModels) {
       existingByUri[model.uri] = model;
     }

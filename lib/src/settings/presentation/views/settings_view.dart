@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -307,18 +309,19 @@ class SettingsView extends ConsumerWidget {
                           },
                         ),
                       ),
-                      Expanded(
-                        child: _OptionPill(
-                          label: l10n.proxy_mode_label,
-                          icon: Icons.lan_rounded,
-                          selected: perAppState.proxyOnly,
-                          activeColor: Colours.orbCyan,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            perAppNotifier.setProxyOnly(true);
-                          },
+                      if (Platform.isAndroid)
+                        Expanded(
+                          child: _OptionPill(
+                            label: l10n.proxy_mode_label,
+                            icon: Icons.lan_rounded,
+                            selected: perAppState.proxyOnly,
+                            activeColor: Colours.orbCyan,
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              perAppNotifier.setProxyOnly(true);
+                            },
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -389,248 +392,250 @@ class SettingsView extends ConsumerWidget {
           ),
           const SizedBox(height: 14),
 
-          // ─── 4. PER-APP PROXY (Per-App Proxy vs Bypass Mode) ───
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: surfaceColor,
-              borderRadius: BorderRadius.circular(26),
-              border: Border.all(
-                color:
-                    perAppState.isEnabled
-                        ? perAppAccent.withValues(alpha: 0.45)
-                        : Colours.subtleBorder(context),
+          if (Platform.isAndroid) ...[
+            // ─── 4. PER-APP PROXY (Per-App Proxy vs Bypass Mode) ───
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(26),
+                border: Border.all(
+                  color:
+                      perAppState.isEnabled
+                          ? perAppAccent.withValues(alpha: 0.45)
+                          : Colours.subtleBorder(context),
+                ),
+                boxShadow: Colours.softCardShadow(context),
               ),
-              boxShadow: Colours.softCardShadow(context),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color:
-                            isBypass
-                                ? Colours.pastelAmberBg
-                                : Colours.pastelLilacBg,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        isBypass
-                            ? Icons.alt_route_rounded
-                            : Icons.apps_outage_rounded,
-                        size: 18,
-                        color: perAppAccent,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.per_app_proxy_title,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: textColor,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            l10n.per_app_proxy_subtitle,
-                            style: const TextStyle(
-                              fontSize: 11.5,
-                              color: Colours.subtitleGrey,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Switch.adaptive(
-                      value: perAppState.isEnabled,
-                      activeThumbColor: perAppAccent,
-                      onChanged: (value) {
-                        HapticFeedback.selectionClick();
-                        perAppNotifier.setEnabled(value);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-
-                // Two-Mode Selector: Per-App Proxy vs Bypass Mode
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colours.softChipBg(context),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
                     children: [
-                      Expanded(
-                        child: _OptionPill(
-                          label: l10n.per_app_mode_proxy,
-                          icon: Icons.shield_outlined,
-                          selected: perAppState.mode == PerAppProxyMode.perApp,
-                          activeColor: Colours.orbViolet,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            perAppNotifier.setMode(PerAppProxyMode.perApp);
-                          },
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color:
+                              isBypass
+                                  ? Colours.pastelAmberBg
+                                  : Colours.pastelLilacBg,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                      Expanded(
-                        child: _OptionPill(
-                          label: l10n.per_app_mode_bypass,
-                          icon: Icons.alt_route_rounded,
-                          selected: perAppState.mode == PerAppProxyMode.bypass,
-                          activeColor: Colours.pastelAmberFg,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            perAppNotifier.setMode(PerAppProxyMode.bypass);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                // Mode explanation banner
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colours.softChipBg(context).withValues(alpha: 0.65),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colours.subtleBorder(context)),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        isBypass
-                            ? Icons.call_split_rounded
-                            : Icons.filter_alt_outlined,
-                        size: 15,
-                        color: perAppAccent,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
+                        child: Icon(
                           isBypass
-                              ? l10n.per_app_mode_bypass_desc
-                              : l10n.per_app_mode_proxy_desc,
-                          style: TextStyle(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w600,
-                            color: textColor.withValues(alpha: 0.85),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Select Apps Button
-                InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    PerAppProxySheet.show(context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: perAppAccent.withValues(alpha: 0.11),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: perAppAccent.withValues(alpha: 0.35),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.checklist_rtl_rounded,
+                              ? Icons.alt_route_rounded
+                              : Icons.apps_outage_rounded,
                           size: 18,
                           color: perAppAccent,
                         ),
-                        const SizedBox(width: 10),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.per_app_proxy_title,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: textColor,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              l10n.per_app_proxy_subtitle,
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                color: Colours.subtitleGrey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Switch.adaptive(
+                        value: perAppState.isEnabled,
+                        activeThumbColor: perAppAccent,
+                        onChanged: (value) {
+                          HapticFeedback.selectionClick();
+                          perAppNotifier.setEnabled(value);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Two-Mode Selector: Per-App Proxy vs Bypass Mode
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colours.softChipBg(context),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      children: [
                         Expanded(
-                          child: Text(
-                            l10n.manage_apps,
-                            style: TextStyle(
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w700,
-                              color: textColor,
-                            ),
+                          child: _OptionPill(
+                            label: l10n.per_app_mode_proxy,
+                            icon: Icons.shield_outlined,
+                            selected: perAppState.mode == PerAppProxyMode.perApp,
+                            activeColor: Colours.orbViolet,
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              perAppNotifier.setMode(PerAppProxyMode.perApp);
+                            },
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 3,
+                        Expanded(
+                          child: _OptionPill(
+                            label: l10n.per_app_mode_bypass,
+                            icon: Icons.alt_route_rounded,
+                            selected: perAppState.mode == PerAppProxyMode.bypass,
+                            activeColor: Colours.pastelAmberFg,
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              perAppNotifier.setMode(PerAppProxyMode.bypass);
+                            },
                           ),
-                          decoration: BoxDecoration(
-                            color: perAppAccent,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            '${perAppState.selectedPackages.length} ${l10n.selected_apps_count}',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Icon(
-                          Icons.chevron_right_rounded,
-                          size: 18,
-                          color: textColor.withValues(alpha: 0.65),
                         ),
                       ],
                     ),
                   ),
-                ),
-
-                if (isConnected && perAppState.isEnabled) ...[
                   const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.info_outline_rounded,
-                        size: 13.5,
-                        color: Colours.subtitleGrey,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          l10n.reconnect_to_apply,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colours.subtitleGrey,
-                            fontWeight: FontWeight.w500,
+
+                  // Mode explanation banner
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 9,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colours.softChipBg(context).withValues(alpha: 0.65),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colours.subtleBorder(context)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          isBypass
+                              ? Icons.call_split_rounded
+                              : Icons.filter_alt_outlined,
+                          size: 15,
+                          color: perAppAccent,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            isBypass
+                                ? l10n.per_app_mode_bypass_desc
+                                : l10n.per_app_mode_proxy_desc,
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w600,
+                              color: textColor.withValues(alpha: 0.85),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(height: 12),
+
+                  // Select Apps Button
+                  InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      PerAppProxySheet.show(context);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: perAppAccent.withValues(alpha: 0.11),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: perAppAccent.withValues(alpha: 0.35),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.checklist_rtl_rounded,
+                            size: 18,
+                            color: perAppAccent,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              l10n.manage_apps,
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w700,
+                                color: textColor,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 9,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: perAppAccent,
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              '${perAppState.selectedPackages.length} ${l10n.selected_apps_count}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            size: 18,
+                            color: textColor.withValues(alpha: 0.65),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  if (isConnected && perAppState.isEnabled) ...[
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline_rounded,
+                          size: 13.5,
+                          color: Colours.subtitleGrey,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            l10n.reconnect_to_apply,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colours.subtitleGrey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 18),
+            const SizedBox(height: 18),
+          ],
 
           // ─── 5. BETA RELEASE FOOTER ───
           Center(

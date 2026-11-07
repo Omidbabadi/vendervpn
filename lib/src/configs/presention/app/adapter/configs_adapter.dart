@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
@@ -8,6 +10,8 @@ import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/src/configs/domain/usecases/get_configs.dart';
 
 import '../../../../../core/services/injection_container.dart';
+import '../../../../../core/utils/core_utils.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 part 'configs_adapter.g.dart';
 part 'configs_state.dart';
@@ -59,5 +63,59 @@ class ConfigsAdapter extends _$ConfigsAdapter {
         state = ConfigsLoaded(r);
       },
     );
+  }
+
+  Future<void> importFromClipboard(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final uiState = ref.read(nodesViewUiStateProvider);
+    if (uiState.isImporting) return;
+    final uiNotifier = ref.read(nodesViewUiStateProvider.notifier);
+    final localConfigsNotifier = ref.read(localConfigsListProvider.notifier);
+    uiNotifier.setImporting(true);
+    try {
+      final data = await Clipboard.getData(Clipboard.kTextPlain);
+      final text = data?.text?.trim() ?? '';
+      if (text.isEmpty) {
+        if (!context.mounted) return;
+        CoreUtils.showSnackBar(
+          context,
+          true,
+          title: l10n.clipboard_empty_title,
+          message: l10n.clipboard_empty_msg,
+        );
+        return;
+      }
+
+      final count = await localConfigsNotifier.importFromRawPayload(
+        text,
+        source: 'clipboard',
+      );
+      if (!context.mounted) return;
+      if (count > 0) {
+        CoreUtils.showSnackBar(
+          context,
+          false,
+          title: l10n.nodes_imported_title,
+          message: '${l10n.nodes_imported_msg} ($count)',
+        );
+      } else {
+        CoreUtils.showSnackBar(
+          context,
+          true,
+          title: l10n.invalid_format_title,
+          message: l10n.invalid_format_msg,
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      CoreUtils.showSnackBar(
+        context,
+        true,
+        title: l10n.import_failed_title,
+        message: e.toString(),
+      );
+    } finally {
+      uiNotifier.setImporting(false);
+    }
   }
 }

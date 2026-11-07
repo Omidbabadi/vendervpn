@@ -250,6 +250,108 @@ class V2rayImportHelper {
     return [];
   }
 
+  /// Extracts `{method, password, host, port, remark, normalizedUri}` from any
+  /// SIP002 or legacy `ss://` link, preserving Shadowsocks-2022 Base64 PSKs
+  /// and multi-user identity keys (`psk1:psk2`).
+  static ({String method, String password, String normalizedUri})?
+  parseShadowsocksCredentials(String rawUri) {
+    final trimmed = rawUri.trim();
+    if (!trimmed.toLowerCase().startsWith('ss://')) return null;
+
+    try {
+      var body = trimmed.substring(5).trim(); // strip 'ss://'
+      String remark = '';
+
+      final hashIdx = body.indexOf('#');
+      if (hashIdx != -1) {
+        remark = body.substring(hashIdx); // keep '#...'
+        body = body.substring(0, hashIdx);
+      }
+
+      // Strip query parameters (?outline=1, ?plugin=...) and trailing slash
+      final queryIdx = body.indexOf('?');
+      if (queryIdx != -1) {
+        body = body.substring(0, queryIdx);
+      }
+      if (body.endsWith('/')) {
+        body = body.substring(0, body.length - 1);
+      }
+
+      String userInfo;
+      String hostPort;
+
+      if (body.contains('@')) {
+        // SIP002 format: ss://userinfo@host:port
+        final atIdx = body.lastIndexOf('@');
+        var rawUser = body.substring(0, atIdx).trim();
+        hostPort = body.substring(atIdx + 1).trim();
+
+        // 1. If percent-encoded (e.g. %3A, %2B, %2F, %3D), decode using
+        // Uri.decodeFull (NOT decodeQueryComponent, which turns '+' into space!)
+        if (rawUser.contains('%')) {
+          rawUser = Uri.decodeFull(rawUser);
+        }
+
+        // 2. If it doesn't contain ':', it is Base64-encoded userinfo
+        if (!rawUser.contains(':')) {
+          final decodedUser = _tryDecodeBase64(rawUser);
+          if (decodedUser != null && decodedUser.contains(':')) {
+            userInfo = decodedUser.trim();
+          } else {
+            return null;
+          }
+        } else {
+          userInfo = rawUser;
+        }
+      } else {
+        // Legacy format: ss://BASE64(method:password@host:port)
+        final rawBody = body.contains('%') ? Uri.decodeFull(body) : body;
+        final decoded = _tryDecodeBase64(rawBody);
+        if (decoded == null || !decoded.contains('@')) return null;
+        final clean = decoded.trim();
+        final atIdx = clean.lastIndexOf('@');
+        userInfo = clean.substring(0, atIdx).trim();
+        hostPort = clean.substring(atIdx + 1).trim();
+      }
+
+      final firstColon = userInfo.indexOf(':');
+      if (firstColon <= 0) return null;
+
+      final method = userInfo.substring(0, firstColon).trim();
+      // Keep everything after the FIRST ':' intact so SS2022 EIH keys
+      // (server_psk:user_psk) and Base64 padding are never truncated!
+      var password = userInfo.substring(firstColon + 1).trim();
+
+      // If the password itself was still percent-encoded inside Base64
+      if (password.contains('%')) {
+        password = Uri.decodeFull(password);
+      }
+
+      // If this is a Shadowsocks 2022 cipher, ensure each Base64 key segment
+      // uses standard Base64 ('+', '/', and '=' padding) as required by Xray-core.
+      if (method.startsWith('2022-')) {
+        password = password
+            .split(':')
+            .map((segment) {
+              var s = segment.trim().replaceAll('-', '+').replaceAll('_', '/');
+              final mod = s.length % 4;
+              if (mod > 0) s += '=' * (4 - mod);
+              return s;
+            })
+            .join(':');
+      }
+
+      final cleanUserInfo = '$method:$password';
+      final stdBase64User = base64Encode(utf8.encode(cleanUserInfo));
+      final normalizedUri = 'ss://$stdBase64User@$hostPort$remark';
+
+      return (method: method, password: password, normalizedUri: normalizedUri);
+    } catch (e) {
+      debugPrint('Failed to parse ss:// credentials: $e');
+      return null;
+    }
+  }
+
   /// Extracts `Subscription-Userinfo` and `Announce` from HTTP response headers (case-insensitive).
   static SubscriptionUserInfo? _extractUserInfoFromHeaders(
     HttpHeaders headers,
@@ -269,10 +371,7 @@ class V2rayImportHelper {
       }
     });
 
-    return SubscriptionUserInfo.tryParse(
-      rawUserInfo,
-      rawAnnounce: rawAnnounce,
-    );
+    return SubscriptionUserInfo.tryParse(rawUserInfo, rawAnnounce: rawAnnounce);
   }
 
   /// Extracts an `#announce:` comment line from raw or base64-decoded subscription payload.
@@ -317,7 +416,7 @@ class V2rayImportHelper {
       final request = await client.headUrl(uri);
       request.headers.set(
         HttpHeaders.userAgentHeader,
-        'VenderVPN/1.0 (v2rayNG; clash.meta; Flutter)',
+        'VenderVPN/1.0 (v2rayNG; Flutter)',
       );
       final response = await request.close();
       await response.drain<void>();
@@ -356,11 +455,13 @@ class V2rayImportHelper {
       final request = await client.getUrl(uri);
       request.headers.set(
         HttpHeaders.userAgentHeader,
-        'VenderVPN/1.0 (v2rayNG; clash.meta; Flutter)',
+        'VenderVPN/1.0 (v2rayNG; Flutter)',
       );
       final response = await request.close();
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw HttpException('Subscription returned HTTP ${response.statusCode}');
+        throw HttpException(
+          'Subscription returned HTTP ${response.statusCode}',
+        );
       }
       var userInfo = _extractUserInfoFromHeaders(response.headers);
       final body = await response.transform(utf8.decoder).join();

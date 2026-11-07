@@ -24,6 +24,11 @@ class CacheHelper {
   static const _perAppProxyModeKey = 'per_app_proxy_mode';
   static const _perAppProxyAppsKey = 'per_app_proxy_apps';
   static const _proxyOnlyModeKey = 'proxy_only_mode';
+  static const _userAllowedUsage = 'user_allowed_usage';
+
+  Future<void> cacheUserAllowedUsage(String usage) async {
+    await _pref.setString(_userAllowedUsage, usage);
+  }
 
   Future<void> cacheVpnState(String state) async {
     await _pref.setString(_vpnStateKey, state);
@@ -143,8 +148,7 @@ class CacheHelper {
     await _pref.setBool(_perAppProxyEnabledKey, enabled);
   }
 
-  bool get perAppProxyEnabled =>
-      _pref.getBool(_perAppProxyEnabledKey) ?? false;
+  bool get perAppProxyEnabled => _pref.getBool(_perAppProxyEnabledKey) ?? false;
 
   Future<void> cachePerAppProxyMode(String mode) async {
     await _pref.setString(_perAppProxyModeKey, mode);

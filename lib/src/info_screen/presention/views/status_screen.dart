@@ -145,7 +145,8 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
       valueListenable: _statusNotifier,
       builder: (context, status, _) {
         final isErrorOrConfigsError =
-            status.status == Status.configsError || configsState is ConfigsError;
+            status.status == Status.configsError ||
+            configsState is ConfigsError;
         final isSuccess = status.status == Status.success;
         final isConnecting =
             status.status == Status.connecting ||
@@ -370,8 +371,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                       color: accentColor.withValues(
-                                        alpha:
-                                            (1.0 - ((p + 0.5) % 1.0)) * 0.22,
+                                        alpha: (1.0 - ((p + 0.5) % 1.0)) * 0.22,
                                       ),
                                       width: 1.5,
                                     ),
@@ -389,184 +389,207 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                         ),
                       ),
 
-                  const Spacer(),
+                      const Spacer(),
 
-                  // ─── Floating Node & IP Route Card (Cirus Style) ───
-                  if (connectedConfig != null)
-                    Container(
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: surfaceColor,
-                        borderRadius: BorderRadius.circular(26),
-                        border: Border.all(color: Colours.subtleBorder(context)),
-                        boxShadow: Colours.softCardShadow(context),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
+                      // ─── Floating Node & IP Route Card (Cirus Style) ───
+                      if (connectedConfig != null)
+                        Container(
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: surfaceColor,
+                            borderRadius: BorderRadius.circular(26),
+                            border: Border.all(
+                              color: Colours.subtleBorder(context),
+                            ),
+                            boxShadow: Colours.softCardShadow(context),
+                          ),
+                          child: Column(
                             children: [
-                              Container(
-                                width: 42,
-                                height: 42,
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: accentColor.withValues(alpha: 0.6),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 42,
+                                    height: 42,
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: accentColor.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                      ),
+                                    ),
+                                    child:
+                                        ((ipSession.afterTun?.countryCode ??
+                                                        connectedConfig
+                                                            .country) !=
+                                                    null &&
+                                                (ipSession
+                                                                .afterTun
+                                                                ?.countryCode ??
+                                                            connectedConfig
+                                                                .country)!
+                                                        .length ==
+                                                    2)
+                                            ? CoreUtils.getCountryFlag(
+                                              (ipSession
+                                                      .afterTun
+                                                      ?.countryCode ??
+                                                  connectedConfig.country)!,
+                                            )
+                                            : Icon(
+                                              Icons.public_rounded,
+                                              size: 20,
+                                              color: textColor,
+                                            ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          ipSession.afterTun?.displayLocation ??
+                                              (ipSession.isLoading
+                                                  ? 'Resolving VPN Location...'
+                                                  : connectedConfig.remark),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Connected IP: ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? 'Resolving endpoint...'}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colours.subtitleGrey,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if ((connectedConfig.ping ?? -1) > 0)
+                                    DotMatrixText(
+                                      text: '${connectedConfig.ping}',
+                                      dotSize: 2.0,
+                                      dotSpacing: 1.0,
+                                      charSpacing: 3.4,
+                                      activeColor: Colours.orbEmerald,
+                                    ),
+                                ],
+                              ),
+                              if (ipSession.beforeTun != null) ...[
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colours.softChipBg(context),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.swap_horiz_rounded,
+                                        size: 16,
+                                        color: Colours.orbViolet,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          'Your IP: ${ipSession.beforeTun!.ip} (${ipSession.beforeTun!.countryCode})  →  ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? 'Resolving...'}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w600,
+                                            color: textColor.withValues(
+                                              alpha: 0.8,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                child:
-                                    ((ipSession.afterTun?.countryCode ??
-                                                    connectedConfig.country) !=
-                                                null &&
-                                            (ipSession.afterTun?.countryCode ??
-                                                    connectedConfig.country)!
-                                                .length ==
-                                                2)
-                                        ? CoreUtils.getCountryFlag(
-                                          (ipSession.afterTun?.countryCode ??
-                                              connectedConfig.country)!,
-                                        )
-                                        : Icon(
-                                          Icons.public_rounded,
-                                          size: 20,
-                                          color: textColor,
-                                        ),
-                              ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      ipSession.afterTun?.displayLocation ??
-                                          (ipSession.isLoading
-                                              ? 'Resolving VPN Location...'
-                                              : connectedConfig.remark),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: textColor,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Connected IP: ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? 'Resolving endpoint...'}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colours.subtitleGrey,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if ((connectedConfig.ping ?? -1) > 0)
-                                DotMatrixText(
-                                  text: '${connectedConfig.ping}',
-                                  dotSize: 2.0,
-                                  dotSpacing: 1.0,
-                                  charSpacing: 3.4,
-                                  activeColor: Colours.orbEmerald,
-                                ),
+                              ],
                             ],
                           ),
-                          if (ipSession.beforeTun != null) ...[
-                            const SizedBox(height: 12),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colours.softChipBg(context),
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.swap_horiz_rounded,
-                                    size: 16,
-                                    color: Colours.orbViolet,
+                        ),
+
+                      const SizedBox(height: 16),
+
+                      // ─── Bottom Action Buttons ───
+                      if (isErrorOrConfigsError)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: textColor,
+                                  side: BorderSide(
+                                    color: Colours.subtleBorder(context),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      'Your IP: ${ipSession.beforeTun!.ip} (${ipSession.beforeTun!.countryCode})  →  ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? 'Resolving...'}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: textColor.withValues(alpha: 0.8),
-                                      ),
-                                    ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
                                   ),
-                                ],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                ),
+                                onPressed: () => context.go(NodesView.path),
+                                icon: const Icon(
+                                  Icons.folder_open_rounded,
+                                  size: 18,
+                                ),
+                                label: const Text(
+                                  'Local Nodes',
+                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: FilledButton.icon(
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: Colours.orbCoral,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  ref
+                                      .read(configsAdapterProvider.notifier)
+                                      .getConfigs();
+                                },
+                                icon: const Icon(
+                                  Icons.refresh_rounded,
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  l10n.retry,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
-                        ],
-                      ),
-                    ),
-
-                  const SizedBox(height: 16),
-
-                  // ─── Bottom Action Buttons ───
-                  if (isErrorOrConfigsError)
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: textColor,
-                              side: BorderSide(
-                                color: Colours.subtleBorder(context),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                            ),
-                            onPressed: () => context.go(NodesView.path),
-                            icon: const Icon(Icons.folder_open_rounded, size: 18),
-                            label: const Text(
-                              'Local Nodes',
-                              style: TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: FilledButton.icon(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colours.orbCoral,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                            ),
-                            onPressed: () {
-                              ref
-                                  .read(configsAdapterProvider.notifier)
-                                  .getConfigs();
-                            },
-                            icon: const Icon(Icons.refresh_rounded, size: 18),
-                            label: Text(
-                              l10n.retry,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
+                        )
                       else if (!isConnecting)
                         SizedBox(
                           width: double.infinity,
