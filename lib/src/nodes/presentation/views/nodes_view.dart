@@ -81,6 +81,7 @@ class NodesView extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final urlController = TextEditingController();
     ref.read(nodesViewUiStateProvider.notifier).setSubIntervalHours(6);
@@ -96,6 +97,7 @@ class NodesView extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
+        final modalL10n = AppLocalizations.of(ctx)!;
         return Consumer(
           builder: (ctx, modalRef, _) {
             final selectedIntervalHours =
@@ -144,7 +146,7 @@ class NodesView extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Add Subscription URL',
+                                modalL10n.add_subscription_url,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -152,9 +154,9 @@ class NodesView extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(height: 2),
-                              const Text(
-                                'Auto-syncs V2Ray configs on your chosen schedule',
-                                style: TextStyle(
+                              Text(
+                                modalL10n.auto_syncs_subtitle,
+                                style: const TextStyle(
                                   fontSize: 11.5,
                                   color: Colours.subtitleGrey,
                                 ),
@@ -172,12 +174,12 @@ class NodesView extends ConsumerWidget {
                       textInputAction: TextInputAction.next,
                       style: TextStyle(color: textColor, fontSize: 13),
                       decoration: InputDecoration(
-                        labelText: 'Subscription Name',
+                        labelText: modalL10n.subscription_name_label,
                         labelStyle: const TextStyle(
                           color: Colours.subtitleGrey,
                           fontSize: 12,
                         ),
-                        hintText: 'e.g. Premium EU Nodes',
+                        hintText: modalL10n.subscription_name_hint,
                         hintStyle: const TextStyle(color: Colours.subtitleGrey),
                         prefixIcon: const Icon(
                           Icons.label_outline_rounded,
@@ -200,7 +202,7 @@ class NodesView extends ConsumerWidget {
                       autofocus: true,
                       style: TextStyle(color: textColor, fontSize: 13),
                       decoration: InputDecoration(
-                        labelText: 'Subscription URL',
+                        labelText: modalL10n.subscription_url_label,
                         labelStyle: const TextStyle(
                           color: Colours.subtitleGrey,
                           fontSize: 12,
@@ -252,7 +254,7 @@ class NodesView extends ConsumerWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Auto-Update Interval',
+                          modalL10n.auto_update_interval,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -267,7 +269,9 @@ class NodesView extends ConsumerWidget {
                           intervalOptions.map((hours) {
                             final isSelected = selectedIntervalHours == hours;
                             final label =
-                                hours == 0 ? 'Manual' : 'Every ${hours}h';
+                                hours == 0
+                                    ? modalL10n.manual_interval
+                                    : '${modalL10n.every_n_hours} ${hours}h';
                             return Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(
@@ -335,9 +339,9 @@ class NodesView extends ConsumerWidget {
                             url: urlController.text.trim(),
                             intervalHours: selectedIntervalHours,
                           )),
-                      child: const Text(
-                        'Save & Fetch Configs',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                      child: Text(
+                        modalL10n.save_and_fetch_configs,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
                   ],
@@ -404,6 +408,7 @@ class NodesView extends ConsumerWidget {
   }
 
   Future<void> _showQrScannerSheet(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final qrPayload = await showModalBottomSheet<String>(
       context: context,
       useRootNavigator: true,

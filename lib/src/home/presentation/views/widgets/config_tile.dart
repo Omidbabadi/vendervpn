@@ -76,8 +76,8 @@ class ConfigTile extends ConsumerWidget {
           CoreUtils.showSnackBar(
             context,
             true,
-            title: 'Tunnel Active',
-            message: 'Disconnect current session before switching nodes.',
+            title: l10n.tunnel_active_title,
+            message: l10n.tunnel_active_msg,
           );
           return;
         }

@@ -258,39 +258,101 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                               ],
                             ),
                           ),
-                          const SizedBox(width: 42, height: 42),
-                        ],
+                        )
+                      else
+                        const SizedBox(width: 42, height: 42),
+
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: Colours.subtleBorder(context),
+                          ),
+                          boxShadow: Colours.softCardShadow(context),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 7,
+                              height: 7,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: accentColor,
+                              ),
+                            ),
+                            const SizedBox(width: 7),
+                            Text(
+                              l10n.vpn_state_badge,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: textColor.withValues(alpha: 0.8),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
 
                       const Spacer(),
 
-                      // ─── Dot-Matrix Headline (Single Word) ───
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 380),
-                        child: FittedBox(
-                          key: ValueKey(_dotMatrixHeadline(status.status)),
-                          fit: BoxFit.scaleDown,
-                          child: DotMatrixText(
-                            text: _dotMatrixHeadline(status.status),
-                            dotSize: 3.4,
-                            dotSpacing: 1.5,
-                            charSpacing: 6.5,
-                            activeColor: textColor,
-                            inactiveColor: textColor.withValues(alpha: 0.08),
-                          ),
-                        ),
+                  // ─── Dot-Matrix Headline (Single Word) ───
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: DotMatrixText(
+                      text: _dotMatrixHeadline(status.status),
+                      dotSize: 3.4,
+                      dotSpacing: 1.5,
+                      charSpacing: 6.5,
+                      activeColor: textColor,
+                      inactiveColor: textColor.withValues(alpha: 0.08),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    status.message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colours.subtitleGrey,
+                    ),
+                  ),
+                  if (isConnecting) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
                       ),
-                      const SizedBox(height: 10),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 320),
-                        child: Text(
-                          status.message,
-                          key: ValueKey(status.message),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Colours.subtitleGrey,
+                      decoration: BoxDecoration(
+                        color: Colours.pastelAmberBg,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.info_outline_rounded,
+                            size: 15,
+                            color: Colours.pastelAmberFg,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              l10n.stay_until_ad_loads,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Colours.pastelAmberFg,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -417,6 +479,34 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                         color: accentColor.withValues(
                                           alpha: 0.6,
                                         ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      ipSession.afterTun?.displayLocation ??
+                                          (ipSession.isLoading
+                                              ? l10n.resolving_vpn_location
+                                              : connectedConfig.remark),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: textColor,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${l10n.connected_ip_label}: ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? l10n.resolving_endpoint}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Colours.subtitleGrey,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                     child:
@@ -445,35 +535,15 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                   ),
                                   const SizedBox(width: 14),
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          ipSession.afterTun?.displayLocation ??
-                                              (ipSession.isLoading
-                                                  ? 'Resolving VPN Location...'
-                                                  : connectedConfig.remark),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Connected IP: ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? 'Resolving endpoint...'}',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Colours.subtitleGrey,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      '${l10n.your_ip_label}: ${ipSession.beforeTun!.ip} (${ipSession.beforeTun!.countryCode})  →  ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? l10n.resolving}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: textColor.withValues(alpha: 0.8),
+                                      ),
                                     ),
                                   ),
                                   if ((connectedConfig.ping ?? -1) > 0)
@@ -486,44 +556,38 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                     ),
                                 ],
                               ),
-                              if (ipSession.beforeTun != null) ...[
-                                const SizedBox(height: 12),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colours.softChipBg(context),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.swap_horiz_rounded,
-                                        size: 16,
-                                        color: Colours.orbViolet,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          'Your IP: ${ipSession.beforeTun!.ip} (${ipSession.beforeTun!.countryCode})  →  ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? 'Resolving...'}',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 11.5,
-                                            fontWeight: FontWeight.w600,
-                                            color: textColor.withValues(
-                                              alpha: 0.8,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+
+                  const SizedBox(height: 16),
+
+                  // ─── Bottom Action Buttons ───
+                  if (isErrorOrConfigsError)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: textColor,
+                              side: BorderSide(
+                                color: Colours.subtleBorder(context),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                            ),
+                            onPressed: () => context.go(NodesView.path),
+                            icon: const Icon(Icons.folder_open_rounded, size: 18),
+                            label: Text(
+                              l10n.local_nodes_btn,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
 
@@ -588,28 +652,28 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                 ),
                               ),
                             ),
-                          ],
-                        )
-                      else if (!isConnecting)
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: accentColor,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                            ),
-                            onPressed: () => context.go(HomeView.path),
-                            child: const Text(
-                              'Continue to Home',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  else if (!isConnecting)
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: accentColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                        onPressed: () => context.go(HomeView.path),
+                        child: Text(
+                          l10n.continue_to_home,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                     ],
