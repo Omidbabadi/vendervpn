@@ -17,15 +17,13 @@ dependencies:
   path_provider: ^2.1.1
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^3.4.3
+  riverpod_annotation: ^4.0.7
   lottie: ^3.3.1
-  #unity_ads_plugin: ^0.3.26
+  # unity_ads_plugin: ^0.3.26
   dartz: ^0.10.1
   equatable: ^2.0.7
   get_it: ^9.2.1
   appwrite: ^26.1.0
-  riverpod_generator: ^4.0.9
-  riverpod_lint: ^3.1.9
-  riverpod_annotation: ^4.0.7
   go_router: ^18.0.1
   shared_preferences: ^2.5.3
   avatar_glow: ^3.0.1
@@ -35,6 +33,7 @@ dependencies:
   flutter_v2ray_client:
     git:
       url: https://github.com/Omidbabadi/flutter_v2ray_client.git
+      ref: main # Optional: pin to your branch name to ensure predictable CI fetches
   countries_world_map: ^1.3.0
   google_mobile_ads: ^9.1.0
   toastification: ^3.0.3
@@ -47,6 +46,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   build_runner: ^2.4.6
+  riverpod_generator: ^4.0.9
+  riverpod_lint: ^3.1.9
 
 flutter:
   generate: true

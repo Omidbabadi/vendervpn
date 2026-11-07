@@ -380,7 +380,7 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
+      ref: main
       resolved-ref: "542b4d42cb1828507e25225995c06bc30a790a04"
       url: "https://github.com/Omidbabadi/flutter_v2ray_client.git"
     source: git
@@ -871,7 +871,7 @@ packages:
     source: hosted
     version: "4.0.7"
   riverpod_generator:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: riverpod_generator
       sha256: c94dcb8b60ff4805d2bb8cacca969c48237bcb563e2ab0b5afb50204470c7636
@@ -879,7 +879,7 @@ packages:
     source: hosted
     version: "4.0.9"
   riverpod_lint:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: riverpod_lint
       sha256: "215cb3cd54a97e09bc3512535fa4e8bedd3bf2a06dc2ae015ac8e0050fc71bd1"
