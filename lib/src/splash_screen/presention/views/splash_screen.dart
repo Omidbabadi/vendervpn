@@ -98,6 +98,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       }
       if (Platform.isAndroid) {
         ref.read(configsAdapterProvider.notifier).getConfigs();
+      } else {
+        context.go(HomeView.path);
       }
     });
   }
