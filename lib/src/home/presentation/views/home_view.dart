@@ -42,9 +42,7 @@ class HomeView extends ConsumerWidget {
         final heroValue =
             isConnected
                 ? status.duration
-                : (ping > 0
-                    ? '$ping'
-                    : totalNodes.toString().padLeft(3, '0'));
+                : (ping > 0 ? '$ping' : totalNodes.toString().padLeft(3, '0'));
 
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),

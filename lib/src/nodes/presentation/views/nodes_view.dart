@@ -371,9 +371,7 @@ class NodesView extends ConsumerWidget {
         count = await localConfigsNotifier.importFromRawPayload(
           rawUrl,
           source:
-              result.name.isNotEmpty
-                  ? 'sub:${result.name}'
-                  : 'subscription',
+              result.name.isNotEmpty ? 'sub:${result.name}' : 'subscription',
         );
       }
       if (!context.mounted) return;
@@ -525,8 +523,7 @@ class NodesView extends ConsumerWidget {
         for (final node in cloudNodes)
           node.copyWith(ping: measuredPings[node.id] ?? node.ping),
       ];
-      final reachable =
-          updatedList.where((c) => (c.ping ?? -1) > 0).toList();
+      final reachable = updatedList.where((c) => (c.ping ?? -1) > 0).toList();
 
       if (reachable.isEmpty) {
         if (context.mounted) {
@@ -856,7 +853,10 @@ class NodesView extends ConsumerWidget {
                     icon: Icons.content_paste_go_rounded,
                     label: l10n.clipboard_action,
                     accent: Colours.orbEmerald,
-                    onTap: () => _importFromClipboard(context, ref),
+                    onTap:
+                        () => ref
+                            .read(configsAdapterProvider.notifier)
+                            .importFromClipboard(context),
                   ),
                 ),
                 const SizedBox(width: 8),

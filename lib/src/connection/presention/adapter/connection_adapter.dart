@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
@@ -111,7 +112,8 @@ class ConnectionAdapter extends _$ConnectionAdapter
     state = const ConnectionStateConnecting();
 
     await _initializeV2ay.call();
-    final proxyOnly = ref.read(perAppProxyProvider).proxyOnly;
+    final proxyOnly =
+        Platform.isIOS || ref.read(perAppProxyProvider).proxyOnly;
     if (!proxyOnly) {
       final per = await requestPermission();
       if (!per || !ref.mounted || attemptId != _activeAttemptId) {

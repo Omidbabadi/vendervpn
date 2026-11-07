@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_v2ray_client/flutter_v2ray.dart';
@@ -93,7 +95,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           return;
         }
       }
-      ref.read(configsAdapterProvider.notifier).getConfigs();
+      if (Platform.isAndroid) {
+        ref.read(configsAdapterProvider.notifier).getConfigs();
+      }
     });
   }
 

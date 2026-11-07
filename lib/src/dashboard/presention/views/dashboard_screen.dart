@@ -17,10 +17,19 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../info_screen/presention/views/status_screen.dart';
 import '../utils/dashboard_utils.dart';
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key, required this.state, required this.child});
   final GoRouterState state;
   final Widget child;
+
+  @override
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  /// Prevents `showBannerAd` from being called more than once per connected
+  /// session (guards both the mount-while-connected path and the listener path).
+  bool _bannerRequested = false;
 
   IconData _getThemeIcon(ThemeMode theme) {
     return switch (theme) {
@@ -36,16 +45,33 @@ class DashboardScreen extends ConsumerWidget {
     return 0;
   }
 
+  void _requestBannerAd() {
+    if (_bannerRequested) return;
+    _bannerRequested = true;
+    final width = MediaQuery.sizeOf(context).width;
+    ref.read(admobAdapterProvider.notifier).showBannerAd(width);
+    debugPrint('banner ad in dashboard screen');
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final currentTheme = ref.watch(currentThemeProvider);
     final connectionState = ref.watch(connectionAdapterProvider);
     final isConnected = connectionState is ConnectionStateConnected;
-    final location = state.uri.path;
+    final location = widget.state.uri.path;
     final currentIndex = _activeIndex(location);
     final scaffoldBg = Colours.scaffoldBg(context);
     final surfaceColor = Colours.cardSurface(context);
     final textColor = Colours.classicAdabtiveTextColor(context);
+
+    // Handle the case where the widget mounts while the state is already
+    // ConnectionStateConnected (e.g. app restart restore or navigation back
+    // from StatusScreen after connect). ref.listen would miss this transition.
+    if (isConnected) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _requestBannerAd();
+      });
+    }
 
     ref.listen(connectionAdapterProvider, (p, next) {
       if (next is ConnectionStateConnecting) {
@@ -57,10 +83,11 @@ class DashboardScreen extends ConsumerWidget {
           ),
         );
       } else if (next is ConnectionStateConnected) {
-        // Only initialize & load Banner Ad AFTER V2Ray TUN has started and connected!
-        final width = MediaQuery.sizeOf(context).width;
-        ref.read(admobAdapterProvider.notifier).showBannerAd(width);
+        // Transition path: VPN just finished connecting this session.
+        _requestBannerAd();
       } else if (next is ConnectionStateDisconnected) {
+        // Reset the flag so the banner loads again on the next connection.
+        _bannerRequested = false;
         ref.read(loadedBannerAdProvider.notifier).clearBannerAd();
       }
     });
@@ -217,7 +244,7 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                 ),
 
-                Expanded(child: child),
+                Expanded(child: widget.child),
               ],
             ),
           ),

@@ -474,36 +474,36 @@ class OrbFaceWidgetState extends State<OrbFaceWidget>
                     ),
 
                     // Two floating glass satellite bubbles on bottom-right
-                    if (widget.showSatellites) ...[
-                      Positioned(
-                        bottom:
-                            effectiveSize * 0.06 -
-                            (wiggle * 5) -
-                            (strainShiverY * 0.8),
-                        right:
-                            effectiveSize * 0.28 +
-                            (wiggle * 4) +
-                            (strainShiverX * 0.8),
-                        child: _GlassSatelliteBubble(
-                          diameter: effectiveSize * 0.13,
-                          isDark: isDark,
-                        ),
-                      ),
-                      Positioned(
-                        bottom:
-                            effectiveSize * 0.10 +
-                            (wiggle * 6) +
-                            (strainShiverY * 0.9),
-                        right:
-                            effectiveSize * 0.08 -
-                            (wiggle * 5) -
-                            (strainShiverX * 0.9),
-                        child: _GlassSatelliteBubble(
-                          diameter: effectiveSize * 0.16,
-                          isDark: isDark,
-                        ),
-                      ),
-                    ],
+                    // if (widget.showSatellites) ...[
+                    //   Positioned(
+                    //     bottom:
+                    //         effectiveSize * 0.06 -
+                    //         (wiggle * 5) -
+                    //         (strainShiverY * 0.8),
+                    //     right:
+                    //         effectiveSize * 0.28 +
+                    //         (wiggle * 4) +
+                    //         (strainShiverX * 0.8),
+                    //     child: _GlassSatelliteBubble(
+                    //       diameter: effectiveSize * 0.13,
+                    //       isDark: isDark,
+                    //     ),
+                    //   ),
+                    //   Positioned(
+                    //     bottom:
+                    //         effectiveSize * 0.10 +
+                    //         (wiggle * 6) +
+                    //         (strainShiverY * 0.9),
+                    //     right:
+                    //         effectiveSize * 0.08 -
+                    //         (wiggle * 5) -
+                    //         (strainShiverX * 0.9),
+                    //     child: _GlassSatelliteBubble(
+                    //       diameter: effectiveSize * 0.16,
+                    //       isDark: isDark,
+                    //     ),
+                    //   ),
+                    // ],
                   ],
                 );
               },
@@ -525,10 +525,8 @@ class OrbFaceWidgetState extends State<OrbFaceWidget>
 
     return Hero(
       tag: widget.heroTag!,
-      createRectTween: (begin, end) => MaterialRectCenterArcTween(
-        begin: begin,
-        end: end,
-      ),
+      createRectTween:
+          (begin, end) => MaterialRectCenterArcTween(begin: begin, end: end),
       flightShuttleBuilder: (
         flightContext,
         animation,
@@ -738,7 +736,9 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
         speedB: -2.0,
         speedC: 3.0,
         phase: 0.0,
-        blur: 12.0 + 8.0 * v,
+        blur: 0,
+
+        // blur: 12.0 + 8.0 * v,
         strokeWidth: 3.2 + 1.8 * v,
         colors: [secondaryColor, primaryColor, accentColor, secondaryColor],
       ),
@@ -752,14 +752,11 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
         speedB: 2.0,
         speedC: -3.0,
         phase: 2.1,
-        blur: 8.0 + 6.0 * v,
+        blur: 0,
+
+        //   blur: 8.0 + 6.0 * v,
         strokeWidth: 2.6 + 1.5 * v,
-        colors: [
-          accentColor,
-          primaryColor,
-          secondaryColor,
-          accentColor,
-        ],
+        colors: [accentColor, primaryColor, secondaryColor, accentColor],
       ),
       _WavyLobeSpec(
         scale: 0.98 + 0.14 * v,
@@ -771,7 +768,8 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
         speedB: -1.0,
         speedC: 2.0,
         phase: 4.2,
-        blur: 5.0 + 4.0 * v,
+        blur: 0,
+        // blur: 5.0 + 4.0 * v,
         strokeWidth: 2.2 + 1.2 * v,
         colors: [primaryColor, Colors.white, secondaryColor, primaryColor],
       ),
@@ -821,7 +819,7 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = spec.strokeWidth
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0)
+            //    ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0)
             ..shader = SweepGradient(
               colors:
                   spec.colors
@@ -922,7 +920,7 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.2 + 1.4 * v + 0.8 * strain
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5)
+          // ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5)
           ..shader = SweepGradient(
             colors: [
               Colors.white.withValues(alpha: 0.70 + 0.25 * v),
@@ -948,17 +946,11 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
     final tremorIntensity = math.max(anger, strain * 1.15);
     final angryTremorX =
         tremorIntensity > 0.01
-            ? math.sin(auraPhase * 22.0) *
-                coreRadius *
-                0.018 *
-                tremorIntensity
+            ? math.sin(auraPhase * 22.0) * coreRadius * 0.018 * tremorIntensity
             : 0.0;
     final angryTremorY =
         tremorIntensity > 0.01
-            ? math.cos(auraPhase * 17.0) *
-                coreRadius *
-                0.012 *
-                tremorIntensity
+            ? math.cos(auraPhase * 17.0) * coreRadius * 0.012 * tremorIntensity
             : 0.0;
 
     final faceOffset = Offset(
@@ -987,7 +979,7 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
             ..style = PaintingStyle.stroke
             ..strokeWidth = strokeW * 1.35
             ..strokeCap = StrokeCap.round
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 0);
 
       final sleepEyePaint =
           Paint()
@@ -1057,12 +1049,10 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
         final strainSquint = (1.0 - strain * 4.5).clamp(0.25, 1.0);
         final eyeWidth =
             coreRadius *
-            (0.26 * (1.0 - q) +
-                (0.175 + 0.035 * anger + 0.025 * happy) * q);
+            (0.26 * (1.0 - q) + (0.175 + 0.035 * anger + 0.025 * happy) * q);
         final eyeHeight =
             coreRadius *
-            (0.115 * (1.0 - q) +
-                (0.38 - 0.04 * anger + 0.02 * happy) * q) *
+            (0.115 * (1.0 - q) + (0.38 - 0.04 * anger + 0.02 * happy) * q) *
             squintFactor.clamp(0.35, 1.0) *
             strainSquint;
 
@@ -1077,11 +1067,11 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
                   0.0,
                   1.0,
                 ),
-              )
-              ..maskFilter = MaskFilter.blur(
-                BlurStyle.normal,
-                5 + 3 * anger + 2 * happy,
               );
+        // ..maskFilter = MaskFilter.blur(
+        //   BlurStyle.normal,
+        //   5 + 3 * anger + 2 * happy,
+        // );
 
         final eyePaint =
             Paint()
@@ -1111,10 +1101,8 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
                     ? eyeCenter.dx + eyeWidth * 0.9
                     : eyeCenter.dx - eyeWidth * 0.9;
 
-            final outerCutY =
-                eyeCenter.dy - eyeHeight * (0.58 - 0.10 * anger);
-            final innerCutY =
-                eyeCenter.dy - eyeHeight * (0.58 - 0.82 * anger);
+            final outerCutY = eyeCenter.dy - eyeHeight * (0.58 - 0.10 * anger);
+            final innerCutY = eyeCenter.dy - eyeHeight * (0.58 - 0.82 * anger);
 
             final bottomY = eyeCenter.dy + eyeHeight;
             final clipPoly = Path();
@@ -1174,8 +1162,8 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
               Paint()
                 ..color = const Color(
                   0xFFFF758F,
-                ).withValues(alpha: 0.34 * happyAlpha)
-                ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7);
+                ).withValues(alpha: 0.34 * happyAlpha);
+          //   ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7);
 
           for (final isLeft in [true, false]) {
             final eyeCenter = isLeft ? adjLeftEye : adjRightEye;
@@ -1497,7 +1485,8 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
         faceOffset.dx - coreRadius * 0.48,
         faceOffset.dy - coreRadius * (0.30 - 0.16 * dropProgress),
       );
-      final dropRadius = coreRadius * (0.048 + 0.018 * math.sin(dropProgress * math.pi));
+      final dropRadius =
+          coreRadius * (0.048 + 0.018 * math.sin(dropProgress * math.pi));
       final dropPath =
           Path()
             ..moveTo(dropCenter.dx, dropCenter.dy - dropRadius * 1.8)
@@ -1525,9 +1514,10 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
 
       final dropPaint =
           Paint()
-            ..color = const Color(
-              0xFF7DD3FC,
-            ).withValues(alpha: (0.85 * math.sin(dropProgress * math.pi * 0.85 + 0.15)).clamp(0.0, 1.0))
+            ..color = const Color(0xFF7DD3FC).withValues(
+              alpha: (0.85 * math.sin(dropProgress * math.pi * 0.85 + 0.15))
+                  .clamp(0.0, 1.0),
+            )
             ..style = PaintingStyle.fill;
       canvas.drawPath(dropPath, dropPaint);
     }

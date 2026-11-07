@@ -1,0 +1,52 @@
+name: Build iOS Unsigned IPA (Proxy-Only)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+      - personal-no-ads
+
+jobs:
+  build-ios-ipa:
+    name: Build Unsigned iOS IPA
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install Flutter dependencies
+        run: |
+          flutter pub get
+          flutter gen-l10n
+
+      - name: Install CocoaPods dependencies
+        working-directory: ios
+        run: pod install --repo-update
+
+      - name: Build iOS Release (No Codesign)
+        run: flutter build ios --release --no-codesign
+
+      - name: Package Runner.app into unsigned .ipa
+        run: |
+          mkdir -p build/ios/ipa/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ios/ipa/Payload/
+          cd build/ios/ipa
+          zip -r -9 VenderVPN-ios-proxy-only-unsigned.ipa Payload
+
+      - name: Upload Unsigned IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VenderVPN-ios-proxy-only-unsigned-ipa
+          path: build/ios/ipa/VenderVPN-ios-proxy-only-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30
+

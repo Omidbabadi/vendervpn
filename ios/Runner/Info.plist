@@ -47,5 +47,22 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera access is required to scan V2Ray QR codes.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>VenderVPN uses the local network to provide a local SOCKS5 and HTTP proxy in Proxy-Only mode.</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>io.appwrite</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>appwrite-callback-68cfc3210015c46501bd</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

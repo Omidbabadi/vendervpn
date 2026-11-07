@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/installed_apps.dart';
@@ -118,13 +120,14 @@ class PerAppProxyAdapter extends Notifier<PerAppProxyState> {
       isEnabled: _cacheHelper.perAppProxyEnabled,
       mode: PerAppProxyMode.fromStorage(_cacheHelper.perAppProxyMode),
       selectedPackages: _cacheHelper.perAppProxyApps.toSet(),
-      proxyOnly: _cacheHelper.proxyOnlyMode,
+      proxyOnly: Platform.isIOS ? true : _cacheHelper.proxyOnlyMode,
     );
   }
 
   Future<void> setProxyOnly(bool proxyOnly) async {
-    state = state.copyWith(proxyOnly: proxyOnly);
-    await _cacheHelper.cacheProxyOnlyMode(proxyOnly);
+    final effectiveProxyOnly = Platform.isIOS ? true : proxyOnly;
+    state = state.copyWith(proxyOnly: effectiveProxyOnly);
+    await _cacheHelper.cacheProxyOnlyMode(effectiveProxyOnly);
   }
 
   Future<void> setEnabled(bool enabled) async {
@@ -169,6 +172,15 @@ class PerAppProxyAdapter extends Notifier<PerAppProxyState> {
     bool includeSystem = false,
     bool forceRefresh = false,
   }) async {
+    if (!Platform.isAndroid) {
+      // Per-app proxy is only available on Android.
+      state = state.copyWith(
+        isLoadingApps: false,
+        userApps: const <AppInfo>[],
+        allApps: const <AppInfo>[],
+      );
+      return;
+    }
     if (state.isLoadingApps) return;
     if (!forceRefresh) {
       if (includeSystem && state.allApps.isNotEmpty) return;
@@ -210,6 +222,11 @@ class PerAppProxyAdapter extends Notifier<PerAppProxyState> {
   /// - In [PerAppProxyMode.perApp]: returns all installed packages EXCEPT `selectedPackages`
   ///   so ONLY selected apps route through the VPN tunnel.
   Future<List<String>> resolveBlockedAppsForVpn() async {
+    if (!Platform.isAndroid) {
+      // Per-app proxy is only available on Android.
+      return const <String>[];
+    }
+
     final current = state;
     if (!current.isEnabled || current.selectedPackages.isEmpty) {
       return const <String>[];
