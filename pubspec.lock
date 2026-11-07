@@ -381,7 +381,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "31c08b6baae04e280114c5aa50b3d71430bba8c9"
+      resolved-ref: "6e05f799a70378b10a79145d49fac10b1b9f023b"
       url: "https://github.com/Omidbabadi/flutter_v2ray_client.git"
     source: git
     version: "3.5.0"
