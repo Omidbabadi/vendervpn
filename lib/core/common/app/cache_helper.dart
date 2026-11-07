@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -165,8 +166,9 @@ class CacheHelper {
       _pref.getStringList(_perAppProxyAppsKey) ?? const <String>[];
 
   Future<void> cacheProxyOnlyMode(bool proxyOnly) async {
-    await _pref.setBool(_proxyOnlyModeKey, proxyOnly);
+    await _pref.setBool(_proxyOnlyModeKey, Platform.isIOS ? true : proxyOnly);
   }
 
-  bool get proxyOnlyMode => _pref.getBool(_proxyOnlyModeKey) ?? false;
+  bool get proxyOnlyMode =>
+      Platform.isIOS ? true : (_pref.getBool(_proxyOnlyModeKey) ?? false);
 }

@@ -379,8 +379,8 @@ packages:
   flutter_v2ray_client:
     dependency: "direct main"
     description:
-      path: "/home/omidbabadi/development/flutter_v2ray_client"
-      relative: false
+      path: "packages/flutter_v2ray_client"
+      relative: true
     source: path
     version: "3.5.0"
   flutter_web_auth_2:

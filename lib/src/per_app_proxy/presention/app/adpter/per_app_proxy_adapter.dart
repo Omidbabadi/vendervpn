@@ -120,13 +120,14 @@ class PerAppProxyAdapter extends Notifier<PerAppProxyState> {
       isEnabled: _cacheHelper.perAppProxyEnabled,
       mode: PerAppProxyMode.fromStorage(_cacheHelper.perAppProxyMode),
       selectedPackages: _cacheHelper.perAppProxyApps.toSet(),
-      proxyOnly: _cacheHelper.proxyOnlyMode,
+      proxyOnly: Platform.isIOS ? true : _cacheHelper.proxyOnlyMode,
     );
   }
 
   Future<void> setProxyOnly(bool proxyOnly) async {
-    state = state.copyWith(proxyOnly: proxyOnly);
-    await _cacheHelper.cacheProxyOnlyMode(proxyOnly);
+    final effectiveProxyOnly = Platform.isIOS ? true : proxyOnly;
+    state = state.copyWith(proxyOnly: effectiveProxyOnly);
+    await _cacheHelper.cacheProxyOnlyMode(effectiveProxyOnly);
   }
 
   Future<void> setEnabled(bool enabled) async {

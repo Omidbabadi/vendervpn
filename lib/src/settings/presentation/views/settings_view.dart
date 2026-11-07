@@ -297,19 +297,20 @@ class SettingsView extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: _OptionPill(
-                          label: l10n.vpn_mode_label,
-                          icon: Icons.vpn_lock_rounded,
-                          selected: !perAppState.proxyOnly,
-                          activeColor: Colours.orbViolet,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            perAppNotifier.setProxyOnly(false);
-                          },
+                      if (!Platform.isIOS)
+                        Expanded(
+                          child: _OptionPill(
+                            label: l10n.vpn_mode_label,
+                            icon: Icons.vpn_lock_rounded,
+                            selected: !perAppState.proxyOnly,
+                            activeColor: Colours.orbViolet,
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              perAppNotifier.setProxyOnly(false);
+                            },
+                          ),
                         ),
-                      ),
-                      if (Platform.isAndroid)
+                      if (Platform.isAndroid || Platform.isIOS)
                         Expanded(
                           child: _OptionPill(
                             label: l10n.proxy_mode_label,
