@@ -379,9 +379,11 @@ packages:
   flutter_v2ray_client:
     dependency: "direct main"
     description:
-      path: "packages/flutter_v2ray_client"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "542b4d42cb1828507e25225995c06bc30a790a04"
+      url: "https://github.com/Omidbabadi/flutter_v2ray_client.git"
+    source: git
     version: "3.5.0"
   flutter_web_auth_2:
     dependency: "direct main"

@@ -33,7 +33,8 @@ dependencies:
   flutter_svg: ^2.2.1
   country_flags: ^4.0.1
   flutter_v2ray_client:
-    path: packages/flutter_v2ray_client
+    git:
+      url: https://github.com/Omidbabadi/flutter_v2ray_client.git
   countries_world_map: ^1.3.0
   google_mobile_ads: ^9.1.0
   toastification: ^3.0.3

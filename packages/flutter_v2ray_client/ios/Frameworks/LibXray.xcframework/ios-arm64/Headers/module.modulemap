@@ -1,5 +1,0 @@
-module LibXray {
-  umbrella header "libXray.h"
-  export *
-  module * { export * }
-}
