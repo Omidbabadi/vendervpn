@@ -1,17 +1,49 @@
 abstract class Constants {
   const Constants();
-  static const interstialAdUnitId = 'ca-app-pub-3940256099942544/1033173712';
 
-  static const iOSInterstialAdUnitId = 'ca-app-pub-3940256099942544/1033173712';
+  // --- Interstitial Test IDs ---
+  static const interstialAdUnitId =
+      'ca-app-pub-3940256099942544/1033173712'; // Android
+  static const iOSInterstialAdUnitId =
+      'ca-app-pub-3940256099942544/4411468910'; // Fixed: iOS Interstitial
 
+  // --- Interstitial Video Test IDs ---
+  static const androidInterstitialVideoAdTest =
+      'ca-app-pub-3940256099942544/8691691433';
+  static const iosInterstitialVideoAdTest =
+      'ca-app-pub-3940256099942544/5135589807';
+
+  // --- Banner Test IDs ---
+  static const androidBannerAdIdTest =
+      'ca-app-pub-3940256099942544/9214589741'; // Adaptive Banner
+  static const iosBannerAdIdTest =
+      'ca-app-pub-3940256099942544/2934735716'; // Fixed-size Banner
+  static const iosAdaptiveBannerAdIdTest =
+      'ca-app-pub-3940256099942544/2435281174'; // Adaptive Banner
+
+  // --- Rewarded Test IDs ---
+  static const androidRewardedAdTest = 'ca-app-pub-3940256099942544/5224354917';
+  static const iosRewardedAdTest = 'ca-app-pub-3940256099942544/1712485313';
+
+  // --- Rewarded Interstitial Test IDs ---
+  static const androidRewardedInterstitialAdTest =
+      'ca-app-pub-3940256099942544/5354046379';
+  static const iosRewardedInterstitialAdTest =
+      'ca-app-pub-3940256099942544/6978759866';
+
+  // --- App Open Test IDs ---
+  static const androidAppOpenAdTest = 'ca-app-pub-3940256099942544/9257395921';
+  static const iosAppOpenAdTest = 'ca-app-pub-3940256099942544/5575463023';
+
+  // --- Native Advanced Test IDs ---
+  static const androidNativeAdTest = 'ca-app-pub-3940256099942544/2247696110';
+  static const iosNativeAdTest = 'ca-app-pub-3940256099942544/3986624511';
+
+  // Kept for backward compatibility if referenced elsewhere in your project
   static const linuxInterstialAdUnitId =
       'ca-app-pub-3940256099942544/1033173712';
   static const windowsInterstialAdUnitId =
       'ca-app-pub-3940256099942544/1033173712';
-
-  static const androidBannerAdIdTest = 'ca-app-pub-3940256099942544/9214589741';
-  static const iosBannerAdIdTest = 'ca-app-pub-3940256099942544/2934735716';
-  static const androidRewardedAdTest = 'ca-app-pub-3940256099942544/5224354917';
 
   static const List<String> subnets = [
     "0.0.0.0/5",

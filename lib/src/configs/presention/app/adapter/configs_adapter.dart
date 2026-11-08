@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -28,6 +30,7 @@ class ConfigsAdapter extends _$ConfigsAdapter {
   final _cacheHelper = sl<CacheHelper>();
 
   Future<void> getConfigs() async {
+    if (!Platform.isAndroid) return;
     state = const ConfigsLoading();
     final result = await _getConfigs.call();
     if (!ref.mounted) return;

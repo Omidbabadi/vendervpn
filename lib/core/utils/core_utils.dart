@@ -31,10 +31,42 @@ abstract class CoreUtils {
       return Constants.interstialAdUnitId;
     } else if (Platform.isIOS) {
       return Constants.iOSInterstialAdUnitId;
-    } else if (Platform.isLinux) {
-      return Constants.linuxInterstialAdUnitId;
-    } else if (Platform.isWindows) {
-      return Constants.windowsInterstialAdUnitId;
+    }
+    return null;
+  }
+
+  static String? get rewardedAdUnitId {
+    if (Platform.isAndroid) {
+      return Constants.androidRewardedAdTest;
+    } else if (Platform.isIOS) {
+      return Constants.iosRewardedAdTest;
+    }
+    return null;
+  }
+
+  static String? get rewardedInterstitialAdUnitId {
+    if (Platform.isAndroid) {
+      return Constants.androidRewardedInterstitialAdTest;
+    } else if (Platform.isIOS) {
+      return Constants.iosRewardedInterstitialAdTest;
+    }
+    return null;
+  }
+
+  static String? get appOpenAdUnitId {
+    if (Platform.isAndroid) {
+      return Constants.androidAppOpenAdTest;
+    } else if (Platform.isIOS) {
+      return Constants.iosAppOpenAdTest;
+    }
+    return null;
+  }
+
+  static String? get nativeAdUnitId {
+    if (Platform.isAndroid) {
+      return Constants.androidNativeAdTest;
+    } else if (Platform.isIOS) {
+      return Constants.iosNativeAdTest;
     }
     return null;
   }
