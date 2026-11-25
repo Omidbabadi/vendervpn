@@ -9,8 +9,9 @@ abstract class ConnectionRepo {
     String remark,
     bool proxyOnly,
     List<String>? bypassSubnets,
-    List<String>? blockedApps,
-  );
+    List<String>? blockedApps, {
+    int trafficLimitBytes = 0,
+  });
   Future disconnect();
   ResultFuture<int> ping(String config);
   ValueNotifier<V2RayStatus> get connectionStatus;

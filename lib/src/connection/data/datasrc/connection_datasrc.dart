@@ -16,8 +16,9 @@ abstract class ConnectionDatasrc {
     String remark,
     bool proxyOnly,
     List<String>? bypassSubnets,
-    List<String>? blockedApps,
-  );
+    List<String>? blockedApps, {
+    int trafficLimitBytes = 0,
+  });
   Future<void> disconnect();
   Future<int> ping(String config);
   ValueNotifier<V2RayStatus> get connectionStatus;
@@ -98,8 +99,9 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     String remark,
     bool proxyOnly,
     List<String>? bypassSubnets,
-    List<String>? blockedApps,
-  ) async {
+    List<String>? blockedApps, {
+    int trafficLimitBytes = 0,
+  }) async {
     try {
       final ping = await _v2ray.getServerDelay(config: config);
 
@@ -119,6 +121,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
         bypassSubnets: Constants.subnets,
         proxyOnly: proxyOnly,
         notificationDisconnectButtonName: 'Disconnect $remark',
+        trafficLimitBytes: trafficLimitBytes,
       );
     } on ConnectionException {
       rethrow;

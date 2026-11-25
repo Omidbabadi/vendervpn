@@ -11,6 +11,7 @@ import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/ip/presention/adapter/ip_provider.dart';
+import 'package:vendervpn/src/home/presentation/views/widgets/cloud_quota_meter.dart';
 import 'package:vendervpn/src/nodes/presentation/views/nodes_view.dart';
 
 class ConnectionStatus extends ConsumerWidget {
@@ -57,10 +58,14 @@ class ConnectionStatus extends ConsumerWidget {
         final beforeIp = ipSession.beforeTun;
         final afterIp = ipSession.afterTun;
 
+        // Only a fetched IP decides the flag: a node's stored country can be
+        // stale or missing, so show a placeholder until the lookup returns.
+        final fetchedCountry =
+            isConnected ? afterIp?.countryCode : beforeIp?.countryCode;
         final countryCode =
-            isConnected
-                ? (afterIp?.countryCode ?? selectedConfig?.country)
-                : (beforeIp?.countryCode ?? selectedConfig?.country);
+            CoreUtils.isValidCountryCode(fetchedCountry)
+                ? fetchedCountry
+                : null;
 
         final locationHeadline =
             isConnected
@@ -115,8 +120,16 @@ class ConnectionStatus extends ConsumerWidget {
                       ),
                     ),
                     child:
-                        (countryCode != null && countryCode.length == 2)
+                        countryCode != null
                             ? CoreUtils.getCountryFlag(countryCode)
+                            : ipSession.isLoading
+                            ? Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: textColor.withValues(alpha: 0.5),
+                              ),
+                            )
                             : Icon(
                               Icons.public_rounded,
                               size: 18,
@@ -286,6 +299,11 @@ class ConnectionStatus extends ConsumerWidget {
                   ],
                 ),
               ),
+              // Cloud nodes: today's 500 MB free allowance, live.
+              if (selectedConfig?.importedFrom == 'cloud') ...[
+                const SizedBox(height: 12),
+                const CloudQuotaMeter(),
+              ],
               const SizedBox(height: 14),
 
               // Bottom Row: Latency/Status metric on Left + Emerald Sparkline Wave on Right

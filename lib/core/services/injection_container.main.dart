@@ -9,6 +9,30 @@ Future<void> init() async {
   await _adMobInit();
   await _ipInit();
   await _perAppProxyInit();
+  await _usageQuotaInit();
+  await _configEditorInit();
+}
+
+Future<void> _configEditorInit() async {
+  sl
+    ..registerLazySingleton(() => LoadEditableNode(sl()))
+    ..registerLazySingleton(() => SaveEditedNode(sl()))
+    ..registerLazySingleton(() => BuildShareLink(sl()))
+    ..registerLazySingleton<ConfigEditorRepo>(() => ConfigEditorRepoImpl(sl()))
+    ..registerLazySingleton<ConfigEditorLocalDatasrc>(
+      () => ConfigEditorLocalDatasrcImpl(sl()),
+    );
+}
+
+Future<void> _usageQuotaInit() async {
+  sl
+    ..registerLazySingleton(() => GetUsageQuota(sl()))
+    ..registerLazySingleton(() => AddCloudUsage(sl()))
+    ..registerLazySingleton(() => AddRewardBonus(sl()))
+    ..registerLazySingleton<UsageQuotaRepo>(() => UsageQuotaRepoImpl(sl()))
+    ..registerLazySingleton<UsageQuotaLocalDatasrc>(
+      () => UsageQuotaLocalDatasrcImpl(sl()),
+    );
 }
 
 Future<void> _perAppProxyInit() async {

@@ -39,6 +39,15 @@ class AdmobException extends Equatable implements Exception {
 //   List<Object?> get props => [message,unityAdsLoadError,unityAdsShowError,unityAdsBannerError,unityAdsInitializationError];
 // }
 
+/// A node's share link or edited settings could not be read or built.
+class ConfigEditException extends Equatable implements Exception {
+  const ConfigEditException({required this.message});
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class ConnectionException extends Equatable implements Exception {
   const ConnectionException({required this.message, required this.ping});
   final String message;

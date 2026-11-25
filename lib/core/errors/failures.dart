@@ -39,3 +39,9 @@ class ConnectionFailure extends Failure {
   ConnectionFailure.fromException(ConnectionException e)
     : this(message: e.message);
 }
+
+class ConfigEditFailure extends Failure {
+  const ConfigEditFailure({required super.message}) : super(statusCode: 5);
+  ConfigEditFailure.fromException(ConfigEditException e)
+    : this(message: e.message);
+}

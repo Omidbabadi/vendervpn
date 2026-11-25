@@ -44,3 +44,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local-only: graphify output and local plugin override
+graphify-out/
+pubspec_overrides.yaml

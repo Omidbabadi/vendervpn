@@ -14,5 +14,7 @@ abstract class AdmobRepo {
   });
   ResultFuture<void> showBannerAd(double width);
   ResultFuture<void> loadRewardedAd();
-  ResultFuture<void> showRewardedAd();
+
+  /// Right(true) if the user watched the ad to the end.
+  ResultFuture<bool> showRewardedAd();
 }

@@ -557,10 +557,11 @@ class V2rayImportHelper {
     required String importedFrom,
     String? forcedIdPrefix,
     String? createdAt,
+    String? idScope,
   }) async {
     final cacheHelper = sl<CacheHelper>();
     final selectedId = cacheHelper.id;
-    final cachedIpCountries = cacheHelper.ipCountryMap;
+    final cachedNodeCountries = cacheHelper.nodeCountryMap;
     final List<ConfigModel> parsed = [];
 
     for (var i = 0; i < links.length; i++) {
@@ -573,6 +574,10 @@ class V2rayImportHelper {
         final id =
             forcedIdPrefix != null
                 ? (links.length == 1 ? forcedIdPrefix : '${forcedIdPrefix}_$i')
+                : idScope != null
+                // Scope the id to its source (e.g. a subscription) so the same
+                // link in two subscriptions yields two distinct nodes.
+                ? 'local_${'$idScope|$rawLink'.hashCode.abs()}'
                 : 'local_${rawLink.hashCode.abs()}';
         final remark =
             parser.remark.trim().isNotEmpty
@@ -580,8 +585,10 @@ class V2rayImportHelper {
                 : '${protocolOf(rawLink)} (${parser.address})';
 
         final cleanAddr = parser.address.trim();
+        // A country verified by a tunnel IP lookup wins; otherwise use the
+        // flag the provider put in the remark; otherwise unknown (placeholder).
         final countryCode =
-            cachedIpCountries[cleanAddr] ?? _inferCountryFromRemark(remark);
+            cachedNodeCountries[rawLink] ?? countryFromRemarkFlag(remark);
 
         parsed.add(
           ConfigModel(
@@ -607,42 +614,20 @@ class V2rayImportHelper {
     return parsed;
   }
 
-  static String? _inferCountryFromRemark(String remark) {
+  /// Country code from the first flag emoji in a remark (e.g. "🇩🇪 Fast" →
+  /// "DE"), or null. Only explicit flag emoji count: matching country names
+  /// in free text is too error-prone ("UK" would match "UKRAINE").
+  static String? countryFromRemarkFlag(String? remark) {
+    if (remark == null || remark.isEmpty) return null;
+    bool isRegional(int r) => r >= 0x1F1E6 && r <= 0x1F1FF;
     final runes = remark.runes.toList();
     for (var i = 0; i < runes.length - 1; i++) {
-      final first = runes[i];
-      final second = runes[i + 1];
-      if (first >= 0x1F1E6 &&
-          first <= 0x1F1FF &&
-          second >= 0x1F1E6 &&
-          second <= 0x1F1FF) {
-        final c1 = String.fromCharCode(first - 0x1F1E6 + 65);
-        final c2 = String.fromCharCode(second - 0x1F1E6 + 65);
-        return '$c1$c2';
+      if (isRegional(runes[i]) && isRegional(runes[i + 1])) {
+        return String.fromCharCodes([
+          runes[i] - 0x1F1E6 + 65,
+          runes[i + 1] - 0x1F1E6 + 65,
+        ]);
       }
-    }
-
-    final upper = remark.toUpperCase();
-    const commonCodes = {
-      'GERMANY': 'DE',
-      'NETHERLANDS': 'NL',
-      'FINLAND': 'FI',
-      'FRANCE': 'FR',
-      'UNITED STATES': 'US',
-      'USA': 'US',
-      'UK': 'GB',
-      'UNITED KINGDOM': 'GB',
-      'TURKEY': 'TR',
-      'SINGAPORE': 'SG',
-      'JAPAN': 'JP',
-      'CANADA': 'CA',
-      'SWEDEN': 'SE',
-      'SWITZERLAND': 'CH',
-      'POLAND': 'PL',
-      'AUSTRIA': 'AT',
-    };
-    for (final entry in commonCodes.entries) {
-      if (upper.contains(entry.key)) return entry.value;
     }
     return null;
   }

@@ -131,7 +131,7 @@ class IpRemoteDatasrcImpl implements IpRemoteDatasrc {
       final countryCode =
           ((data['country_code'] as String?) ??
                   (data['countryCode'] as String?) ??
-                  'US')
+                  '')
               .toUpperCase();
       final countryName = (data['country'] as String?) ?? countryCode;
       final city = (data['city'] as String?) ?? '';
@@ -186,7 +186,7 @@ class IpRemoteDatasrcImpl implements IpRemoteDatasrc {
 
       final ip = (data['query'] as String?) ?? '';
       final countryCode =
-          ((data['countryCode'] as String?) ?? 'US').toUpperCase();
+          ((data['countryCode'] as String?) ?? '').toUpperCase();
       final countryName = (data['country'] as String?) ?? countryCode;
       final city = (data['city'] as String?) ?? '';
 

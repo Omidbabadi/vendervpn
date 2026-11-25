@@ -66,7 +66,6 @@ class AdmobAdapter extends _$AdmobAdapter {
   }
 
   Future<void> loadInterstitialAd(LoadInterstitialAdParams params) async {
-    return;
     if (!_isV2rayStarted) {
       debugPrint('Blocked InterstitialAd load: V2Ray TUN has not started yet.');
       params.onAdFailed();
@@ -90,7 +89,6 @@ class AdmobAdapter extends _$AdmobAdapter {
   }
 
   Future<void> showInterstitialAd(ShowInterstitialAdParams params) async {
-    return;
     if (!_isV2rayStarted) {
       params.onAdFailedToShowFullScreenContent();
       return;
@@ -130,32 +128,41 @@ class AdmobAdapter extends _$AdmobAdapter {
     );
   }
 
-  Future<void> loadRewardedAd() async {
-    if (!_isV2rayStarted) return;
+  /// Returns true when a rewarded ad is loaded and ready to show.
+  Future<bool> loadRewardedAd() async {
+    if (!_isV2rayStarted) {
+      debugPrint('Blocked RewardedAd load: V2Ray TUN has not started yet.');
+      return false;
+    }
     final ok = await init();
-    if (!ok || !_isV2rayStarted) return;
+    if (!ok || !_isV2rayStarted) return false;
     state = const RewardedAdLoading();
     final result = await _loadRewardedAd.call();
-    result.fold(
+    return result.fold(
       (failure) {
         state = AdmobError(failure.message);
+        return false;
       },
       (_) {
         state = const RewardedAdLoaded();
+        return true;
       },
     );
   }
 
-  Future<void> showRewardedAd() async {
-    if (!_isV2rayStarted) return;
+  /// Returns true only if the user watched the ad to the end.
+  Future<bool> showRewardedAd() async {
+    if (!_isV2rayStarted) return false;
     state = const RewardedAdShowing();
     final result = await _showRewardedAd.call();
-    result.fold(
+    return result.fold(
       (failure) {
         state = AdmobError(failure.message);
+        return false;
       },
-      (_) {
+      (earnedReward) {
         state = const RewardedAdShowed();
+        return earnedReward;
       },
     );
   }

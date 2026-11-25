@@ -20,7 +20,9 @@ abstract class AdmobRemoteDatasrc {
   });
   Future<void> showBannerAd(double width);
   Future<void> loadRewardedAd();
-  Future<void> showRewardedAd();
+
+  /// Returns true if the user watched the ad to the end (earned the reward).
+  Future<bool> showRewardedAd();
 }
 
 class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
@@ -215,52 +217,68 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   Future<void> loadRewardedAd() async {
     final completer = Completer<void>();
     RewardedAd.load(
-      adUnitId: Constants.androidRewardedAdTest,
-      request: AdRequest(),
+      adUnitId: CoreUtils.rewardedAdUnitId ?? Constants.androidRewardedAdTest,
+      request: request,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
-          completer.complete();
           Cache.instance.setRewardedAd(ad);
+          if (!completer.isCompleted) completer.complete();
         },
-
         onAdFailedToLoad: (error) {
-          completer.completeError(error.message);
+          debugPrint('Rewarded ad failed to load: ${error.message}');
+          if (!completer.isCompleted) {
+            completer.completeError(
+              AdmobException(error, message: error.message),
+            );
+          }
         },
       ),
     );
-    return completer.future;
+    return completer.future.timeout(
+      const Duration(seconds: 15),
+      onTimeout: () {
+        throw const AdmobException(
+          null,
+          message: 'Rewarded ad load timed out',
+        );
+      },
+    );
   }
 
   @override
-  Future<void> showRewardedAd() async {
+  Future<bool> showRewardedAd() async {
     final ad = Cache.instance.rewardedAd;
     if (ad == null) {
-      return;
+      throw const AdmobException(null, message: 'No rewarded ad is loaded');
     }
-    ad.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (ad) {
-        debugPrint('Ad showed full screen content.');
-      },
-      onAdFailedToShowFullScreenContent: (ad, err) {
-        debugPrint('Ad failed to show full screen content with error: $err');
+    // An ad can only be shown once, so forget it right away.
+    Cache.instance.resetRewardedAd();
 
-        ad.dispose();
+    final completer = Completer<bool>();
+    var earnedReward = false;
+
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (closedAd) {
+        closedAd.dispose();
+        if (!completer.isCompleted) completer.complete(earnedReward);
       },
-      onAdDismissedFullScreenContent: (ad) {
-        debugPrint('Ad was dismissed.');
-        ad.dispose();
-      },
-      onAdImpression: (ad) {
-        debugPrint('Ad recorded an impression.');
-      },
-      onAdClicked: (ad) {
-        debugPrint('Ad was clicked.');
+      onAdFailedToShowFullScreenContent: (failedAd, error) {
+        debugPrint('Rewarded ad failed to show: $error');
+        failedAd.dispose();
+        if (!completer.isCompleted) {
+          completer.completeError(
+            AdmobException(error, message: error.message),
+          );
+        }
       },
     );
-    ad.show(
-      onUserEarnedReward: (ad, reward) {
-        Cache.instance.resetRewardedAd();
+
+    await ad.show(
+      onUserEarnedReward: (shownAd, reward) {
+        earnedReward = true;
       },
     );
+    // Wait until the user closes the ad.
+    return completer.future;
   }
 }

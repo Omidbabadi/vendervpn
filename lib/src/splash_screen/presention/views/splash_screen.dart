@@ -42,6 +42,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (vpnState == 'CONNECTED') {
         Cache.instance.setVpnDisconnected(false);
         final cachedConfigs = cache.configs;
+        final nodeCountries = cache.nodeCountryMap;
         final configList =
             cachedConfigs.map((e) {
               final V2RayURL parser = V2ray.parseFromURL(e['uri'] as String);
@@ -62,7 +63,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 dateAdded: (e['dateAdded'] as String?) ?? '',
                 id: e['id'] as String,
                 isSelected: isSelected,
-                country: e['country'] as String?,
+                country:
+                    nodeCountries[(e['uri'] as String).trim()] ??
+                    V2rayImportHelper.countryFromRemarkFlag(
+                      (e['remark'] as String?) ?? parser.remark,
+                    ),
                 ping: int.tryParse((e['ping'] ?? '-1').toString()) ?? -1,
               );
               if (isSelected) {

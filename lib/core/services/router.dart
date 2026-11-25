@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vendervpn/core/common/entities/config.dart';
+import 'package:vendervpn/src/config_editor/presentation/views/config_editor_view.dart';
 import 'package:vendervpn/src/dashboard/presention/views/dashboard_screen.dart';
 import 'package:vendervpn/src/home/presentation/views/home_view.dart';
 import 'package:vendervpn/src/nodes/presentation/views/nodes_view.dart';

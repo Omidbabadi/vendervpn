@@ -80,10 +80,10 @@ class AdmobRepoImpl implements AdmobRepo {
   }
 
   @override
-  ResultFuture<void> showRewardedAd() async {
+  ResultFuture<bool> showRewardedAd() async {
     try {
-      await _remoteDatasrc.showRewardedAd();
-      return const Right(null);
+      final earnedReward = await _remoteDatasrc.showRewardedAd();
+      return Right(earnedReward);
     } on AdmobException catch (e) {
       return Left(AdmobFailure.fromException(e));
     } catch (e) {

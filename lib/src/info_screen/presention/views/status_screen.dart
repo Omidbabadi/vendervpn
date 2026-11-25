@@ -420,22 +420,11 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                       ),
                                     ),
                                     child:
-                                        ((ipSession.afterTun?.countryCode ??
-                                                        connectedConfig
-                                                            .country) !=
-                                                    null &&
-                                                (ipSession
-                                                                .afterTun
-                                                                ?.countryCode ??
-                                                            connectedConfig
-                                                                .country)!
-                                                        .length ==
-                                                    2)
+                                        CoreUtils.isValidCountryCode(
+                                              ipSession.afterTun?.countryCode,
+                                            )
                                             ? CoreUtils.getCountryFlag(
-                                              (ipSession
-                                                      .afterTun
-                                                      ?.countryCode ??
-                                                  connectedConfig.country)!,
+                                              ipSession.afterTun!.countryCode,
                                             )
                                             : Icon(
                                               Icons.public_rounded,

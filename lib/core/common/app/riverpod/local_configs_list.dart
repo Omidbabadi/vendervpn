@@ -191,6 +191,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
   List<Config> build() {
     final rawList = _cacheHelper.localConfigs;
     final selectedId = _cacheHelper.id;
+    final nodeCountries = _cacheHelper.nodeCountryMap;
     final List<Config> loaded = [];
 
     for (final e in rawList) {
@@ -213,7 +214,12 @@ class LocalConfigsList extends Notifier<List<Config>> {
                 e['dateAdded'] as String? ?? DateTime.now().toIso8601String(),
             id: id,
             isSelected: id == selectedId,
-            country: e['country'] as String? ?? 'US',
+            // Verified country, else the remark's flag emoji, else unknown.
+            country:
+                nodeCountries[uri.trim()] ??
+                V2rayImportHelper.countryFromRemarkFlag(
+                  e['remark'] as String? ?? parser.remark,
+                ),
             serverIp:
                 (e['serverIp'] as String?) != null &&
                         e['serverIp'] != 'N/A' &&
@@ -329,6 +335,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
     final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
       links: fetched.links,
       importedFrom: sourceTag,
+      idScope: sourceTag,
     );
     if (parsedModels.isEmpty) return 0;
 
@@ -348,6 +355,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
     final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
       links: fetched.links,
       importedFrom: sourceTag,
+      idScope: sourceTag,
     );
     if (parsedModels.isEmpty) return 0;
 
@@ -371,29 +379,50 @@ class LocalConfigsList extends Notifier<List<Config>> {
     required String sourceTag,
     required List<ConfigModel> newModels,
   }) async {
-    // Keep nodes from other sources; replace nodes belonging to this subscription
+    // Keep nodes from other sources; replace nodes belonging to this subscription.
+    // Keyed by id (scoped per source), so a link shared with another
+    // subscription or a direct import is never stolen from it.
     final retained = state.where((c) => c.importedFrom != sourceTag).toList();
-    final existingByUri = <String, Config>{for (final c in retained) c.uri: c};
+    final existingById = <String, Config>{for (final c in retained) c.id: c};
     for (final model in newModels) {
-      existingByUri[model.uri] = model;
+      existingById[model.id] = model;
     }
-    final merged = existingByUri.values.toList();
+    final merged = existingById.values.toList();
     state = merged;
     await _persistState(merged);
 
-    if (ref.read(currentConfigProvider) == null && merged.isNotEmpty) {
-      await ref
-          .read(currentConfigProvider.notifier)
-          .setCurrentConfig(merged.first);
+    final current = ref.read(currentConfigProvider);
+    if (current == null) {
+      if (merged.isNotEmpty) {
+        await ref
+            .read(currentConfigProvider.notifier)
+            .setCurrentConfig(merged.first);
+      }
+      return;
+    }
+
+    // If the selected node belonged to this subscription, re-point the
+    // selection at its refreshed copy (ids may change, e.g. legacy unscoped
+    // ids migrating to per-subscription ids).
+    if (current.importedFrom == sourceTag &&
+        !merged.any((c) => c.id == current.id)) {
+      for (final model in newModels) {
+        if (model.uri == current.uri) {
+          await ref
+              .read(currentConfigProvider.notifier)
+              .setCurrentConfig(model);
+          break;
+        }
+      }
     }
   }
 
   Future<void> _mergeAndPersist(List<ConfigModel> newModels) async {
-    final existingByUri = <String, Config>{for (final c in state) c.uri: c};
+    final existingById = <String, Config>{for (final c in state) c.id: c};
     for (final model in newModels) {
-      existingByUri[model.uri] = model;
+      existingById[model.id] = model;
     }
-    final merged = existingByUri.values.toList();
+    final merged = existingById.values.toList();
     state = merged;
     await _persistState(merged);
 
@@ -428,7 +457,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
   Future<void> updateConfigEndpoint(
     String id, {
     required String serverIp,
-    required String countryCode,
+    String? countryCode,
   }) async {
     final updated = [
       for (final config in state)
@@ -439,6 +468,15 @@ class LocalConfigsList extends Notifier<List<Config>> {
     ];
     state = updated;
     await _persistState(updated);
+  }
+
+  /// Puts a node that was edited and already saved to storage back into the
+  /// list, in place of the old version (matched by id).
+  void applySavedConfig(Config saved) {
+    state = [
+      for (final config in state)
+        if (config.id == saved.id) saved else config,
+    ];
   }
 
   Future<void> _persistState(List<Config> list) async {
@@ -491,6 +529,7 @@ class NodesViewUiState {
     this.isAutoConnectingFastest = false,
     this.subIntervalHours = 6,
     this.collapsedSubKeys = const <String>{},
+    this.refreshingSubIds = const <String>{},
   });
 
   final int selectedTab;
@@ -500,6 +539,9 @@ class NodesViewUiState {
   final int subIntervalHours;
   final Set<String> collapsedSubKeys;
 
+  /// IDs of subscriptions currently being refreshed from their card.
+  final Set<String> refreshingSubIds;
+
   NodesViewUiState copyWith({
     int? selectedTab,
     bool? isImporting,
@@ -507,6 +549,7 @@ class NodesViewUiState {
     bool? isAutoConnectingFastest,
     int? subIntervalHours,
     Set<String>? collapsedSubKeys,
+    Set<String>? refreshingSubIds,
   }) {
     return NodesViewUiState(
       selectedTab: selectedTab ?? this.selectedTab,
@@ -516,6 +559,7 @@ class NodesViewUiState {
           isAutoConnectingFastest ?? this.isAutoConnectingFastest,
       subIntervalHours: subIntervalHours ?? this.subIntervalHours,
       collapsedSubKeys: collapsedSubKeys ?? this.collapsedSubKeys,
+      refreshingSubIds: refreshingSubIds ?? this.refreshingSubIds,
     );
   }
 }
@@ -536,6 +580,12 @@ class NodesViewUiStateNotifier extends Notifier<NodesViewUiState> {
       state = state.copyWith(isAutoConnectingFastest: value);
   void setSubIntervalHours(int hours) =>
       state = state.copyWith(subIntervalHours: hours);
+
+  void setSubRefreshing(String id, bool value) {
+    final next = {...state.refreshingSubIds};
+    value ? next.add(id) : next.remove(id);
+    state = state.copyWith(refreshingSubIds: next);
+  }
 
   void toggleSubExpanded(String key) {
     final next = {...state.collapsedSubKeys};

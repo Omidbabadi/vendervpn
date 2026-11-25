@@ -92,6 +92,10 @@ abstract class CoreUtils {
     );
   }
 
+  /// True for an ISO 3166-1 alpha-2 code that can be rendered as a flag.
+  static bool isValidCountryCode(String? code) =>
+      code != null && RegExp(r'^[A-Za-z]{2}$').hasMatch(code);
+
   static CountryFlag getCountryFlag(String currencyCode) {
     return CountryFlag.fromCountryCode(
       currencyCode,

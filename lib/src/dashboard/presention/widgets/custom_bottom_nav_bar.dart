@@ -21,7 +21,10 @@ class CustomBottomNavBar extends ConsumerWidget {
     bool isConnected,
     bool isConnecting,
   ) async {
-    if (isConnected || isConnecting) {
+    if (isConnected) {
+      // Local nodes show the preloaded interstitial before disconnecting.
+      await adapter.disconnectByUser();
+    } else if (isConnecting) {
       await adapter.stopConnection();
     } else {
       await adapter.startConnection();

@@ -28,6 +28,18 @@ final class ConnectionStateDisconnected extends ConnectionState {
   const ConnectionStateDisconnected();
 }
 
+/// Today's free data for cloud nodes is used up. The UI offers a rewarded ad.
+final class ConnectionStateQuotaExceeded extends ConnectionState {
+  const ConnectionStateQuotaExceeded(this.at);
+
+  /// When it happened. Each tap on connect gives a new value, so the
+  /// prompt opens again even if the previous state was the same.
+  final DateTime at;
+
+  @override
+  List<Object?> get props => [at];
+}
+
 final class ConnectionStateError extends ConnectionState {
   final String message;
 

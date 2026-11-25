@@ -19,13 +19,43 @@ class CacheHelper {
   static const _configs = 'configs';
   static const _localConfigs = 'local_configs';
   static const _subscriptionUrls = 'subscription_urls';
-  static const _ipCountryCache = 'ip_country_cache';
+  // v2: the v1 map could hold the user's own country for a node (recorded
+  // when the tunnel lookup fell back to the real IP), so it is dropped.
+  // v3: keyed by node link instead of address (v2 entries were shared by
+  // every node on the same host/CDN and showed the wrong flag).
+  static const _ipCountryCache = 'node_country_cache_v3';
   static const _localeKey = 'app_locale';
   static const _perAppProxyEnabledKey = 'per_app_proxy_enabled';
   static const _perAppProxyModeKey = 'per_app_proxy_mode';
   static const _perAppProxyAppsKey = 'per_app_proxy_apps';
   static const _proxyOnlyModeKey = 'proxy_only_mode';
   static const _userAllowedUsage = 'user_allowed_usage';
+  static const _cloudUsageQuota = 'cloud_usage_quota';
+
+  /// Session traffic total (upload + download, as V2Ray reports it) already
+  /// added to the cloud quota. Lets a restarted app count what was used
+  /// while it was closed instead of skipping it.
+  static const _cloudTrafficCounted = 'cloud_traffic_counted';
+
+  int? get cloudTrafficCounted => _pref.getInt(_cloudTrafficCounted);
+
+  Future<void> cacheCloudTrafficCounted(int? total) async {
+    if (total == null) {
+      await _pref.remove(_cloudTrafficCounted);
+    } else {
+      await _pref.setInt(_cloudTrafficCounted, total);
+    }
+  }
+
+  Future<void> cacheCloudUsageQuota(Map<String, dynamic> quota) async {
+    await _pref.setString(_cloudUsageQuota, json.encode(quota));
+  }
+
+  Map<String, dynamic>? get cloudUsageQuota {
+    final raw = _pref.getString(_cloudUsageQuota);
+    if (raw == null || raw.isEmpty) return null;
+    return Map<String, dynamic>.from(json.decode(raw) as Map);
+  }
 
   Future<void> cacheUserAllowedUsage(String usage) async {
     await _pref.setString(_userAllowedUsage, usage);
@@ -92,7 +122,10 @@ class CacheHelper {
     return result;
   }
 
-  Map<String, String> get ipCountryMap {
+  /// Countries verified by a tunnel IP lookup, keyed by the node's full link.
+  /// Not keyed by address: nodes behind one CDN domain or relay share an
+  /// address but exit in different countries.
+  Map<String, String> get nodeCountryMap {
     final raw = _pref.getString(_ipCountryCache);
     if (raw == null || raw.isEmpty) return {};
     try {
@@ -102,9 +135,9 @@ class CacheHelper {
     }
   }
 
-  Future<void> cacheIpCountry(String hostOrIp, String countryCode) async {
-    final map = ipCountryMap;
-    map[hostOrIp] = countryCode;
+  Future<void> cacheNodeCountry(String nodeUri, String countryCode) async {
+    final map = nodeCountryMap;
+    map[nodeUri] = countryCode;
     await _pref.setString(_ipCountryCache, json.encode(map));
   }
 

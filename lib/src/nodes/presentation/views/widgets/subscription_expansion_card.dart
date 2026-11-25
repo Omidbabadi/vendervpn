@@ -35,7 +35,14 @@ class SubscriptionExpansionCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final isImporting = ref.watch(nodesViewUiStateProvider).isImporting;
+    // Only show loading for THIS subscription, not every card.
+    final isRefreshing =
+        subscription != null &&
+        ref.watch(
+          nodesViewUiStateProvider.select(
+            (s) => s.refreshingSubIds.contains(subscription!.id),
+          ),
+        );
     final intervalLabel =
         subscription != null
             ? (subscription!.intervalHours > 0
@@ -145,14 +152,16 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                         const SizedBox(width: 6),
                         GestureDetector(
                           onTap: () async {
+                            if (isRefreshing) return;
                             HapticFeedback.lightImpact();
+                            final sub = subscription!;
                             final uiNotifier = ref.read(
                               nodesViewUiStateProvider.notifier,
                             );
                             final localConfigsNotifier = ref.read(
                               localConfigsListProvider.notifier,
                             );
-                            uiNotifier.setImporting(true);
+                            uiNotifier.setSubRefreshing(sub.id, true);
                             try {
                               final count = await localConfigsNotifier
                                   .refreshSubscription(subscription!);
@@ -173,7 +182,7 @@ class SubscriptionExpansionCard extends ConsumerWidget {
                                 message: e.toString(),
                               );
                             } finally {
-                              uiNotifier.setImporting(false);
+                              uiNotifier.setSubRefreshing(sub.id, false);
                             }
                           },
                           child: Container(
@@ -255,7 +264,7 @@ class SubscriptionExpansionCard extends ConsumerWidget {
             secondChild: Padding(
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
               child:
-                  isImporting
+                  isRefreshing
                       ? const Center(
                         child: CircularProgressIndicator(
                           color: Colours.orbViolet,

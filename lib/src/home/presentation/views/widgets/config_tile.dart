@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/app/riverpod/local_configs_list.dart';
@@ -12,6 +13,7 @@ import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
+import 'package:vendervpn/src/config_editor/presentation/views/config_editor_view.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 
 class ConfigTile extends ConsumerWidget {
@@ -118,7 +120,7 @@ class ConfigTile extends ConsumerWidget {
                 ),
               ),
               child:
-                  (config.country != null && config.country!.length == 2)
+                  CoreUtils.isValidCountryCode(config.country)
                       ? CoreUtils.getCountryFlag(config.country!)
                       : Icon(
                         Icons.public_rounded,
@@ -296,8 +298,37 @@ class ConfigTile extends ConsumerWidget {
               ),
             ),
 
-            // Delete action for Local Nodes
+            // Edit + delete actions for Local Nodes
             if (isLocal) ...[
+              const SizedBox(width: 6),
+              GestureDetector(
+                onTap: () {
+                  if (isConnected && isSelected) {
+                    CoreUtils.showSnackBar(
+                      context,
+                      true,
+                      title: 'Tunnel Active',
+                      message: 'Disconnect before editing the active node.',
+                    );
+                    return;
+                  }
+                  HapticFeedback.selectionClick();
+                  context.push(ConfigEditorView.path, extra: config);
+                },
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: Colours.softChipBg(context),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.edit_outlined,
+                    size: 15,
+                    color: Colours.orbViolet,
+                  ),
+                ),
+              ),
               const SizedBox(width: 6),
               GestureDetector(
                 onTap: () {

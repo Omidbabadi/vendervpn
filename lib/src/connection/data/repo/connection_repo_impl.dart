@@ -48,8 +48,9 @@ class ConnectionRepoImpl implements ConnectionRepo {
     String remark,
     bool proxyOnly,
     List<String>? bypassSubnets,
-    List<String>? blockedApps,
-  ) async {
+    List<String>? blockedApps, {
+    int trafficLimitBytes = 0,
+  }) async {
     try {
       await _datasrc.connect(
         config,
@@ -57,6 +58,7 @@ class ConnectionRepoImpl implements ConnectionRepo {
         proxyOnly,
         bypassSubnets,
         blockedApps,
+        trafficLimitBytes: trafficLimitBytes,
       );
       return Right(null);
     } on ConnectionException catch (e) {

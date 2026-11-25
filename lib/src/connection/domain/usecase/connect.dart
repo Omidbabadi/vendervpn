@@ -13,6 +13,7 @@ class Connect extends UsecaseWithParams<void, ConnectionsParams> {
     params.proxyOnly,
     params.bypassSubnets,
     params.blockedApps,
+    trafficLimitBytes: params.trafficLimitBytes,
   );
 }
 
@@ -23,10 +24,15 @@ class ConnectionsParams {
     required this.proxyOnly,
     required this.bypassSubnets,
     required this.blockedApps,
+    this.trafficLimitBytes = 0,
   });
   final String config;
   final String remark;
   final bool proxyOnly;
   final List<String>? bypassSubnets;
   final List<String>? blockedApps;
+
+  /// The tunnel stops itself natively once this session uses this many bytes
+  /// (upload + download), even with the app closed. 0 = no limit.
+  final int trafficLimitBytes;
 }

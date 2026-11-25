@@ -66,6 +66,12 @@ final router = GoRouter(
         );
       },
     ),
+    GoRoute(
+      path: ConfigEditorView.path,
+      builder: (_, state) {
+        return ConfigEditorView(config: state.extra as Config?);
+      },
+    ),
     ShellRoute(
       pageBuilder: (context, state, child) {
         return _buildOrbMoodTransitionPage(

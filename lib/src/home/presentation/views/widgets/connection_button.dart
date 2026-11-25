@@ -5,6 +5,7 @@ import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/widgets/orb_face_widget.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
+import 'package:vendervpn/src/home/presentation/views/widgets/cloud_quota_sheet.dart';
 
 class ConnectionButton extends ConsumerWidget {
   const ConnectionButton({super.key});
@@ -17,7 +18,10 @@ class ConnectionButton extends ConsumerWidget {
     bool isConnected,
     bool isConnecting,
   ) async {
-    if (isConnected || isConnecting) {
+    if (isConnected) {
+      // Local nodes show the preloaded interstitial before disconnecting.
+      await adapter.disconnectByUser();
+    } else if (isConnecting) {
       await adapter.stopConnection();
     } else {
       await adapter.startConnection();
@@ -28,6 +32,13 @@ class ConnectionButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final adapter = ref.watch(connectionAdapterProvider.notifier);
     final connectionState = ref.watch(connectionAdapterProvider);
+
+    // Cloud free data used up (on connect or mid-session): offer the ad.
+    ref.listen(connectionAdapterProvider, (previous, next) {
+      if (next is ConnectionStateQuotaExceeded) {
+        CloudQuotaSheet.show(context);
+      }
+    });
     ref.watch(currentThemeProvider);
     final l10n = AppLocalizations.of(context)!;
     final textColor = Colours.classicAdabtiveTextColor(context);

@@ -7,6 +7,7 @@ import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
 import 'package:vendervpn/core/common/app/riverpod/local_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
+import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/src/ip/data/datasrc/ip_remote_datasrc.dart';
 import 'package:vendervpn/src/ip/domain/entities/ip_info.dart';
 
@@ -47,6 +48,13 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
 
   @override
   IpSessionState build() {
+    // After a restart with the tunnel still up, a "before TUN" lookup would go
+    // through the VPN and record the exit IP as the user's real IP. The
+    // connection adapter resolves the tunnel IP instead; the real IP is looked
+    // up on disconnect.
+    if (_cacheHelper.vpnState == 'CONNECTED') {
+      return const IpSessionState();
+    }
     Future.microtask(lookupBeforeTun);
     return const IpSessionState(isLoading: true);
   }
@@ -76,17 +84,22 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
       IpInfo? info;
       for (var attempt = 0; attempt < 3; attempt++) {
         try {
-          info = await _datasrc.fetchIpInfo(
+          final candidate = await _datasrc.fetchIpInfo(
             localHttpProxyPort: httpPort,
             isTunnel: true,
           );
-          if (state.beforeTun == null || info.ip != state.beforeTun!.ip) {
+          // The real IP means traffic isn't going through the tunnel (yet);
+          // never record it as the node's location.
+          if (state.beforeTun == null || candidate.ip != state.beforeTun!.ip) {
+            info = candidate;
             break;
           }
         } catch (e) {
           debugPrint('lookupAfterTun attempt ${attempt + 1} failed: $e');
         }
-        await Future<void>.delayed(const Duration(milliseconds: 1000));
+        if (attempt < 2) {
+          await Future<void>.delayed(const Duration(milliseconds: 1000));
+        }
       }
 
       if (info == null) {
@@ -98,17 +111,26 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
 
       if (!ref.mounted) return;
 
-      await _cacheHelper.cacheIpCountry(activeConfig.address, info.countryCode);
-      await _cacheHelper.cacheIpCountry(info.ip, info.countryCode);
+      final hasCountry = CoreUtils.isValidCountryCode(info.countryCode);
+      if (hasCountry) {
+        await _cacheHelper.cacheNodeCountry(
+          activeConfig.uri.trim(),
+          info.countryCode,
+        );
+      }
+      if (!ref.mounted) return;
 
       // Update the active Config with the verified tunnel exit IP & Country Code
       final updatedConfig = activeConfig.copyWith(
-        country: info.countryCode,
+        country: hasCountry ? info.countryCode : null,
         serverIp: info.ip,
       );
-      await ref
-          .read(currentConfigProvider.notifier)
-          .setCurrentConfig(updatedConfig);
+      // Don't clobber the selection if the user picked another node meanwhile.
+      if (ref.read(currentConfigProvider)?.id == activeConfig.id) {
+        await ref
+            .read(currentConfigProvider.notifier)
+            .setCurrentConfig(updatedConfig);
+      }
 
       // Also update in cloud/local lists so node tiles display the resolved country flag & endpoint IP
       final cloudList = ref.read(currentConfigsListProvider);
@@ -125,7 +147,7 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
               .updateConfigEndpoint(
                 activeConfig.id,
                 serverIp: info.ip,
-                countryCode: info.countryCode,
+                countryCode: hasCountry ? info.countryCode : null,
               );
         }
       }
