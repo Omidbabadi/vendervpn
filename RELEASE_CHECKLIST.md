@@ -125,7 +125,7 @@ Legend: 🔴 blocker (Play will reject or the build is unsafe) · 🟠 high risk
 
 | Day | Work |
 |-----|------|
-| 1 | Phase 0 decisions · keystore + release signing · remove override, pin plugin |
+| 1 | Phase 0 1 · keystore + release signing · remove override, pin plugin |
 | 2 | Manifest/permission cleanup · targetSdk 36 · 16 KB check of native libs |
 | 3 | AdMob real IDs + UMP consent (or remove ads) · release-build smoke test |
 | 4 | Privacy policy · store assets (icon, feature graphic, screenshots) · listing text en/fa |
