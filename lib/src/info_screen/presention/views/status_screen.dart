@@ -441,7 +441,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                         Text(
                                           ipSession.afterTun?.displayLocation ??
                                               (ipSession.isLoading
-                                                  ? 'Resolving VPN Location...'
+                                                  ? l10n.resolving_vpn_location
                                                   : connectedConfig.remark),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -453,7 +453,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          'Connected IP: ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? 'Resolving endpoint...'}',
+                                          '${l10n.connected_ip_label}: ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? l10n.resolving_endpoint}',
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -496,7 +496,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
-                                          'Your IP: ${ipSession.beforeTun!.ip} (${ipSession.beforeTun!.countryCode})  →  ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? 'Resolving...'}',
+                                          '${l10n.your_ip_label}: ${ipSession.beforeTun!.ip} (${ipSession.beforeTun!.countryCode})  →  ${ipSession.afterTun?.ip ?? connectedConfig.serverIp ?? l10n.resolving}',
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -541,9 +541,11 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                                   Icons.folder_open_rounded,
                                   size: 18,
                                 ),
-                                label: const Text(
-                                  'Local Nodes',
-                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                label: Text(
+                                  l10n.local_nodes_btn,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
                             ),
@@ -592,9 +594,9 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
                               ),
                             ),
                             onPressed: () => context.go(HomeView.path),
-                            child: const Text(
-                              'Continue to Home',
-                              style: TextStyle(
+                            child: Text(
+                              l10n.continue_to_home,
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
                               ),

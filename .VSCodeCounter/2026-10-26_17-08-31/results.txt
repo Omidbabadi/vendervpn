@@ -1,0 +1,203 @@
+Date : 2026-10-26 17:08:31
+Directory : /home/omidbabadi/development/vendervpn/lib
+Total : 93 files,  8600 codes, 441 comments, 1109 blanks, all 10150 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Dart     |         93 |      8,600 |        441 |      1,109 |     10,150 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                             | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                |         93 |      8,600 |        441 |      1,109 |     10,150 |
+| . (Files)                                                                                                        |          1 |         67 |          0 |          6 |         73 |
+| core                                                                                                             |         32 |      2,770 |        102 |        430 |      3,302 |
+| core/common                                                                                                      |         13 |        965 |         35 |        191 |      1,191 |
+| core/common/app                                                                                                  |         11 |        848 |         33 |        159 |      1,040 |
+| core/common/app (Files)                                                                                          |          1 |        113 |          1 |         24 |        138 |
+| core/common/app/riverpod                                                                                         |         10 |        735 |         32 |        135 |        902 |
+| core/common/app/riverpod (Files)                                                                                 |          8 |        660 |         25 |        112 |        797 |
+| core/common/app/riverpod/theme                                                                                   |          2 |         75 |          7 |         23 |        105 |
+| core/common/entities                                                                                             |          1 |         68 |          0 |         15 |         83 |
+| core/common/singelton                                                                                            |          1 |         49 |          2 |         17 |         68 |
+| core/errors                                                                                                      |          2 |         57 |         14 |         21 |         92 |
+| core/extensions                                                                                                  |          4 |         51 |          0 |         16 |         67 |
+| core/res                                                                                                         |          1 |         67 |          3 |         17 |         87 |
+| core/res/styles                                                                                                  |          1 |         67 |          3 |         17 |         87 |
+| core/services                                                                                                    |          4 |        159 |          0 |         18 |        177 |
+| core/usecase                                                                                                     |          1 |         21 |          0 |         11 |         32 |
+| core/utils                                                                                                       |          4 |        323 |         10 |         38 |        371 |
+| core/widgets                                                                                                     |          3 |      1,127 |         40 |        118 |      1,285 |
+| l10n                                                                                                             |          4 |        294 |        246 |        156 |        696 |
+| src                                                                                                              |         56 |      5,469 |         93 |        517 |      6,079 |
+| src/admob                                                                                                        |         12 |        665 |          9 |        104 |        778 |
+| src/admob/data                                                                                                   |          2 |        330 |          0 |         35 |        365 |
+| src/admob/data/datasrc                                                                                           |          1 |        244 |          0 |         23 |        267 |
+| src/admob/data/repo                                                                                              |          1 |         86 |          0 |         12 |         98 |
+| src/admob/domain                                                                                                 |          7 |         97 |          0 |         24 |        121 |
+| src/admob/domain/repo                                                                                            |          1 |         17 |          0 |          2 |         19 |
+| src/admob/domain/usecase                                                                                         |          6 |         80 |          0 |         22 |        102 |
+| src/admob/presention                                                                                             |          3 |        238 |          9 |         45 |        292 |
+| src/admob/presention/app                                                                                         |          3 |        238 |          9 |         45 |        292 |
+| src/admob/presention/app/adapter                                                                                 |          3 |        238 |          9 |         45 |        292 |
+| src/configs                                                                                                      |          8 |        333 |          7 |         54 |        394 |
+| src/configs/data                                                                                                 |          3 |        184 |          0 |         21 |        205 |
+| src/configs/data/datasrc                                                                                         |          1 |         88 |          0 |         13 |        101 |
+| src/configs/data/models                                                                                          |          1 |         76 |          0 |          5 |         81 |
+| src/configs/data/repo                                                                                            |          1 |         20 |          0 |          3 |         23 |
+| src/configs/domain                                                                                               |          2 |         15 |          0 |          5 |         20 |
+| src/configs/domain/repo                                                                                          |          1 |          5 |          0 |          2 |          7 |
+| src/configs/domain/usecases                                                                                      |          1 |         10 |          0 |          3 |         13 |
+| src/configs/presention                                                                                           |          3 |        134 |          7 |         28 |        169 |
+| src/configs/presention/app                                                                                       |          3 |        134 |          7 |         28 |        169 |
+| src/configs/presention/app/adapter                                                                               |          3 |        134 |          7 |         28 |        169 |
+| src/connection                                                                                                   |         12 |        557 |         12 |        106 |        675 |
+| src/connection/data                                                                                              |          2 |        197 |          0 |         28 |        225 |
+| src/connection/data/datasrc                                                                                      |          1 |        129 |          0 |         19 |        148 |
+| src/connection/data/repo                                                                                         |          1 |         68 |          0 |          9 |         77 |
+| src/connection/domain                                                                                            |          7 |         92 |          0 |         22 |        114 |
+| src/connection/domain/repo                                                                                       |          1 |         17 |          0 |          2 |         19 |
+| src/connection/domain/usecase                                                                                    |          6 |         75 |          0 |         20 |         95 |
+| src/connection/presention                                                                                        |          3 |        268 |         12 |         56 |        336 |
+| src/connection/presention/adapter                                                                                |          3 |        268 |         12 |         56 |        336 |
+| src/dashboard                                                                                                    |          4 |        299 |          5 |         23 |        327 |
+| src/dashboard/presention                                                                                         |          4 |        299 |          5 |         23 |        327 |
+| src/dashboard/presention/utils                                                                                   |          1 |          5 |          0 |          2 |          7 |
+| src/dashboard/presention/views                                                                                   |          1 |        184 |          5 |         11 |        200 |
+| src/dashboard/presention/widgets                                                                                 |          2 |        110 |          0 |         10 |        120 |
+| src/home                                                                                                         |          4 |        902 |         12 |         53 |        967 |
+| src/home/presentation                                                                                            |          4 |        902 |         12 |         53 |        967 |
+| src/home/presentation/views                                                                                      |          4 |        902 |         12 |         53 |        967 |
+| src/home/presentation/views (Files)                                                                              |          1 |        115 |          4 |         10 |        129 |
+| src/home/presentation/views/widgets                                                                              |          3 |        787 |          8 |         43 |        838 |
+| src/info_screen                                                                                                  |          2 |        515 |          7 |         31 |        553 |
+| src/info_screen/presention                                                                                       |          2 |        515 |          7 |         31 |        553 |
+| src/info_screen/presention/views                                                                                 |          2 |        515 |          7 |         31 |        553 |
+| src/info_screen/presention/views (Files)                                                                         |          1 |        506 |          7 |         27 |        540 |
+| src/info_screen/presention/views/utils                                                                           |          1 |          9 |          0 |          4 |         13 |
+| src/ip                                                                                                           |          6 |        375 |         13 |         54 |        442 |
+| src/ip/data                                                                                                      |          2 |        198 |          7 |         22 |        227 |
+| src/ip/data/datasrc                                                                                              |          1 |        179 |          7 |         19 |        205 |
+| src/ip/data/repo                                                                                                 |          1 |         19 |          0 |          3 |         22 |
+| src/ip/domain                                                                                                    |          3 |         38 |          0 |         13 |         51 |
+| src/ip/domain/entities                                                                                           |          1 |         24 |          0 |          5 |         29 |
+| src/ip/domain/repo                                                                                               |          1 |          5 |          0 |          4 |          9 |
+| src/ip/domain/usecase                                                                                            |          1 |          9 |          0 |          4 |         13 |
+| src/ip/presention                                                                                                |          1 |        139 |          6 |         19 |        164 |
+| src/ip/presention/adapter                                                                                        |          1 |        139 |          6 |         19 |        164 |
+| src/nodes                                                                                                        |          6 |      1,460 |         24 |         71 |      1,555 |
+| src/nodes/presentation                                                                                           |          6 |      1,460 |         24 |         71 |      1,555 |
+| src/nodes/presentation/views                                                                                     |          6 |      1,460 |         24 |         71 |      1,555 |
+| src/nodes/presentation/views (Files)                                                                             |          1 |        747 |          8 |         22 |        777 |
+| src/nodes/presentation/views/widgets                                                                             |          5 |        713 |         16 |         49 |        778 |
+| src/settings                                                                                                     |          1 |        251 |          3 |         12 |        266 |
+| src/settings/presentation                                                                                        |          1 |        251 |          3 |         12 |        266 |
+| src/settings/presentation/views                                                                                  |          1 |        251 |          3 |         12 |        266 |
+| src/splash_screen                                                                                                |          1 |        112 |          1 |          9 |        122 |
+| src/splash_screen/presention                                                                                     |          1 |        112 |          1 |          9 |        122 |
+| src/splash_screen/presention/views                                                                               |          1 |        112 |          1 |          9 |        122 |
++------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                                         | language | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/cache_helper.dart                                     | Dart     |        113 |          1 |         24 |        138 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/banner_ad.dart                               | Dart     |         27 |          0 |          5 |         32 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/banner_ad.g.dart                             | Dart     |         45 |          7 |         11 |         63 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/current_config.dart                          | Dart     |         20 |          0 |          7 |         27 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/current_config.g.dart                        | Dart     |         45 |          7 |         11 |         63 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/current_configs_list.dart                    | Dart     |         19 |          0 |          5 |         24 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/current_configs_list.g.dart                  | Dart     |         46 |          7 |         11 |         64 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/current_locale.dart                          | Dart     |         19 |          0 |          5 |         24 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/local_configs_list.dart                      | Dart     |        439 |          4 |         57 |        500 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/theme/current_theme.dart                     | Dart     |         30 |          0 |         12 |         42 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/app/riverpod/theme/current_theme.g.dart                   | Dart     |         45 |          7 |         11 |         63 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/entities/config.dart                                      | Dart     |         68 |          0 |         15 |         83 |
+| /home/omidbabadi/development/vendervpn/lib/core/common/singelton/core.dart                                       | Dart     |         49 |          2 |         17 |         68 |
+| /home/omidbabadi/development/vendervpn/lib/core/errors/exceptions.dart                                           | Dart     |         29 |         10 |         11 |         50 |
+| /home/omidbabadi/development/vendervpn/lib/core/errors/failures.dart                                             | Dart     |         28 |          4 |         10 |         42 |
+| /home/omidbabadi/development/vendervpn/lib/core/extensions/bool_ext.dart                                         | Dart     |          8 |          0 |          1 |          9 |
+| /home/omidbabadi/development/vendervpn/lib/core/extensions/context_ext.dart                                      | Dart     |         17 |          0 |         10 |         27 |
+| /home/omidbabadi/development/vendervpn/lib/core/extensions/string_ext.dart                                       | Dart     |         16 |          0 |          3 |         19 |
+| /home/omidbabadi/development/vendervpn/lib/core/extensions/theme_mode_ext.dart                                   | Dart     |         10 |          0 |          2 |         12 |
+| /home/omidbabadi/development/vendervpn/lib/core/res/styles/colors.dart                                           | Dart     |         67 |          3 |         17 |         87 |
+| /home/omidbabadi/development/vendervpn/lib/core/services/injection_container.dart                                | Dart     |         35 |          0 |          2 |         37 |
+| /home/omidbabadi/development/vendervpn/lib/core/services/injection_container.main.dart                           | Dart     |         67 |          0 |         10 |         77 |
+| /home/omidbabadi/development/vendervpn/lib/core/services/router.dart                                             | Dart     |         10 |          0 |          3 |         13 |
+| /home/omidbabadi/development/vendervpn/lib/core/services/router.main.dart                                        | Dart     |         47 |          0 |          3 |         50 |
+| /home/omidbabadi/development/vendervpn/lib/core/usecase/usecase.dart                                             | Dart     |         21 |          0 |         11 |         32 |
+| /home/omidbabadi/development/vendervpn/lib/core/utils/consts.dart                                                | Dart     |         45 |          0 |          5 |         50 |
+| /home/omidbabadi/development/vendervpn/lib/core/utils/core_utils.dart                                            | Dart     |         62 |          0 |          8 |         70 |
+| /home/omidbabadi/development/vendervpn/lib/core/utils/typedefs.dart                                              | Dart     |          8 |          0 |          2 |         10 |
+| /home/omidbabadi/development/vendervpn/lib/core/utils/v2ray_import_helper.dart                                   | Dart     |        208 |         10 |         23 |        241 |
+| /home/omidbabadi/development/vendervpn/lib/core/widgets/app_logo.dart                                            | Dart     |        154 |          7 |         16 |        177 |
+| /home/omidbabadi/development/vendervpn/lib/core/widgets/dot_matrix_text.dart                                     | Dart     |        144 |          0 |         14 |        158 |
+| /home/omidbabadi/development/vendervpn/lib/core/widgets/orb_face_widget.dart                                     | Dart     |        829 |         33 |         88 |        950 |
+| /home/omidbabadi/development/vendervpn/lib/l10n/app_localizations.dart                                           | Dart     |         99 |        240 |         60 |        399 |
+| /home/omidbabadi/development/vendervpn/lib/l10n/app_localizations_en.dart                                        | Dart     |         94 |          3 |         47 |        144 |
+| /home/omidbabadi/development/vendervpn/lib/l10n/app_localizations_fa.dart                                        | Dart     |         94 |          3 |         47 |        144 |
+| /home/omidbabadi/development/vendervpn/lib/l10n/l10n.dart                                                        | Dart     |          7 |          0 |          2 |          9 |
+| /home/omidbabadi/development/vendervpn/lib/main.dart                                                             | Dart     |         67 |          0 |          6 |         73 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/data/datasrc/admob_remote_datasrc.dart                      | Dart     |        244 |          0 |         23 |        267 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/data/repo/admob_repo_impl.dart                              | Dart     |         86 |          0 |         12 |         98 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/domain/repo/admob_repo.dart                                 | Dart     |         17 |          0 |          2 |         19 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/domain/usecase/init.dart                                    | Dart     |          9 |          0 |          2 |         11 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/domain/usecase/load_interstitial_ad.dart                    | Dart     |         17 |          0 |          4 |         21 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/domain/usecase/load_rewarded_ad.dart                        | Dart     |          9 |          0 |          3 |         12 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/domain/usecase/show_banner_ad.dart                          | Dart     |          9 |          0 |          4 |         13 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/domain/usecase/show_interstitial_ad.dart                    | Dart     |         27 |          0 |          6 |         33 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/domain/usecase/show_rewarded_ad.dart                        | Dart     |          9 |          0 |          3 |         12 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/presention/app/adapter/admob_adapter.dart                   | Dart     |        144 |          2 |         15 |        161 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/presention/app/adapter/admob_adapter.g.dart                 | Dart     |         45 |          7 |         11 |         63 |
+| /home/omidbabadi/development/vendervpn/lib/src/admob/presention/app/adapter/admob_state.dart                     | Dart     |         49 |          0 |         19 |         68 |
+| /home/omidbabadi/development/vendervpn/lib/src/configs/data/datasrc/configs_remote_datasrc.dart                  | Dart     |         88 |          0 |         13 |        101 |
+| /home/omidbabadi/development/vendervpn/lib/src/configs/data/models/config_model.dart                             | Dart     |         76 |          0 |          5 |         81 |
+| /home/omidbabadi/development/vendervpn/lib/src/configs/data/repo/configs_repo_impl.dart                          | Dart     |         20 |          0 |          3 |         23 |
+| /home/omidbabadi/development/vendervpn/lib/src/configs/domain/repo/configs_repo.dart                             | Dart     |          5 |          0 |          2 |          7 |
+| /home/omidbabadi/development/vendervpn/lib/src/configs/domain/usecases/get_configs.dart                          | Dart     |         10 |          0 |          3 |         13 |
+| /home/omidbabadi/development/vendervpn/lib/src/configs/presention/app/adapter/configs_adapter.dart               | Dart     |         58 |          0 |          6 |         64 |
+| /home/omidbabadi/development/vendervpn/lib/src/configs/presention/app/adapter/configs_adapter.g.dart             | Dart     |         45 |          7 |         11 |         63 |
+| /home/omidbabadi/development/vendervpn/lib/src/configs/presention/app/adapter/configs_state.dart                 | Dart     |         31 |          0 |         11 |         42 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/data/datasrc/connection_datasrc.dart                   | Dart     |        129 |          0 |         19 |        148 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/data/repo/connection_repo_impl.dart                    | Dart     |         68 |          0 |          9 |         77 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/domain/repo/connection_repo.dart                       | Dart     |         17 |          0 |          2 |         19 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/domain/usecase/connect.dart                            | Dart     |         29 |          0 |          4 |         33 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/domain/usecase/disconnect.dart                         | Dart     |          8 |          0 |          3 |         11 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/domain/usecase/get_vpn_state.dart                      | Dart     |         11 |          0 |          4 |         15 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/domain/usecase/initialize_v2ay.dart                    | Dart     |          9 |          0 |          3 |         12 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/domain/usecase/ping.dart                               | Dart     |          9 |          0 |          3 |         12 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/domain/usecase/request_permission.dart                 | Dart     |          9 |          0 |          3 |         12 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/presention/adapter/connection_adapter.dart             | Dart     |        195 |          5 |         34 |        234 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/presention/adapter/connection_adapter.g.dart           | Dart     |         45 |          7 |         11 |         63 |
+| /home/omidbabadi/development/vendervpn/lib/src/connection/presention/adapter/connection_state.dart               | Dart     |         28 |          0 |         11 |         39 |
+| /home/omidbabadi/development/vendervpn/lib/src/dashboard/presention/utils/dashboard_utils.dart                   | Dart     |          5 |          0 |          2 |          7 |
+| /home/omidbabadi/development/vendervpn/lib/src/dashboard/presention/views/dashboard_screen.dart                  | Dart     |        184 |          5 |         11 |        200 |
+| /home/omidbabadi/development/vendervpn/lib/src/dashboard/presention/widgets/custom_bottom_nav_bar.dart           | Dart     |         60 |          0 |          5 |         65 |
+| /home/omidbabadi/development/vendervpn/lib/src/dashboard/presention/widgets/nav_bar_item.dart                    | Dart     |         50 |          0 |          5 |         55 |
+| /home/omidbabadi/development/vendervpn/lib/src/home/presentation/views/home_view.dart                            | Dart     |        115 |          4 |         10 |        129 |
+| /home/omidbabadi/development/vendervpn/lib/src/home/presentation/views/widgets/config_tile.dart                  | Dart     |        289 |          4 |         11 |        304 |
+| /home/omidbabadi/development/vendervpn/lib/src/home/presentation/views/widgets/connection_button.dart            | Dart     |        102 |          1 |          9 |        112 |
+| /home/omidbabadi/development/vendervpn/lib/src/home/presentation/views/widgets/connection_status.dart            | Dart     |        396 |          3 |         23 |        422 |
+| /home/omidbabadi/development/vendervpn/lib/src/info_screen/presention/views/status_screen.dart                   | Dart     |        506 |          7 |         27 |        540 |
+| /home/omidbabadi/development/vendervpn/lib/src/info_screen/presention/views/utils/status_utils.dart              | Dart     |          9 |          0 |          4 |         13 |
+| /home/omidbabadi/development/vendervpn/lib/src/ip/data/datasrc/ip_remote_datasrc.dart                            | Dart     |        179 |          7 |         19 |        205 |
+| /home/omidbabadi/development/vendervpn/lib/src/ip/data/repo/ip_repo_impl.dart                                    | Dart     |         19 |          0 |          3 |         22 |
+| /home/omidbabadi/development/vendervpn/lib/src/ip/domain/entities/ip_info.dart                                   | Dart     |         24 |          0 |          5 |         29 |
+| /home/omidbabadi/development/vendervpn/lib/src/ip/domain/repo/ip_repo.dart                                       | Dart     |          5 |          0 |          4 |          9 |
+| /home/omidbabadi/development/vendervpn/lib/src/ip/domain/usecase/get_user_country.dart                           | Dart     |          9 |          0 |          4 |         13 |
+| /home/omidbabadi/development/vendervpn/lib/src/ip/presention/adapter/ip_provider.dart                            | Dart     |        139 |          6 |         19 |        164 |
+| /home/omidbabadi/development/vendervpn/lib/src/nodes/presentation/views/nodes_view.dart                          | Dart     |        747 |          8 |         22 |        777 |
+| /home/omidbabadi/development/vendervpn/lib/src/nodes/presentation/views/widgets/import_action_card.dart          | Dart     |         53 |          0 |          5 |         58 |
+| /home/omidbabadi/development/vendervpn/lib/src/nodes/presentation/views/widgets/local_nodes_grouped_list.dart    | Dart     |        102 |          6 |         11 |        119 |
+| /home/omidbabadi/development/vendervpn/lib/src/nodes/presentation/views/widgets/qr_scanner_sheet.dart            | Dart     |        235 |          8 |         21 |        264 |
+| /home/omidbabadi/development/vendervpn/lib/src/nodes/presentation/views/widgets/subscription_expansion_card.dart | Dart     |        274 |          2 |          7 |        283 |
+| /home/omidbabadi/development/vendervpn/lib/src/nodes/presentation/views/widgets/tab_pill_button.dart             | Dart     |         49 |          0 |          5 |         54 |
+| /home/omidbabadi/development/vendervpn/lib/src/settings/presentation/views/settings_view.dart                    | Dart     |        251 |          3 |         12 |        266 |
+| /home/omidbabadi/development/vendervpn/lib/src/splash_screen/presention/views/splash_screen.dart                 | Dart     |        112 |          1 |          9 |        122 |
+| Total                                                                                                            |          |      8,600 |        441 |      1,109 |     10,150 |
++------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

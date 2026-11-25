@@ -9,6 +9,7 @@ import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/ip/presention/adapter/ip_provider.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/cloud_quota_meter.dart';
@@ -42,6 +43,7 @@ class ConnectionStatus extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     ref.watch(currentThemeProvider);
     final selectedConfig = ref.watch(currentConfigProvider);
     final ipSession = ref.watch(ipSessionProvider);
@@ -71,17 +73,17 @@ class ConnectionStatus extends ConsumerWidget {
             isConnected
                 ? (afterIp?.displayLocation ??
                     (ipSession.isLoading
-                        ? 'Resolving VPN Location...'
-                        : (selectedConfig?.remark ?? 'Connected Tunnel')))
+                        ? l10n.resolving_vpn_location
+                        : (selectedConfig?.remark ?? l10n.connected_tunnel)))
                 : (beforeIp != null
-                    ? 'Your Location • ${beforeIp.displayLocation}'
-                    : (selectedConfig?.remark ?? 'Detecting Location...'));
+                    ? '${l10n.your_location_prefix} • ${beforeIp.displayLocation}'
+                    : (selectedConfig?.remark ?? l10n.detecting_location));
 
         final connectedEndpointIp = afterIp?.ip ?? selectedConfig?.serverIp;
         final ipSubtitle =
             isConnected
-                ? 'Connected IP: ${connectedEndpointIp ?? 'Resolving endpoint...'}'
-                : 'Your IP: ${beforeIp?.ip ?? (ipSession.isLoading ? 'Resolving...' : 'Unknown')}';
+                ? '${l10n.connected_ip_label}: ${connectedEndpointIp ?? l10n.resolving_endpoint}'
+                : '${l10n.your_ip_label}: ${beforeIp?.ip ?? (ipSession.isLoading ? l10n.resolving : l10n.unknown)}';
 
         final protocol =
             selectedConfig != null
@@ -219,8 +221,8 @@ class ConnectionStatus extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         isConnected && beforeIp != null
-                            ? 'Real: ${beforeIp.ip} (${beforeIp.countryCode})  →  Connected: ${connectedEndpointIp ?? 'Resolving...'} (${afterIp?.countryCode ?? countryCode ?? '--'})'
-                            : 'Target Node: ${selectedConfig?.remark ?? 'None'} ($protocol)',
+                            ? '${l10n.real_ip_label}: ${beforeIp.ip} (${beforeIp.countryCode})  →  ${l10n.connected_route_label}: ${connectedEndpointIp ?? l10n.resolving} (${afterIp?.countryCode ?? countryCode ?? '--'})'
+                            : '${l10n.target_node_label}: ${selectedConfig?.remark ?? l10n.none_label} ($protocol)',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -285,7 +287,7 @@ class ConnectionStatus extends ConsumerWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Switch',
+                              l10n.switch_node,
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,

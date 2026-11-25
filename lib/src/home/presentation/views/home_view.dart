@@ -9,6 +9,7 @@ import 'package:vendervpn/core/common/app/riverpod/local_configs_list.dart';
 import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/connection_status.dart';
@@ -22,6 +23,7 @@ class HomeView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(currentThemeProvider);
+    final l10n = AppLocalizations.of(context)!;
     final selectedConfig = ref.watch(currentConfigProvider);
     final cloudConfigs = ref.watch(currentConfigsListProvider);
     final localConfigs = ref.watch(localConfigsListProvider);
@@ -67,8 +69,10 @@ class HomeView extends ConsumerWidget {
                   const SizedBox(width: 7),
                   Text(
                     isConnected
-                        ? 'Session Duration'
-                        : (ping > 0 ? 'Node Latency (ms)' : 'Available Nodes'),
+                        ? l10n.session_duration
+                        : (ping > 0
+                            ? l10n.node_latency_ms
+                            : l10n.available_nodes),
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
