@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/singelton/core.dart';
+import 'package:vendervpn/core/config/app_config.dart';
 import 'package:vendervpn/src/admob/data/datasrc/admob_remote_datasrc.dart';
 import 'package:vendervpn/src/admob/data/repo/admob_repo_impl.dart';
 import 'package:vendervpn/src/admob/domain/repo/admob_repo.dart';

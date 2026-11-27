@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:vendervpn/core/config/app_config.dart';
 import 'package:vendervpn/core/common/singelton/core.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
-import 'package:vendervpn/core/utils/consts.dart';
-import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/core/utils/app_log.dart';
 
 abstract class AdmobRemoteDatasrc {
@@ -58,7 +57,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
     void attemptLoad() {
       try {
         InterstitialAd.load(
-          adUnitId: CoreUtils.interstitialAdId!,
+          adUnitId: AppConfig.interstitialAdUnitId!,
           request: request,
           adLoadCallback: InterstitialAdLoadCallback(
             onAdLoaded: (InterstitialAd ad) {
@@ -174,7 +173,13 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
           message: 'Unable to get width of anchored banner',
         );
       }
-      final adUnitId = CoreUtils.bannerAdUnitId ?? Constants.androidBannerAdIdTest;
+      final adUnitId = AppConfig.bannerAdUnitId;
+      if (adUnitId == null) {
+        throw const AdmobException(
+          null,
+          message: 'No banner ad unit configured',
+        );
+      }
       final completer = Completer<void>();
       await BannerAd(
         size: size,
@@ -212,9 +217,16 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
 
   @override
   Future<void> loadRewardedAd() async {
+    final adUnitId = AppConfig.rewardedAdUnitId;
+    if (adUnitId == null) {
+      throw const AdmobException(
+        null,
+        message: 'No rewarded ad unit configured',
+      );
+    }
     final completer = Completer<void>();
     RewardedAd.load(
-      adUnitId: CoreUtils.rewardedAdUnitId ?? Constants.androidRewardedAdTest,
+      adUnitId: adUnitId,
       request: request,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {

@@ -82,9 +82,10 @@ Future<void> _adMobInit() async {
 }
 
 Future<void> _configsInit() async {
+  AppConfig.ensureConfigured();
   final client = Client()
-      .setEndpoint('https://vender.flutterdevs.top/v1')
-      .setProject('6b07171100033f5027f4');
+      .setEndpoint(AppConfig.appwriteEndpoint)
+      .setProject(AppConfig.appwriteProjectId);
 
   sl
     ..registerLazySingleton(() => GetConfigs(sl()))

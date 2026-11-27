@@ -47,8 +47,8 @@ Legend: 🔴 blocker (Play will reject or the build is unsafe) · 🟠 high risk
 - [ ] Review the final merged manifest: `android/app/build/intermediates/merged_manifests/release/...`.
 
 ### AdMob (if ads ship) 🔴
-- [ ] The manifest has the **test App ID** `ca-app-pub-3940256099942544~3347511713`. Replace it with the real App ID.
-- [ ] `lib/core/utils/consts.dart` has only test unit IDs. Add real IDs, and pick them with `kReleaseMode` so debug builds keep the test IDs.
+- [ ] Real **App IDs**: set `ADMOB_ANDROID_APP_ID` in `android/secrets.properties` (or a CI env var) and `ADMOB_IOS_APP_ID` in `ios/Flutter/Secrets.xcconfig`. Without them, release builds fall back to Google's sample app ID (Gradle prints a warning).
+- [ ] Real **ad unit IDs**: fill the `ADMOB_*_ID` keys in `dart_defines.json`. Release builds use them; debug/profile always use Google's sample IDs (`lib/core/config/app_config.dart`). An empty release ID skips that ad.
 - [ ] Add the **UMP consent** flow (GDPR/EEA + US states) before calling `MobileAds.initialize`. Then `AdRequest(nonPersonalizedAds: false)` is correct only after consent.
 - [ ] Register test devices so you never click your own live ads.
 - [ ] Set up `app-ads.txt` on the developer website.
@@ -59,11 +59,11 @@ Legend: 🔴 blocker (Play will reject or the build is unsafe) · 🟠 high risk
 - [ ] Check that the production Appwrite endpoint/project are used, with no dev servers or debug keys in the code.
 
 ### Release build hygiene 🟢
-- [ ] Build: `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols`
+- [ ] Build: `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols --dart-define-from-file=dart_defines.json` (the app throws at startup if the Appwrite keys are missing).
 - [ ] Keep `build/symbols` + `mapping.txt` per version. Upload the R8 mapping and native debug symbols to Play.
 - [ ] Smoke-test the **release** build on a real device. R8 can break things that work in debug: VPN connect/disconnect, subscription import, QR, per-app proxy, ads, Appwrite login, the cloud quota.
-- [ ] Remove or guard debug logging (`kDebugMode`). Make sure no config/server secrets end up in logs.
-- [ ] `ctashlog1.txt` (7 MB, repo root): make sure it isn't tracked and isn't bundled. `assets/` is included wholesale.
+- [x] Remove or guard debug logging: all logs go through `appLog` (debug-only).
+- [x] `ctashlog1.txt` untracked and git-ignored; unused `assets/` removed.
 - [ ] App icon: adaptive icon (foreground + background) and a themed/monochrome icon.
 - [ ] Bump `versionCode` (`+N`) for **every** upload. Play rejects reused codes.
 

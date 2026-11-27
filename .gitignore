@@ -56,5 +56,7 @@ flutter_*.png
 .VSCodeCounter/
 .idx/
 
-# Local build-time config (see dart_defines.example.json)
+# Local build-time config and secrets (see the *.example.* files)
 dart_defines.json
+android/secrets.properties
+ios/Flutter/Secrets.xcconfig

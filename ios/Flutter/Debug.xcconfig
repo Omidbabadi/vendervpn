@@ -1,1 +1,4 @@
 #include "Generated.xcconfig"
+
+// Google's sample AdMob app ID: debug builds only load test ads.
+ADMOB_IOS_APP_ID = ca-app-pub-3940256099942544~1458002511
