@@ -550,4 +550,23 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get quota_meter_resets => 'تمدید در نیمه‌شب';
+
+  @override
+  String get connection_error_quota_unavailable =>
+      'بررسی حجم رایگان امروز ممکن نشد. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.';
+
+  @override
+  String get connection_error_ad_not_completed =>
+      'تبلیغ تا آخر دیده نشد، پس حجمی اضافه نشد. لطفاً دوباره تلاش کنید.';
+
+  @override
+  String get reward_error_cap_reached =>
+      'امروز بیشترین حجم اضافه را دریافت کرده‌اید.';
+
+  @override
+  String get reward_error_disabled => 'حجم اضافه در حال حاضر غیرفعال است.';
+
+  @override
+  String get reward_error_failed =>
+      'افزودن حجم اضافه ممکن نشد. اتصال را بررسی کنید و دوباره تلاش کنید.';
 }

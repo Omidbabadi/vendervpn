@@ -14,7 +14,7 @@ import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/config_editor/presentation/views/config_editor_view.dart';
-import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
+import 'package:vendervpn/src/connection/presention/adapter/ping_nodes_provider.dart';
 
 class ConfigTile extends ConsumerWidget {
   const ConfigTile({
@@ -36,9 +36,7 @@ class ConfigTile extends ConsumerWidget {
 
     ref.read(pingingNodeIdsProvider.notifier).setPinging(config.id, true);
     try {
-      final delay = await ref
-          .read(connectionAdapterProvider.notifier)
-          .ping(config.configjson);
+      final delay = await ref.read(pingNodesProvider).single(config);
 
       if (isLocal) {
         ref

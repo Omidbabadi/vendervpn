@@ -8,12 +8,21 @@ part of 'connection_adapter.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Runs the tunnel lifecycle and holds the connection state. Everything
+/// that depends on the node type (quota, ads, metering) is in the
+/// [ConnectStrategy] picked for the node, so this class never checks it.
 
 @ProviderFor(ConnectionAdapter)
 final connectionAdapterProvider = ConnectionAdapterProvider._();
 
+/// Runs the tunnel lifecycle and holds the connection state. Everything
+/// that depends on the node type (quota, ads, metering) is in the
+/// [ConnectStrategy] picked for the node, so this class never checks it.
 final class ConnectionAdapterProvider
     extends $NotifierProvider<ConnectionAdapter, ConnectionState> {
+  /// Runs the tunnel lifecycle and holds the connection state. Everything
+  /// that depends on the node type (quota, ads, metering) is in the
+  /// [ConnectStrategy] picked for the node, so this class never checks it.
   ConnectionAdapterProvider._()
     : super(
         from: null,
@@ -41,7 +50,11 @@ final class ConnectionAdapterProvider
   }
 }
 
-String _$connectionAdapterHash() => r'c45210d5f14175d5db1e105323f8df6313f2a527';
+String _$connectionAdapterHash() => r'ed68d55feb48895e0c5cbd28b38c4891579674a8';
+
+/// Runs the tunnel lifecycle and holds the connection state. Everything
+/// that depends on the node type (quota, ads, metering) is in the
+/// [ConnectStrategy] picked for the node, so this class never checks it.
 
 abstract class _$ConnectionAdapter extends $Notifier<ConnectionState> {
   ConnectionState build();

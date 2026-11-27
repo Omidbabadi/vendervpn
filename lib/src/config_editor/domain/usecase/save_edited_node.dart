@@ -14,7 +14,7 @@ class SaveEditedNode extends UsecaseWithParams<Config, SaveEditedNodeParams> {
 
   @override
   ResultFuture<Config> call(SaveEditedNodeParams params) async {
-    if (params.original.importedFrom == 'cloud') {
+    if (params.original.isCloud) {
       return Left(
         const ConfigEditFailure(message: "Cloud nodes can't be edited."),
       );

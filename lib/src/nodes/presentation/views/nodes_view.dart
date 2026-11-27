@@ -12,6 +12,7 @@ import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
+import 'package:vendervpn/src/connection/presention/adapter/ping_nodes_provider.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/config_tile.dart';
 import 'package:vendervpn/src/nodes/presentation/views/widgets/fastest_server_card.dart';
 import 'package:vendervpn/src/nodes/presentation/views/widgets/import_action_card.dart';
@@ -415,6 +416,7 @@ class NodesView extends ConsumerWidget {
     final configsAdapter = ref.read(configsAdapterProvider.notifier);
     final connAdapter = ref.read(connectionAdapterProvider.notifier);
     final currentConfigNotifier = ref.read(currentConfigProvider.notifier);
+    final pingNodes = ref.read(pingNodesProvider);
 
     uiNotifier.setAutoConnectingFastest(true);
 
@@ -438,30 +440,10 @@ class NodesView extends ConsumerWidget {
         return;
       }
 
-      final measuredPings = <String, int>{};
-
-      // Ping all cloud nodes in parallel batches of 3
-      const batchSize = 3;
-      for (var i = 0; i < cloudNodes.length; i += batchSize) {
-        final batch = cloudNodes.skip(i).take(batchSize).toList();
-        await Future.wait(
-          batch.map((node) async {
-            try {
-              final delay = await connAdapter
-                  .ping(node.configjson)
-                  .timeout(
-                    const Duration(milliseconds: 3500),
-                    onTimeout: () => -1,
-                  );
-              measuredPings[node.id] = delay;
-              cloudConfigsNotifier.updateConfigPing(node.id, delay);
-            } catch (_) {
-              measuredPings[node.id] = -1;
-              cloudConfigsNotifier.updateConfigPing(node.id, -1);
-            }
-          }),
-        );
-      }
+      final measuredPings = await pingNodes(
+        cloudNodes,
+        onResult: cloudConfigsNotifier.updateConfigPing,
+      );
 
       final updatedList = [
         for (final node in cloudNodes)
@@ -542,42 +524,22 @@ class NodesView extends ConsumerWidget {
     final uiNotifier = ref.read(nodesViewUiStateProvider.notifier);
     final cloudConfigsNotifier = ref.read(currentConfigsListProvider.notifier);
     final localConfigsNotifier = ref.read(localConfigsListProvider.notifier);
-    final connAdapter = ref.read(connectionAdapterProvider.notifier);
-    final selectedTab = uiState.selectedTab;
+    final pingNodes = ref.read(pingNodesProvider);
+    final isCloudTab = uiState.selectedTab == 0;
     final list =
-        selectedTab == 0
+        isCloudTab
             ? ref.read(currentConfigsListProvider)
             : ref.read(localConfigsListProvider);
 
     uiNotifier.setPingingAll(true);
     try {
-      const batchSize = 3;
-      for (var i = 0; i < list.length; i += batchSize) {
-        final batch = list.skip(i).take(batchSize).toList();
-        await Future.wait(
-          batch.map((node) async {
-            try {
-              final delay = await connAdapter
-                  .ping(node.configjson)
-                  .timeout(
-                    const Duration(milliseconds: 3500),
-                    onTimeout: () => -1,
-                  );
-              if (selectedTab == 0) {
-                cloudConfigsNotifier.updateConfigPing(node.id, delay);
-              } else {
-                localConfigsNotifier.updateConfigPing(node.id, delay);
-              }
-            } catch (_) {
-              if (selectedTab == 0) {
-                cloudConfigsNotifier.updateConfigPing(node.id, -1);
-              } else {
-                localConfigsNotifier.updateConfigPing(node.id, -1);
-              }
-            }
-          }),
-        );
-      }
+      await pingNodes(
+        list,
+        onResult:
+            isCloudTab
+                ? cloudConfigsNotifier.updateConfigPing
+                : localConfigsNotifier.updateConfigPing,
+      );
     } finally {
       uiNotifier.setPingingAll(false);
     }

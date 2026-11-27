@@ -122,7 +122,8 @@ class _StatusScreenState extends ConsumerState<StatusScreen>
         }
       } else if (next is ConnectionStateError) {
         _statusNotifier.value = StatusUtils(
-          next.message.isNotEmpty ? next.message : texts[Status.error]!,
+          connectionErrorText(l10n, next.code, detail: next.detail) ??
+              texts[Status.error]!,
           Status.error,
         )..showBackButton = true;
       } else if (next is ConnectionStateInitial ||

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 import 'package:vendervpn/core/common/entities/quota_entity.dart';
@@ -19,6 +18,18 @@ const bool kFakeRewardedAds = true;
 
 /// Whether a cloud node may connect right now.
 enum QuotaGate { allowed, exceeded, unavailable }
+
+/// Why the server didn't add the rewarded-ad bonus.
+enum RewardBonusError {
+  /// The daily bonus cap is reached (HTTP 429).
+  capReached,
+
+  /// The bonus is turned off on the server (HTTP 403).
+  disabled,
+
+  /// Network or other server error.
+  failed,
+}
 
 final usageQuotaProvider = NotifierProvider<UsageQuotaAdapter, QuotaEntity>(
   UsageQuotaAdapter.new,
@@ -99,27 +110,23 @@ class UsageQuotaAdapter extends Notifier<QuotaEntity> {
   }
 
   /// Asks the server for the rewarded-ad bonus. Returns null on success,
-  /// otherwise a message for the user.
-  Future<String?> grantRewardBonus() async {
+  /// otherwise why it wasn't added (the UI picks the text).
+  Future<RewardBonusError?> grantRewardBonus() async {
     final result = await _addRewardBonus.call();
     return result.fold(
       (failure) {
         appLog('Reward bonus error: ${failure.errorMessage}');
-        return _bonusErrorMessage(failure);
+        return switch (failure.statusCode) {
+          429 => RewardBonusError.capReached,
+          403 => RewardBonusError.disabled,
+          _ => RewardBonusError.failed,
+        };
       },
       (quota) {
         _set(quota);
         return null;
       },
     );
-  }
-
-  static String _bonusErrorMessage(Failure failure) {
-    return switch (failure.statusCode) {
-      429 => 'You already got the most extra data for today.',
-      403 => 'Extra data is turned off right now.',
-      _ => "Couldn't add extra data. Check your connection and try again.",
-    };
   }
 
   bool _apply(Result<QuotaEntity> result) {

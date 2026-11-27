@@ -169,5 +169,10 @@
   "quota_meter_left": "امروز {left} باقی است",
   "quota_meter_left_with_bonus": "امروز {left} باقی است · با جایزه تبلیغ",
   "quota_meter_watch_ad": "دیدن تبلیغ · +{reward}",
-  "quota_meter_resets": "تمدید در نیمه‌شب"
+  "quota_meter_resets": "تمدید در نیمه‌شب",
+  "connection_error_quota_unavailable": "بررسی حجم رایگان امروز ممکن نشد. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.",
+  "connection_error_ad_not_completed": "تبلیغ تا آخر دیده نشد، پس حجمی اضافه نشد. لطفاً دوباره تلاش کنید.",
+  "reward_error_cap_reached": "امروز بیشترین حجم اضافه را دریافت کرده‌اید.",
+  "reward_error_disabled": "حجم اضافه در حال حاضر غیرفعال است.",
+  "reward_error_failed": "افزودن حجم اضافه ممکن نشد. اتصال را بررسی کنید و دوباره تلاش کنید."
 }

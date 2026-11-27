@@ -1,3 +1,5 @@
+import 'package:vendervpn/core/common/entities/node_source.dart';
+
 class Config {
   final String configjson;
 
@@ -79,4 +81,9 @@ class Config {
     serverIp: serverIp ?? this.serverIp,
     ping: ping ?? this.ping,
   );
+
+  /// Cloud (server-managed) or local (imported by the user).
+  NodeSource get source => NodeSource.fromImportedFrom(importedFrom);
+
+  bool get isCloud => source == NodeSource.cloud;
 }

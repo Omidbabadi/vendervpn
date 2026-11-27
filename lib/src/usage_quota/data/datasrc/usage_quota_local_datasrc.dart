@@ -14,6 +14,11 @@ abstract class UsageQuotaLocalDatasrc {
 
   UsageOutbox get outbox;
   Future<void> saveOutbox(UsageOutbox outbox);
+
+  /// Session total (upload + download) of the running cloud session that
+  /// was already counted. Null when no cloud session is being metered.
+  int? get sessionCounted;
+  Future<void> saveSessionCounted(int? total);
 }
 
 class UsageQuotaLocalDatasrcImpl implements UsageQuotaLocalDatasrc {
@@ -60,4 +65,11 @@ class UsageQuotaLocalDatasrcImpl implements UsageQuotaLocalDatasrc {
       throw CacheException(message: 'Saving unreported usage failed: $e');
     }
   }
+
+  @override
+  int? get sessionCounted => _cacheHelper.cloudTrafficCounted;
+
+  @override
+  Future<void> saveSessionCounted(int? total) =>
+      _cacheHelper.cacheCloudTrafficCounted(total);
 }

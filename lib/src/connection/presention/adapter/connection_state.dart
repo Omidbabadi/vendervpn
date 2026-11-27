@@ -40,11 +40,16 @@ final class ConnectionStateQuotaExceeded extends ConnectionState {
   List<Object?> get props => [at];
 }
 
+/// A connection attempt failed. The UI turns [code] into text with
+/// `connectionErrorText`.
 final class ConnectionStateError extends ConnectionState {
-  final String message;
+  const ConnectionStateError(this.code, {this.detail});
 
-  const ConnectionStateError(this.message);
+  final ConnectionErrorCode code;
+
+  /// The engine's own message, for [ConnectionErrorCode.connectFailed].
+  final String? detail;
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [code, detail];
 }

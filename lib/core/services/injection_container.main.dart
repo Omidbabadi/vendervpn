@@ -37,6 +37,9 @@ Future<void> _usageQuotaInit() async {
     ..registerLazySingleton<UsageQuotaRemoteDatasrc>(
       () => UsageQuotaRemoteDatasrcImpl(sl<Client>(), sl(), sl()),
     )
+    ..registerLazySingleton<CloudSessionMeter>(
+      () => CloudSessionMeterImpl(sl()),
+    )
     ..registerLazySingleton<UsageQuotaLocalDatasrc>(
       () => UsageQuotaLocalDatasrcImpl(sl()),
     )
@@ -114,6 +117,7 @@ Future<void> _v2rayInit() async {
     ..registerLazySingleton(() => WatchVpnStatus(sl()))
     ..registerLazySingleton(() => GetServiceState(sl()))
     ..registerLazySingleton(() => Ping(sl()))
+    ..registerLazySingleton(() => PingNodes(sl()))
     ..registerLazySingleton(() => RequestPermission(sl()))
     ..registerLazySingleton<ConnectionRepo>(() => ConnectionRepoImpl(sl()))
     ..registerLazySingleton<ConnectionDatasrc>(

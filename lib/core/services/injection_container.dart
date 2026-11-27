@@ -58,4 +58,7 @@ import '../../src/config_editor/domain/repo/config_editor_repo.dart';
 import '../../src/config_editor/domain/usecase/build_share_link.dart';
 import '../../src/config_editor/domain/usecase/load_editable_node.dart';
 import '../../src/config_editor/domain/usecase/save_edited_node.dart';
+import '../../src/connection/domain/usecase/ping_nodes.dart';
+import '../../src/usage_quota/data/repo/cloud_session_meter_impl.dart';
+import '../../src/usage_quota/domain/repo/cloud_session_meter.dart';
 part 'injection_container.main.dart';

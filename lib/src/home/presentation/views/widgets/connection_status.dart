@@ -302,7 +302,7 @@ class ConnectionStatus extends ConsumerWidget {
                 ),
               ),
               // Cloud nodes: today's 500 MB free allowance, live.
-              if (selectedConfig?.importedFrom == 'cloud') ...[
+              if (selectedConfig?.isCloud ?? false) ...[
                 const SizedBox(height: 12),
                 const CloudQuotaMeter(),
               ],

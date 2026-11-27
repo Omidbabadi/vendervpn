@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
+import 'package:vendervpn/core/common/entities/node_source.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
@@ -33,7 +34,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
             e,
             selectedId: selectedId,
             nodeCountries: nodeCountries,
-            defaultImportedFrom: 'cloud',
+            defaultImportedFrom: NodeSource.cloudTag,
             defaultDateAdded: '',
           ),
         );
@@ -94,7 +95,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
 
         final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
           links: extractedLinks,
-          importedFrom: 'cloud',
+          importedFrom: NodeSource.cloudTag,
           forcedIdPrefix: row.$id,
           createdAt: createdAt,
         );

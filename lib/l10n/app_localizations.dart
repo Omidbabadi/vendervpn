@@ -1117,6 +1117,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Resets at midnight'**
   String get quota_meter_resets;
+
+  /// No description provided for @connection_error_quota_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t check today\'s free data. Check your internet connection and try again.'**
+  String get connection_error_quota_unavailable;
+
+  /// No description provided for @connection_error_ad_not_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'The ad was not completed, so no extra data was added. Please try again.'**
+  String get connection_error_ad_not_completed;
+
+  /// No description provided for @reward_error_cap_reached.
+  ///
+  /// In en, this message translates to:
+  /// **'You already got the most extra data for today.'**
+  String get reward_error_cap_reached;
+
+  /// No description provided for @reward_error_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra data is turned off right now.'**
+  String get reward_error_disabled;
+
+  /// No description provided for @reward_error_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t add extra data. Check your connection and try again.'**
+  String get reward_error_failed;
 }
 
 class _AppLocalizationsDelegate

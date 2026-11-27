@@ -554,4 +554,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quota_meter_resets => 'Resets at midnight';
+
+  @override
+  String get connection_error_quota_unavailable =>
+      'Couldn\'t check today\'s free data. Check your internet connection and try again.';
+
+  @override
+  String get connection_error_ad_not_completed =>
+      'The ad was not completed, so no extra data was added. Please try again.';
+
+  @override
+  String get reward_error_cap_reached =>
+      'You already got the most extra data for today.';
+
+  @override
+  String get reward_error_disabled => 'Extra data is turned off right now.';
+
+  @override
+  String get reward_error_failed =>
+      'Couldn\'t add extra data. Check your connection and try again.';
 }

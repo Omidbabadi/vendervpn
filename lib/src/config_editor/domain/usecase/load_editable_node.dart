@@ -14,7 +14,7 @@ class LoadEditableNode extends UsecaseWithParams<EditableNode, Config> {
 
   @override
   ResultFuture<EditableNode> call(Config params) async {
-    if (params.importedFrom == 'cloud') {
+    if (params.isCloud) {
       return Left(
         const ConfigEditFailure(message: "Cloud nodes can't be edited."),
       );
