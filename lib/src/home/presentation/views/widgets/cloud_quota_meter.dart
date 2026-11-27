@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/core/widgets/quota_progress_bar.dart';
+import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/cloud_quota_sheet.dart';
 import 'package:vendervpn/src/usage_quota/presention/adapter/usage_quota_adapter.dart';
 
@@ -16,6 +17,7 @@ class CloudQuotaMeter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final quota = ref.watch(usageQuotaProvider);
+    final l10n = AppLocalizations.of(context)!;
     final textColor = Colours.classicAdabtiveTextColor(context);
 
     final ratio =
@@ -51,7 +53,7 @@ class CloudQuotaMeter extends ConsumerWidget {
               Icon(Icons.cloud_outlined, size: 15, color: barColor),
               const SizedBox(width: 8),
               Text(
-                'Free cloud data',
+                l10n.quota_meter_title,
                 style: TextStyle(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
@@ -81,8 +83,10 @@ class CloudQuotaMeter extends ConsumerWidget {
               Expanded(
                 child: Text(
                   quota.isExhausted
-                      ? 'Used up for today'
-                      : '$left left today${hasBonus ? ' · incl. ad bonus' : ''}',
+                      ? l10n.quota_meter_used_up
+                      : hasBonus
+                      ? l10n.quota_meter_left_with_bonus(left)
+                      : l10n.quota_meter_left(left),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -99,7 +103,7 @@ class CloudQuotaMeter extends ConsumerWidget {
                 GestureDetector(
                   onTap: () => CloudQuotaSheet.show(context),
                   child: Text(
-                    'Watch ad · +$reward',
+                    l10n.quota_meter_watch_ad(reward),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
@@ -108,9 +112,12 @@ class CloudQuotaMeter extends ConsumerWidget {
                   ),
                 )
               else
-                const Text(
-                  'Resets at midnight',
-                  style: TextStyle(fontSize: 10.5, color: Colours.subtitleGrey),
+                Text(
+                  l10n.quota_meter_resets,
+                  style: const TextStyle(
+                    fontSize: 10.5,
+                    color: Colours.subtitleGrey,
+                  ),
                 ),
             ],
           ),

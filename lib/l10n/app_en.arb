@@ -311,5 +311,26 @@
   },
   "quota_sheet_decline": "No thanks, I'll wait until tomorrow",
   "quota_sheet_close": "Got it",
-  "quota_sheet_resets": "Free data resets every day at midnight (Tehran time)."
+  "quota_sheet_resets": "Free data resets every day at midnight (Tehran time).",
+  "quota_meter_title": "Free cloud data",
+  "quota_meter_used_up": "Used up for today",
+  "quota_meter_left": "{left} left today",
+  "@quota_meter_left": {
+    "placeholders": {
+      "left": {"type": "String"}
+    }
+  },
+  "quota_meter_left_with_bonus": "{left} left today · incl. ad bonus",
+  "@quota_meter_left_with_bonus": {
+    "placeholders": {
+      "left": {"type": "String"}
+    }
+  },
+  "quota_meter_watch_ad": "Watch ad · +{reward}",
+  "@quota_meter_watch_ad": {
+    "placeholders": {
+      "reward": {"type": "String"}
+    }
+  },
+  "quota_meter_resets": "Resets at midnight"
 }

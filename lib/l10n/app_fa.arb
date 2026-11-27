@@ -163,5 +163,11 @@
   "quota_sheet_watch_ad": "دیدن تبلیغ · دریافت {reward} رایگان",
   "quota_sheet_decline": "نه ممنون، تا فردا صبر می‌کنم",
   "quota_sheet_close": "متوجه شدم",
-  "quota_sheet_resets": "حجم رایگان هر روز نیمه‌شب (به وقت تهران) تمدید می‌شود."
+  "quota_sheet_resets": "حجم رایگان هر روز نیمه‌شب (به وقت تهران) تمدید می‌شود.",
+  "quota_meter_title": "حجم رایگان ابری",
+  "quota_meter_used_up": "حجم امروز تمام شد",
+  "quota_meter_left": "امروز {left} باقی است",
+  "quota_meter_left_with_bonus": "امروز {left} باقی است · با جایزه تبلیغ",
+  "quota_meter_watch_ad": "دیدن تبلیغ · +{reward}",
+  "quota_meter_resets": "تمدید در نیمه‌شب"
 }

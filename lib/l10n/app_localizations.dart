@@ -1081,6 +1081,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Free data resets every day at midnight (Tehran time).'**
   String get quota_sheet_resets;
+
+  /// No description provided for @quota_meter_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Free cloud data'**
+  String get quota_meter_title;
+
+  /// No description provided for @quota_meter_used_up.
+  ///
+  /// In en, this message translates to:
+  /// **'Used up for today'**
+  String get quota_meter_used_up;
+
+  /// No description provided for @quota_meter_left.
+  ///
+  /// In en, this message translates to:
+  /// **'{left} left today'**
+  String quota_meter_left(String left);
+
+  /// No description provided for @quota_meter_left_with_bonus.
+  ///
+  /// In en, this message translates to:
+  /// **'{left} left today · incl. ad bonus'**
+  String quota_meter_left_with_bonus(String left);
+
+  /// No description provided for @quota_meter_watch_ad.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch ad · +{reward}'**
+  String quota_meter_watch_ad(String reward);
+
+  /// No description provided for @quota_meter_resets.
+  ///
+  /// In en, this message translates to:
+  /// **'Resets at midnight'**
+  String get quota_meter_resets;
 }
 
 class _AppLocalizationsDelegate

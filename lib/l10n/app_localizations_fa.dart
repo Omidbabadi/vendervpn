@@ -526,4 +526,28 @@ class AppLocalizationsFa extends AppLocalizations {
   @override
   String get quota_sheet_resets =>
       'حجم رایگان هر روز نیمه‌شب (به وقت تهران) تمدید می‌شود.';
+
+  @override
+  String get quota_meter_title => 'حجم رایگان ابری';
+
+  @override
+  String get quota_meter_used_up => 'حجم امروز تمام شد';
+
+  @override
+  String quota_meter_left(String left) {
+    return 'امروز $left باقی است';
+  }
+
+  @override
+  String quota_meter_left_with_bonus(String left) {
+    return 'امروز $left باقی است · با جایزه تبلیغ';
+  }
+
+  @override
+  String quota_meter_watch_ad(String reward) {
+    return 'دیدن تبلیغ · +$reward';
+  }
+
+  @override
+  String get quota_meter_resets => 'تمدید در نیمه‌شب';
 }

@@ -530,4 +530,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get quota_sheet_resets =>
       'Free data resets every day at midnight (Tehran time).';
+
+  @override
+  String get quota_meter_title => 'Free cloud data';
+
+  @override
+  String get quota_meter_used_up => 'Used up for today';
+
+  @override
+  String quota_meter_left(String left) {
+    return '$left left today';
+  }
+
+  @override
+  String quota_meter_left_with_bonus(String left) {
+    return '$left left today · incl. ad bonus';
+  }
+
+  @override
+  String quota_meter_watch_ad(String reward) {
+    return 'Watch ad · +$reward';
+  }
+
+  @override
+  String get quota_meter_resets => 'Resets at midnight';
 }
