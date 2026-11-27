@@ -1,86 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:vendervpn/core/extensions/context_ext.dart';
+import 'package:vendervpn/core/res/styles/pallet.dart';
 
-import '../../utils/core_utils.dart';
-
+/// Legacy colour access, kept while call sites move to `context.pallet`
+/// (phase 6b–6d). Values come from [PalletSeeds] / [OrbSpectrum]; removed in 6e.
 abstract class Colours {
   // ─── Cirus Luminous Light & Obsidian Dark Canvas ───
-  static const Color lightBackgroundColor = Color(0xFFF7F8FC);
-  static const Color darkBackgroundColor = Color(0xFF06070B);
+  static const Color lightBackgroundColor = PalletSeeds.lightBackground;
+  static const Color darkBackgroundColor = PalletSeeds.darkBackground;
 
-  static const Color lightCardSurface = Color(0xFFFFFFFF);
-  static const Color darkCardSurface = Color(0xFF10131C);
+  static const Color lightCardSurface = PalletSeeds.lightCardSurface;
+  static const Color darkCardSurface = PalletSeeds.darkCardSurface;
 
-  static const Color lightThemePrimaryTextColor = Color(0xFF151926);
-  static const Color darkThemePrimaryTextColor = Color(0xFFF8FAFC);
+  static const Color lightThemePrimaryTextColor = PalletSeeds.lightTextPrimary;
+  static const Color darkThemePrimaryTextColor = PalletSeeds.darkTextPrimary;
 
-  static const Color subtitleGrey = Color(0xFF8A93A6);
+  static const Color subtitleGrey = PalletSeeds.subtitleGrey;
 
   // ─── Iridescent Orb Face Spectrum ───
-  static const Color orbCoral = Color(0xFFFF3B6B);
-  static const Color orbRose = Color(0xFFF43F5E);
-  static const Color orbMagenta = Color(0xFFD946EF);
-  static const Color orbViolet = Color(0xFF8B5CF6);
-  static const Color orbCyan = Color(0xFF06B6D4);
-  static const Color orbAzure = Color(0xFF3B82F6);
-  static const Color orbEmerald = Color(0xFF10B981);
+  static const Color orbCoral = OrbSpectrum.coral;
+  static const Color orbRose = OrbSpectrum.rose;
+  static const Color orbMagenta = OrbSpectrum.magenta;
+  static const Color orbViolet = OrbSpectrum.violet;
+  static const Color orbCyan = OrbSpectrum.cyan;
+  static const Color orbAzure = OrbSpectrum.azure;
+  static const Color orbEmerald = OrbSpectrum.emerald;
 
   // Soft Status Pills
-  static const Color pastelAmberBg = Color(0xFFFFF4E5);
-  static const Color pastelAmberFg = Color(0xFFD97706);
+  static const Color pastelAmberBg = PalletSeeds.pastelAmberBg;
+  static const Color pastelAmberFg = PalletSeeds.pastelAmberFg;
 
-  static const Color pastelLilacBg = Color(0xFFF3E8FF);
-  static const Color pastelLilacFg = Color(0xFF7C3AED);
+  static const Color pastelLilacBg = PalletSeeds.pastelLilacBg;
+  static const Color pastelLilacFg = PalletSeeds.pastelLilacFg;
 
-  static const Color pastelRoseBg = Color(0xFFFFE4E8);
-  static const Color pastelRoseFg = Color(0xFFE11D48);
+  static const Color pastelRoseBg = PalletSeeds.pastelRoseBg;
+  static const Color pastelRoseFg = PalletSeeds.pastelRoseFg;
 
-  static const Color pastelMintBg = Color(0xFFD1FAE5);
-  static const Color pastelMintFg = Color(0xFF059669);
+  static const Color pastelMintBg = PalletSeeds.pastelMintBg;
+  static const Color pastelMintFg = PalletSeeds.pastelMintFg;
 
-  static Color scaffoldBg(BuildContext context) => CoreUtils.adabtiveColor(
-    context,
-    lightModeColor: lightBackgroundColor,
-    darkModeColor: darkBackgroundColor,
-  );
+  /// Picks light or dark exactly as before (no theme-switch animation), so
+  /// these helpers look the same until their callers move to `context.pallet`.
+  static Pallet _p(BuildContext context) =>
+      context.isDarkMode ? Pallet.dark : Pallet.light;
+
+  static Color scaffoldBg(BuildContext context) => _p(context).background;
 
   static Color classicAdabtiveTextColor(BuildContext context) =>
-      CoreUtils.adabtiveColor(
-        context,
-        lightModeColor: lightThemePrimaryTextColor,
-        darkModeColor: darkThemePrimaryTextColor,
-      );
+      _p(context).textPrimary;
 
-  static Color cardSurface(BuildContext context) => CoreUtils.adabtiveColor(
-    context,
-    lightModeColor: lightCardSurface,
-    darkModeColor: darkCardSurface,
-  );
+  static Color cardSurface(BuildContext context) => _p(context).cardSurface;
 
-  static Color softChipBg(BuildContext context) => CoreUtils.adabtiveColor(
-    context,
-    lightModeColor: const Color(0xFFF1F3F9),
-    darkModeColor: const Color(0xFF1A1F2E),
-  );
+  static Color softChipBg(BuildContext context) => _p(context).softChipBg;
 
-  static Color subtleBorder(BuildContext context) => CoreUtils.adabtiveColor(
-    context,
-    lightModeColor: const Color(0xFFECEEF6),
-    darkModeColor: const Color(0xFF1E2333),
-  );
+  static Color subtleBorder(BuildContext context) => _p(context).subtleBorder;
 
-  static List<BoxShadow> softCardShadow(BuildContext context) {
-    final isDark = context.isDarkMode;
-    return [
-      BoxShadow(
-        color:
-            isDark
-                ? Colors.black.withValues(alpha: 0.35)
-                : const Color(0xFF1E293B).withValues(alpha: 0.055),
-        blurRadius: 28,
-        spreadRadius: 0,
-        offset: const Offset(0, 10),
-      ),
-    ];
-  }
+  static List<BoxShadow> softCardShadow(BuildContext context) =>
+      _p(context).cardShadow;
 }
