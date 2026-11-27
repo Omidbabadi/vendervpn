@@ -1,15 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
+import 'package:vendervpn/src/usage_quota/data/models/usage_outbox.dart';
 import 'package:vendervpn/src/usage_quota/data/models/usage_quota_model.dart';
-import 'package:vendervpn/src/usage_quota/domain/entities/usage_quota.dart';
 
-/// Stores the cloud usage quota on the device.
-/// (Later this can move to a server datasrc without touching the domain.)
+/// On-device state for the cloud quota: the last server snapshot (so the UI
+/// can render at once) and the usage not yet reported to the server.
 abstract class UsageQuotaLocalDatasrc {
   const UsageQuotaLocalDatasrc();
 
-  Future<UsageQuotaModel> getQuota();
-  Future<void> saveQuota(UsageQuotaModel quota);
+  UsageQuotaModel? get snapshot;
+  Future<void> saveSnapshot(UsageQuotaModel quota);
+
+  UsageOutbox get outbox;
+  Future<void> saveOutbox(UsageOutbox outbox);
 }
 
 class UsageQuotaLocalDatasrcImpl implements UsageQuotaLocalDatasrc {
@@ -17,27 +21,43 @@ class UsageQuotaLocalDatasrcImpl implements UsageQuotaLocalDatasrc {
   final CacheHelper _cacheHelper;
 
   @override
-  Future<UsageQuotaModel> getQuota() async {
+  UsageQuotaModel? get snapshot {
     try {
-      final today = UsageQuota.dayOf(DateTime.now());
-      final cached = _cacheHelper.cloudUsageQuota;
-      if (cached == null) return UsageQuotaModel.empty(today);
-
-      final quota = UsageQuotaModel.fromMap(cached);
-      // A new day starts a fresh allowance; yesterday's bonus expires too.
-      if (quota.day != today) return UsageQuotaModel.empty(today);
-      return quota;
+      final map = _cacheHelper.cloudQuotaSnapshot;
+      return map == null ? null : UsageQuotaModel.fromMap(map);
     } catch (e) {
-      throw CacheException(message: 'Reading cloud usage failed: $e');
+      // A corrupt snapshot is only a cache; the server has the real numbers.
+      debugPrint('Ignoring cached quota snapshot: $e');
+      return null;
     }
   }
 
   @override
-  Future<void> saveQuota(UsageQuotaModel quota) async {
+  Future<void> saveSnapshot(UsageQuotaModel quota) async {
     try {
-      await _cacheHelper.cacheCloudUsageQuota(quota.toMap());
+      await _cacheHelper.cacheCloudQuotaSnapshot(quota.toMap());
     } catch (e) {
-      throw CacheException(message: 'Saving cloud usage failed: $e');
+      throw CacheException(message: 'Saving quota snapshot failed: $e');
+    }
+  }
+
+  @override
+  UsageOutbox get outbox {
+    try {
+      final map = _cacheHelper.cloudUsageOutbox;
+      return map == null ? const UsageOutbox() : UsageOutbox.fromMap(map);
+    } catch (e) {
+      debugPrint('Ignoring unreadable usage outbox: $e');
+      return const UsageOutbox();
+    }
+  }
+
+  @override
+  Future<void> saveOutbox(UsageOutbox outbox) async {
+    try {
+      await _cacheHelper.cacheCloudUsageOutbox(outbox.toMap());
+    } catch (e) {
+      throw CacheException(message: 'Saving unreported usage failed: $e');
     }
   }
 }

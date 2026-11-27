@@ -3,7 +3,7 @@ import 'package:vendervpn/core/utils/typedefs.dart';
 import 'package:vendervpn/src/usage_quota/domain/entities/usage_quota.dart';
 import 'package:vendervpn/src/usage_quota/domain/repo/usage_quota_repo.dart';
 
-/// Adds the rewarded-ad bonus (1 GB) to today's quota.
+/// Asks the server for the rewarded-ad bonus (amount set by BONUS_BYTES).
 class AddRewardBonus extends UsecaseWithOutParams<UsageQuota> {
   const AddRewardBonus(this._repo);
   final UsageQuotaRepo _repo;

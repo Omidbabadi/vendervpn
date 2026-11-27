@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/cloud_quota_sheet.dart';
-import 'package:vendervpn/src/usage_quota/domain/entities/usage_quota.dart';
 import 'package:vendervpn/src/usage_quota/presention/adapter/usage_quota_adapter.dart';
 
-/// Today's cloud-node data allowance (500 MB free + ad bonuses):
+/// Today's cloud-node data allowance (server free data + ad bonuses):
 /// used / limit, a progress bar, and how much is left. Updates live while
 /// connected, since the connection adapter adds usage on every status tick.
+/// Every amount comes from the quota server; nothing is hardcoded here.
 class CloudQuotaMeter extends ConsumerWidget {
   const CloudQuotaMeter({super.key});
 
@@ -18,7 +18,9 @@ class CloudQuotaMeter extends ConsumerWidget {
     final textColor = Colours.classicAdabtiveTextColor(context);
 
     final ratio =
-        quota.limitBytes == 0
+        !quota.isKnown
+            ? 0.0
+            : quota.limitBytes == 0
             ? 1.0
             : (quota.usedBytes / quota.limitBytes).clamp(0.0, 1.0);
     final barColor =
@@ -31,7 +33,7 @@ class CloudQuotaMeter extends ConsumerWidget {
     final used = SubscriptionUserInfo.formatBytes(quota.usedBytes);
     final limit = SubscriptionUserInfo.formatBytes(quota.limitBytes);
     final left = SubscriptionUserInfo.formatBytes(quota.remainingBytes);
-    final reward = SubscriptionUserInfo.formatBytes(UsageQuota.rewardBytes);
+    final reward = SubscriptionUserInfo.formatBytes(quota.bonusPerAdBytes);
     final hasBonus = quota.bonusBytes > 0;
 
     return Container(
@@ -96,7 +98,7 @@ class CloudQuotaMeter extends ConsumerWidget {
                   ),
                 ),
               ),
-              if (quota.isExceeded)
+              if (quota.isExceeded && quota.canEarnBonus)
                 GestureDetector(
                   onTap: () => CloudQuotaSheet.show(context),
                   child: Text(

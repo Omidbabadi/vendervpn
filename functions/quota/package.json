@@ -1,0 +1,19 @@
+{
+  "name": "quota",
+  "version": "1.0.0",
+  "description": "VenderVPN cloud usage quota function (Appwrite, Node runtime).",
+  "private": true,
+  "type": "module",
+  "main": "src/main.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/",
+    "provision": "node tool/provision.mjs",
+    "bundle": "tar -czf /tmp/quota-code.tar.gz package.json package-lock.json src"
+  },
+  "dependencies": {
+    "node-appwrite": "^32.1.0"
+  }
+}

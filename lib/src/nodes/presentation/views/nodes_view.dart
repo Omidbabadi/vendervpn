@@ -23,60 +23,6 @@ class NodesView extends ConsumerWidget {
   const NodesView({super.key});
   static const path = '/nodes';
 
-  Future<void> _importFromClipboard(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
-    final uiState = ref.read(nodesViewUiStateProvider);
-    if (uiState.isImporting) return;
-    final uiNotifier = ref.read(nodesViewUiStateProvider.notifier);
-    final localConfigsNotifier = ref.read(localConfigsListProvider.notifier);
-    uiNotifier.setImporting(true);
-    try {
-      final data = await Clipboard.getData(Clipboard.kTextPlain);
-      final text = data?.text?.trim() ?? '';
-      if (text.isEmpty) {
-        if (!context.mounted) return;
-        CoreUtils.showSnackBar(
-          context,
-          true,
-          title: l10n.clipboard_empty_title,
-          message: l10n.clipboard_empty_msg,
-        );
-        return;
-      }
-
-      final count = await localConfigsNotifier.importFromRawPayload(
-        text,
-        source: 'clipboard',
-      );
-      if (!context.mounted) return;
-      if (count > 0) {
-        CoreUtils.showSnackBar(
-          context,
-          false,
-          title: l10n.nodes_imported_title,
-          message: '${l10n.nodes_imported_msg} ($count)',
-        );
-      } else {
-        CoreUtils.showSnackBar(
-          context,
-          true,
-          title: l10n.invalid_format_title,
-          message: l10n.invalid_format_msg,
-        );
-      }
-    } catch (e) {
-      if (!context.mounted) return;
-      CoreUtils.showSnackBar(
-        context,
-        true,
-        title: l10n.import_failed_title,
-        message: e.toString(),
-      );
-    } finally {
-      uiNotifier.setImporting(false);
-    }
-  }
-
   Future<void> _showSubscriptionDialog(
     BuildContext context,
     WidgetRef ref,

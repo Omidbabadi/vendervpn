@@ -75,4 +75,7 @@ class ConnectionRepoImpl implements ConnectionRepo {
   Future<void> disconnect() async {
     await _datasrc.disconnect();
   }
+
+  @override
+  Future<V2RayServiceState?> getServiceState() => _datasrc.getServiceState();
 }

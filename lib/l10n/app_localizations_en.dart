@@ -498,4 +498,36 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get proxy_mode_desc =>
       'Runs local SOCKS5 (127.0.0.1:10807) & HTTP (127.0.0.1:10809) proxy only';
+
+  @override
+  String get quota_sheet_title => 'Today\'s free data is used up';
+
+  @override
+  String quota_sheet_used(String used, String limit) {
+    return 'You used $used of $limit on cloud nodes today.';
+  }
+
+  @override
+  String quota_sheet_pitch(String reward) {
+    return 'Stay connected: one short ad gives you $reward more right now, free.';
+  }
+
+  @override
+  String get quota_sheet_no_bonus =>
+      'You\'ve collected all of today\'s ad bonuses.';
+
+  @override
+  String quota_sheet_watch_ad(String reward) {
+    return 'Watch ad · Get $reward free';
+  }
+
+  @override
+  String get quota_sheet_decline => 'No thanks, I\'ll wait until tomorrow';
+
+  @override
+  String get quota_sheet_close => 'Got it';
+
+  @override
+  String get quota_sheet_resets =>
+      'Free data resets every day at midnight (Tehran time).';
 }

@@ -287,5 +287,29 @@
   "vpn_mode_label": "VPN Mode",
   "proxy_mode_label": "Proxy Mode",
   "vpn_mode_desc": "Routes device traffic through a system-wide TUN interface",
-  "proxy_mode_desc": "Runs local SOCKS5 (127.0.0.1:10807) & HTTP (127.0.0.1:10809) proxy only"
+  "proxy_mode_desc": "Runs local SOCKS5 (127.0.0.1:10807) & HTTP (127.0.0.1:10809) proxy only",
+  "quota_sheet_title": "Today's free data is used up",
+  "quota_sheet_used": "You used {used} of {limit} on cloud nodes today.",
+  "@quota_sheet_used": {
+    "placeholders": {
+      "used": {"type": "String"},
+      "limit": {"type": "String"}
+    }
+  },
+  "quota_sheet_pitch": "Stay connected: one short ad gives you {reward} more right now, free.",
+  "@quota_sheet_pitch": {
+    "placeholders": {
+      "reward": {"type": "String"}
+    }
+  },
+  "quota_sheet_no_bonus": "You've collected all of today's ad bonuses.",
+  "quota_sheet_watch_ad": "Watch ad · Get {reward} free",
+  "@quota_sheet_watch_ad": {
+    "placeholders": {
+      "reward": {"type": "String"}
+    }
+  },
+  "quota_sheet_decline": "No thanks, I'll wait until tomorrow",
+  "quota_sheet_close": "Got it",
+  "quota_sheet_resets": "Free data resets every day at midnight (Tehran time)."
 }

@@ -37,6 +37,44 @@ class CacheHelper {
   /// while it was closed instead of skipping it.
   static const _cloudTrafficCounted = 'cloud_traffic_counted';
 
+  /// Last quota snapshot from the server (only a cache for the first frame).
+  static const _cloudQuotaSnapshot = 'cloud_quota_snapshot_v2';
+
+  /// Usage counted on this device but not yet acknowledged by the server.
+  static const _cloudUsageOutbox = 'cloud_usage_outbox';
+
+  /// Appwrite user ID whose session is already bound to this device.
+  static const _quotaBoundUserId = 'quota_bound_user_id';
+
+  Map<String, dynamic>? get cloudQuotaSnapshot =>
+      _readMap(_cloudQuotaSnapshot);
+
+  Future<void> cacheCloudQuotaSnapshot(Map<String, dynamic> snapshot) async {
+    await _pref.setString(_cloudQuotaSnapshot, json.encode(snapshot));
+  }
+
+  Map<String, dynamic>? get cloudUsageOutbox => _readMap(_cloudUsageOutbox);
+
+  Future<void> cacheCloudUsageOutbox(Map<String, dynamic> outbox) async {
+    await _pref.setString(_cloudUsageOutbox, json.encode(outbox));
+  }
+
+  String? get quotaBoundUserId => _pref.getString(_quotaBoundUserId);
+
+  Future<void> cacheQuotaBoundUserId(String? userId) async {
+    if (userId == null) {
+      await _pref.remove(_quotaBoundUserId);
+    } else {
+      await _pref.setString(_quotaBoundUserId, userId);
+    }
+  }
+
+  Map<String, dynamic>? _readMap(String key) {
+    final raw = _pref.getString(key);
+    if (raw == null || raw.isEmpty) return null;
+    return Map<String, dynamic>.from(json.decode(raw) as Map);
+  }
+
   int? get cloudTrafficCounted => _pref.getInt(_cloudTrafficCounted);
 
   Future<void> cacheCloudTrafficCounted(int? total) async {

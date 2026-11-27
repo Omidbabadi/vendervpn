@@ -494,4 +494,36 @@ class AppLocalizationsFa extends AppLocalizations {
   @override
   String get proxy_mode_desc =>
       'اجرای پروکسی محلی SOCKS5 (127.0.0.1:10807) و HTTP (127.0.0.1:10809) بدون تونل VPN';
+
+  @override
+  String get quota_sheet_title => 'حجم رایگان امروز تمام شد';
+
+  @override
+  String quota_sheet_used(String used, String limit) {
+    return 'امروز $used از $limit حجم سرورهای ابری را مصرف کردید.';
+  }
+
+  @override
+  String quota_sheet_pitch(String reward) {
+    return 'متصل بمانید: با دیدن یک تبلیغ کوتاه، همین حالا $reward حجم رایگان بگیرید.';
+  }
+
+  @override
+  String get quota_sheet_no_bonus =>
+      'همه جایزه‌های تبلیغ امروز را دریافت کرده‌اید.';
+
+  @override
+  String quota_sheet_watch_ad(String reward) {
+    return 'دیدن تبلیغ · دریافت $reward رایگان';
+  }
+
+  @override
+  String get quota_sheet_decline => 'نه ممنون، تا فردا صبر می‌کنم';
+
+  @override
+  String get quota_sheet_close => 'متوجه شدم';
+
+  @override
+  String get quota_sheet_resets =>
+      'حجم رایگان هر روز نیمه‌شب (به وقت تهران) تمدید می‌شود.';
 }

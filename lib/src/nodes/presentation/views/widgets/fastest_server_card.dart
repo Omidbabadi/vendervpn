@@ -39,9 +39,10 @@ class FastestServerCard extends StatelessWidget {
           color: surfaceColor,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: isFastestActive
-                ? Colours.orbEmerald.withValues(alpha: 0.7)
-                : Colours.subtleBorder(context),
+            color:
+                isFastestActive
+                    ? Colours.orbEmerald.withValues(alpha: 0.7)
+                    : Colours.subtleBorder(context),
             width: isFastestActive ? 1.5 : 1.0,
           ),
           boxShadow: Colours.softCardShadow(context),
@@ -67,20 +68,21 @@ class FastestServerCard extends StatelessWidget {
                 ),
               ),
               child: Center(
-                child: isAutoConnecting
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.0,
+                child:
+                    isAutoConnecting
+                        ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            color: Colours.orbEmerald,
+                          ),
+                        )
+                        : const Icon(
+                          Icons.bolt_rounded,
+                          size: 22,
                           color: Colours.orbEmerald,
                         ),
-                      )
-                    : const Icon(
-                        Icons.bolt_rounded,
-                        size: 22,
-                        color: Colours.orbEmerald,
-                      ),
               ),
             ),
             const SizedBox(width: 12),
@@ -102,30 +104,6 @@ class FastestServerCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 7),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isFastestActive
-                              ? Colours.pastelMintBg
-                              : Colours.pastelLilacBg,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          isFastestActive
-                              ? l10n.vpnstatus_connect
-                              : l10n.fastest_badge,
-                          style: TextStyle(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w800,
-                            color: isFastestActive
-                                ? Colours.pastelMintFg
-                                : Colours.pastelLilacFg,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -148,7 +126,9 @@ class FastestServerCard extends StatelessWidget {
                           SizedBox(
                             width: 14,
                             height: 14,
-                            child: CoreUtils.getCountryFlag(fastestNode!.country!),
+                            child: CoreUtils.getCountryFlag(
+                              fastestNode!.country!,
+                            ),
                           ),
                           const SizedBox(width: 5),
                         ],
@@ -204,7 +184,10 @@ class FastestServerCard extends StatelessWidget {
             // Action Pill Button
             if (isAutoConnecting)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
                   color: Colours.softChipBg(context),
                   borderRadius: BorderRadius.circular(999),
@@ -220,7 +203,10 @@ class FastestServerCard extends StatelessWidget {
               )
             else if (isFastestActive)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colours.pastelMintBg,
                   borderRadius: BorderRadius.circular(999),
@@ -247,7 +233,10 @@ class FastestServerCard extends StatelessWidget {
               )
             else
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colours.pastelMintBg,
                   borderRadius: BorderRadius.circular(999),

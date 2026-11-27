@@ -25,8 +25,8 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
 
     try {
       final response = await tablesDB.listRows(
-        databaseId: '68cfc4e70012fb5e5417',
-        tableId: 'url',
+        databaseId: '6b071b2200201ca27bcb',
+        tableId: '6b071b3e001bb7849d16',
       );
       if (response.rows.isEmpty) {
         throw const ServerException(

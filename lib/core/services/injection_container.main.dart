@@ -29,10 +29,19 @@ Future<void> _usageQuotaInit() async {
     ..registerLazySingleton(() => GetUsageQuota(sl()))
     ..registerLazySingleton(() => AddCloudUsage(sl()))
     ..registerLazySingleton(() => AddRewardBonus(sl()))
-    ..registerLazySingleton<UsageQuotaRepo>(() => UsageQuotaRepoImpl(sl()))
+    ..registerLazySingleton(() => FlushCloudUsage(sl()))
+    ..registerLazySingleton(() => GetCachedUsageQuota(sl()))
+    ..registerLazySingleton<UsageQuotaRepo>(
+      () => UsageQuotaRepoImpl(sl(), sl()),
+    )
+    ..registerLazySingleton<UsageQuotaRemoteDatasrc>(
+      () => UsageQuotaRemoteDatasrcImpl(sl<Client>(), sl(), sl()),
+    )
     ..registerLazySingleton<UsageQuotaLocalDatasrc>(
       () => UsageQuotaLocalDatasrcImpl(sl()),
-    );
+    )
+    ..registerLazySingleton(() => DeviceIdentity(sl()))
+    ..registerLazySingleton(() => const FlutterSecureStorage());
 }
 
 Future<void> _perAppProxyInit() async {
@@ -73,7 +82,9 @@ Future<void> _adMobInit() async {
 }
 
 Future<void> _configsInit() async {
-  final client = Client().setProject('68cfc3210015c46501bd').setSession('');
+  final client = Client()
+      .setEndpoint('https://vender.flutterdevs.top/v1')
+      .setProject('6b07171100033f5027f4');
 
   sl
     ..registerLazySingleton(() => GetConfigs(sl()))
@@ -98,6 +109,7 @@ Future<void> _v2rayInit() async {
     ..registerLazySingleton(() => Disconnect(sl()))
     ..registerLazySingleton(() => InitializeV2ay(sl()))
     ..registerLazySingleton(() => GetVpnState(sl()))
+    ..registerLazySingleton(() => GetServiceState(sl()))
     ..registerLazySingleton(() => Ping(sl()))
     ..registerLazySingleton(() => RequestPermission(sl()))
     ..registerLazySingleton<ConnectionRepo>(() => ConnectionRepoImpl(sl()))

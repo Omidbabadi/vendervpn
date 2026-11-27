@@ -16,4 +16,7 @@ abstract class ConnectionRepo {
   ResultFuture<int> ping(String config);
   ValueNotifier<V2RayStatus> get connectionStatus;
   ResultFuture<bool> requestPermission();
+
+  /// The real native service state, or null if it can't be asked.
+  Future<V2RayServiceState?> getServiceState();
 }

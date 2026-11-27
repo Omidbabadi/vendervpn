@@ -23,6 +23,10 @@ abstract class ConnectionDatasrc {
   Future<int> ping(String config);
   ValueNotifier<V2RayStatus> get connectionStatus;
   Future<bool> requestPermission();
+
+  /// Whether the native service is really running, or null if that can't be
+  /// asked (older plugin build, unsupported platform).
+  Future<V2RayServiceState?> getServiceState();
 }
 
 class ConnectionDatasrcImpl implements ConnectionDatasrc {
@@ -146,5 +150,15 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
   @override
   ValueNotifier<V2RayStatus> get connectionStatus {
     return _status;
+  }
+
+  @override
+  Future<V2RayServiceState?> getServiceState() async {
+    try {
+      return await _v2ray.getServiceState();
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s, label: 'getServiceState failed: $e');
+      return null;
+    }
   }
 }

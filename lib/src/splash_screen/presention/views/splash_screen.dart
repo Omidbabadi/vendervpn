@@ -32,13 +32,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final cache = sl<CacheHelper>();
       final vpnState = cache.vpnState;
       // Ensure local configs are initialized on startup
       final localConfigs = ref.read(localConfigsListProvider);
-      if (vpnState == 'CONNECTED') {
+      final tunnelUp = vpnState == 'CONNECTED' && await _isTunnelStillUp();
+      if (!mounted) return;
+      if (tunnelUp) {
         Cache.instance.setVpnDisconnected(false);
         final cachedConfigs = cache.configs;
         final nodeCountries = cache.nodeCountryMap;
@@ -106,6 +108,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         context.go(HomeView.path);
       }
     });
+  }
+
+  /// The saved flag says connected; ask the plugin whether the tunnel really
+  /// still runs. If it stopped while the app was closed (traffic limit,
+  /// notification button, the OS), settle that session and start fresh.
+  Future<bool> _isTunnelStillUp() async {
+    final connection = ref.read(connectionAdapterProvider.notifier);
+    final service = await connection.serviceState();
+    if (service == null) return true; // can't tell: keep the old behaviour
+    if (service.isRunning) return true;
+    await connection.settleStoppedSession(service);
+    return false;
   }
 
   @override

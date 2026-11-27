@@ -155,5 +155,13 @@
   "vpn_mode_label": "حالت VPN",
   "proxy_mode_label": "حالت پروکسی",
   "vpn_mode_desc": "عبور ترافیک دستگاه از طریق رابط سراسری TUN",
-  "proxy_mode_desc": "اجرای پروکسی محلی SOCKS5 (127.0.0.1:10807) و HTTP (127.0.0.1:10809) بدون تونل VPN"
+  "proxy_mode_desc": "اجرای پروکسی محلی SOCKS5 (127.0.0.1:10807) و HTTP (127.0.0.1:10809) بدون تونل VPN",
+  "quota_sheet_title": "حجم رایگان امروز تمام شد",
+  "quota_sheet_used": "امروز {used} از {limit} حجم سرورهای ابری را مصرف کردید.",
+  "quota_sheet_pitch": "متصل بمانید: با دیدن یک تبلیغ کوتاه، همین حالا {reward} حجم رایگان بگیرید.",
+  "quota_sheet_no_bonus": "همه جایزه‌های تبلیغ امروز را دریافت کرده‌اید.",
+  "quota_sheet_watch_ad": "دیدن تبلیغ · دریافت {reward} رایگان",
+  "quota_sheet_decline": "نه ممنون، تا فردا صبر می‌کنم",
+  "quota_sheet_close": "متوجه شدم",
+  "quota_sheet_resets": "حجم رایگان هر روز نیمه‌شب (به وقت تهران) تمدید می‌شود."
 }

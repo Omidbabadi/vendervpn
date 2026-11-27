@@ -1033,6 +1033,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Runs local SOCKS5 (127.0.0.1:10807) & HTTP (127.0.0.1:10809) proxy only'**
   String get proxy_mode_desc;
+
+  /// No description provided for @quota_sheet_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s free data is used up'**
+  String get quota_sheet_title;
+
+  /// No description provided for @quota_sheet_used.
+  ///
+  /// In en, this message translates to:
+  /// **'You used {used} of {limit} on cloud nodes today.'**
+  String quota_sheet_used(String used, String limit);
+
+  /// No description provided for @quota_sheet_pitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay connected: one short ad gives you {reward} more right now, free.'**
+  String quota_sheet_pitch(String reward);
+
+  /// No description provided for @quota_sheet_no_bonus.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve collected all of today\'s ad bonuses.'**
+  String get quota_sheet_no_bonus;
+
+  /// No description provided for @quota_sheet_watch_ad.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch ad · Get {reward} free'**
+  String quota_sheet_watch_ad(String reward);
+
+  /// No description provided for @quota_sheet_decline.
+  ///
+  /// In en, this message translates to:
+  /// **'No thanks, I\'ll wait until tomorrow'**
+  String get quota_sheet_decline;
+
+  /// No description provided for @quota_sheet_close.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get quota_sheet_close;
+
+  /// No description provided for @quota_sheet_resets.
+  ///
+  /// In en, this message translates to:
+  /// **'Free data resets every day at midnight (Tehran time).'**
+  String get quota_sheet_resets;
 }
 
 class _AppLocalizationsDelegate
