@@ -474,38 +474,6 @@ class OrbFaceWidgetState extends State<OrbFaceWidget>
                         ),
                       ),
                     ),
-
-                    // Two floating glass satellite bubbles on bottom-right
-                    // if (widget.showSatellites) ...[
-                    //   Positioned(
-                    //     bottom:
-                    //         effectiveSize * 0.06 -
-                    //         (wiggle * 5) -
-                    //         (strainShiverY * 0.8),
-                    //     right:
-                    //         effectiveSize * 0.28 +
-                    //         (wiggle * 4) +
-                    //         (strainShiverX * 0.8),
-                    //     child: _GlassSatelliteBubble(
-                    //       diameter: effectiveSize * 0.13,
-                    //       isDark: isDark,
-                    //     ),
-                    //   ),
-                    //   Positioned(
-                    //     bottom:
-                    //         effectiveSize * 0.10 +
-                    //         (wiggle * 6) +
-                    //         (strainShiverY * 0.9),
-                    //     right:
-                    //         effectiveSize * 0.08 -
-                    //         (wiggle * 5) -
-                    //         (strainShiverX * 0.9),
-                    //     child: _GlassSatelliteBubble(
-                    //       diameter: effectiveSize * 0.16,
-                    //       isDark: isDark,
-                    //     ),
-                    //   ),
-                    // ],
                   ],
                 );
               },
@@ -549,52 +517,6 @@ class OrbFaceWidgetState extends State<OrbFaceWidget>
         );
       },
       child: content,
-    );
-  }
-}
-
-class _GlassSatelliteBubble extends StatelessWidget {
-  const _GlassSatelliteBubble({required this.diameter, required this.isDark});
-
-  final double diameter;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: diameter,
-      height: diameter,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors:
-              isDark
-                  ? [
-                    Colors.white.withValues(alpha: 0.18),
-                    Colors.white.withValues(alpha: 0.04),
-                  ]
-                  : [
-                    Colors.white.withValues(alpha: 0.92),
-                    const Color(0xFFF3E8FF).withValues(alpha: 0.65),
-                  ],
-        ),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: isDark ? 0.22 : 0.85),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color:
-                isDark
-                    ? Colors.black.withValues(alpha: 0.35)
-                    : const Color(0xFFF43F5E).withValues(alpha: 0.10),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -1551,80 +1473,6 @@ class _WavyAiTalkingSpherePainter extends CustomPainter {
           canvas.drawPath(p, veinPaint);
         }
       }
-    }
-  }
-
-  /// Draws 3D spherical acoustic wave ribbons rippling across the inside of the orb. Save this Future Use
-  void _drawInternalSphericalWaves({
-    required Canvas canvas,
-    required Offset center,
-    required double radius,
-    required double voiceEnergy,
-    required double volume,
-    required Color primaryColor,
-    required Color secondaryColor,
-    required Color accentColor,
-  }) {
-    final waveColors = [
-      primaryColor,
-      secondaryColor,
-      accentColor,
-      const Color(0xFFEC4899),
-    ];
-
-    for (var w = 0; w < 4; w++) {
-      final path = Path();
-      const steps = 48;
-      final waveFreq = 2.0 + w * 0.7;
-      final speed = (w.isEven ? 1.0 : -1.0) * (1.0 + w * 0.5);
-      final phase = auraPhase * speed + w * 1.4;
-      final verticalBias = (w - 1.5) * radius * 0.22;
-      final amp = radius * (0.16 + 0.24 * voiceEnergy);
-
-      for (var i = 0; i <= steps; i++) {
-        final t = i / steps; // 0.0 -> 1.0 across horizontal diameter
-        final nx = (t * 2.0) - 1.0; // -1.0 -> 1.0
-        // 3D sphere envelope: tapers wave amplitude naturally at the sphere edges
-        final sphereEnvelope = math.sqrt((1.0 - nx * nx).clamp(0.0, 1.0));
-
-        final x = center.dx + nx * radius * 1.08;
-        final waveY =
-            math.sin(nx * math.pi * waveFreq + phase) * amp * sphereEnvelope +
-            math.cos(nx * math.pi * (waveFreq * 1.6) - phase) *
-                (amp * 0.45) *
-                sphereEnvelope;
-        final y = center.dy + verticalBias * sphereEnvelope + waveY;
-
-        if (i == 0) {
-          path.moveTo(x, y);
-        } else {
-          path.lineTo(x, y);
-        }
-      }
-
-      final waveColor = waveColors[w % waveColors.length];
-      final glowPaint =
-          Paint()
-            ..blendMode = BlendMode.screen
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 6.0 + 4.0 * volume
-            ..strokeCap = StrokeCap.round
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6)
-            ..color = waveColor.withValues(
-              alpha: (0.28 + 0.25 * volume).clamp(0.0, 1.0),
-            );
-      canvas.drawPath(path, glowPaint);
-
-      final coreLinePaint =
-          Paint()
-            ..blendMode = BlendMode.screen
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.8 + 1.2 * volume
-            ..strokeCap = StrokeCap.round
-            ..color = Colors.white.withValues(
-              alpha: (0.26 + 0.28 * volume).clamp(0.0, 1.0),
-            );
-      canvas.drawPath(path, coreLinePaint);
     }
   }
 
