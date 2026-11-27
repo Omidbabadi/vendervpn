@@ -3,4 +3,5 @@ import 'package:vendervpn/core/utils/typedefs.dart';
 
 abstract class ConfigsRepo {
   ResultFuture<List<Config>> getConfigs();
+  ResultFuture<List<Config>> getCachedConfigs();
 }

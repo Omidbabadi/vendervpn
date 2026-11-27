@@ -1,18 +1,18 @@
-import 'package:flutter/widgets.dart';
+import 'package:vendervpn/core/common/entities/banner_ad_handle.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 
 abstract class AdmobRepo {
   ResultFuture<void> init();
   ResultFuture<void> loadInterstitialAd(
-    VoidCallback onAdLoaded,
-    VoidCallback onAdFailed,
+    void Function() onAdLoaded,
+    void Function() onAdFailed,
   );
   ResultFuture<void> showInterstitialAd({
-    required VoidCallback onAdDismissedFullScreenContent,
-    required VoidCallback onAdFailedToShowFullScreenContent,
-    required VoidCallback onAdShowedFullScreenContent,
+    required void Function() onAdDismissedFullScreenContent,
+    required void Function() onAdFailedToShowFullScreenContent,
+    required void Function() onAdShowedFullScreenContent,
   });
-  ResultFuture<void> showBannerAd(double width);
+  ResultFuture<BannerAdHandle> showBannerAd(double width);
   ResultFuture<void> loadRewardedAd();
 
   /// Right(true) if the user watched the ad to the end.

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:vendervpn/core/usecase/usecase.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 import 'package:vendervpn/src/admob/domain/repo/admob_repo.dart';
@@ -26,7 +24,7 @@ class ShowInterstitialAdParams {
     required this.onAdFailedToShowFullScreenContent,
   });
 
-  final VoidCallback onAdShowedFullScreenContent;
-  final VoidCallback onAdDismissedFullScreenContent;
-  final VoidCallback onAdFailedToShowFullScreenContent;
+  final void Function() onAdShowedFullScreenContent;
+  final void Function() onAdDismissedFullScreenContent;
+  final void Function() onAdFailedToShowFullScreenContent;
 }

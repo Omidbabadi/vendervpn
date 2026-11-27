@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
@@ -11,7 +10,7 @@ import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/common/singelton/core.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
-import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
+import 'package:vendervpn/src/configs/domain/usecases/get_cached_configs.dart';
 import 'package:vendervpn/src/configs/presention/app/adapter/configs_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/home_view.dart';
@@ -42,42 +41,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (!mounted) return;
       if (tunnelUp) {
         Cache.instance.setVpnDisconnected(false);
-        final cachedConfigs = cache.configs;
-        final nodeCountries = cache.nodeCountryMap;
-        final configList =
-            cachedConfigs.map((e) {
-              final V2RayURL parser = V2ray.parseFromURL(e['uri'] as String);
-              final fullJson =
-                  V2rayImportHelper.buildFullConfigurationWithHttpInbound(
-                    parser,
-                  );
-              final isSelected = e['id'] == cache.id;
-
-              final config = Config(
-                configjson: fullJson,
-                importedFrom: (e['importedFrom'] as String?) ?? 'cloud',
-                remark: (e['remark'] as String?) ?? parser.remark,
-                port:
-                    int.tryParse((e['port'] ?? '0').toString()) ?? parser.port,
-                address: (e['address'] as String?) ?? parser.address,
-                uri: e['uri'] as String,
-                dateAdded: (e['dateAdded'] as String?) ?? '',
-                id: e['id'] as String,
-                isSelected: isSelected,
-                country:
-                    nodeCountries[(e['uri'] as String).trim()] ??
-                    V2rayImportHelper.countryFromRemarkFlag(
-                      (e['remark'] as String?) ?? parser.remark,
-                    ),
-                ping: int.tryParse((e['ping'] ?? '-1').toString()) ?? -1,
-              );
-              if (isSelected) {
-                ref
-                    .read(currentConfigProvider.notifier)
-                    .setCurrentConfig(config);
-              }
-              return config;
-            }).toList();
+        final cached = await sl<GetCachedConfigs>()();
+        if (!mounted) return;
+        final configList = cached.fold(
+          (_) => const <Config>[],
+          (configs) => configs,
+        );
 
         final allConfigs = [...configList, ...localConfigs];
         if (allConfigs.isEmpty) {

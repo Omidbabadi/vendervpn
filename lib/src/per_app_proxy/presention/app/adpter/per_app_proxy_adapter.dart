@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:installed_apps/installed_apps.dart';
+import 'package:vendervpn/core/common/entities/installed_app.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/src/per_app_proxy/domain/repo/per_app_proxy_repo.dart';
@@ -29,8 +29,8 @@ class PerAppProxyState {
     required this.mode,
     required this.selectedPackages,
     this.proxyOnly = false,
-    this.userApps = const <AppInfo>[],
-    this.allApps = const <AppInfo>[],
+    this.userApps = const <InstalledApp>[],
+    this.allApps = const <InstalledApp>[],
     this.isLoadingApps = false,
     this.showSystemApps = false,
     this.searchQuery = '',
@@ -40,13 +40,13 @@ class PerAppProxyState {
   final PerAppProxyMode mode;
   final Set<String> selectedPackages;
   final bool proxyOnly;
-  final List<AppInfo> userApps;
-  final List<AppInfo> allApps;
+  final List<InstalledApp> userApps;
+  final List<InstalledApp> allApps;
   final bool isLoadingApps;
   final bool showSystemApps;
   final String searchQuery;
 
-  List<AppInfo> get filteredApps {
+  List<InstalledApp> get filteredApps {
     final source =
         showSystemApps && allApps.isNotEmpty ? allApps : userApps;
     final query = searchQuery.trim().toLowerCase();
@@ -78,8 +78,8 @@ class PerAppProxyState {
     PerAppProxyMode? mode,
     Set<String>? selectedPackages,
     bool? proxyOnly,
-    List<AppInfo>? userApps,
-    List<AppInfo>? allApps,
+    List<InstalledApp>? userApps,
+    List<InstalledApp>? allApps,
     bool? isLoadingApps,
     bool? showSystemApps,
     String? searchQuery,
@@ -176,8 +176,8 @@ class PerAppProxyAdapter extends Notifier<PerAppProxyState> {
       // Per-app proxy is only available on Android.
       state = state.copyWith(
         isLoadingApps: false,
-        userApps: const <AppInfo>[],
-        allApps: const <AppInfo>[],
+        userApps: const <InstalledApp>[],
+        allApps: const <InstalledApp>[],
       );
       return;
     }
@@ -237,25 +237,31 @@ class PerAppProxyAdapter extends Notifier<PerAppProxyState> {
     }
 
     // Per-App Proxy mode: disallow every installed package except the selected ones.
-    try {
-      final allInstalled = await InstalledApps.getInstalledApps(
-        detectPlatformType: false,
+    final result = await _getInstalledApp(
+      const GetInstalledAppParams(
         excludeSystemApps: false,
         withIcon: false,
         excludeNonLaunchableApps: false,
-      );
-      final blocked = <String>[];
-      for (final app in allInstalled) {
-        final pkg = app.packageName.trim();
-        if (pkg.isEmpty) continue;
-        if (!current.selectedPackages.contains(pkg)) {
-          blocked.add(pkg);
+      ),
+    );
+    return result.fold(
+      (failure) {
+        appLog(
+          'Failed to resolve per-app proxy package list: ${failure.message}',
+        );
+        return const <String>[];
+      },
+      (allInstalled) {
+        final blocked = <String>[];
+        for (final app in allInstalled) {
+          final pkg = app.packageName.trim();
+          if (pkg.isEmpty) continue;
+          if (!current.selectedPackages.contains(pkg)) {
+            blocked.add(pkg);
+          }
         }
-      }
-      return blocked;
-    } catch (e) {
-      appLog('Failed to resolve per-app proxy package list: $e');
-      return const <String>[];
-    }
+        return blocked;
+      },
+    );
   }
 }

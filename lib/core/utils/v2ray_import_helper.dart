@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
+import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
 import 'package:vendervpn/core/utils/app_log.dart';
 
@@ -547,6 +548,68 @@ class V2rayImportHelper {
     configMap['inbounds'] = inbounds;
     final cleaned = parser.removeNulls(configMap);
     return const JsonEncoder.withIndent('  ').convert(cleaned);
+  }
+
+  /// Rebuilds a [Config] from a node map saved by [configToCacheMap].
+  /// Throws if the saved link can no longer be parsed.
+  static Config configFromCacheMap(
+    Map<String, dynamic> e, {
+    required String? selectedId,
+    required Map<String, String> nodeCountries,
+    required String defaultImportedFrom,
+    String? defaultDateAdded,
+    bool readServerIp = false,
+  }) {
+    final uri = (e['uri'] as String? ?? '').trim();
+    if (uri.isEmpty) throw const FormatException('Saved node has no link');
+    final parser = V2ray.parseFromURL(uri);
+    final fullJson = buildFullConfigurationWithHttpInbound(parser);
+    final id = e['id'] as String? ?? 'local_${uri.hashCode.abs()}';
+    final remark = e['remark'] as String? ?? parser.remark;
+    final rawServerIp = e['serverIp'] as String?;
+    return Config(
+      configjson: fullJson,
+      importedFrom: e['importedFrom'] as String? ?? defaultImportedFrom,
+      remark: remark,
+      port: int.tryParse((e['port'] ?? '0').toString()) ?? parser.port,
+      address: e['address'] as String? ?? parser.address,
+      uri: uri,
+      dateAdded:
+          e['dateAdded'] as String? ??
+          defaultDateAdded ??
+          DateTime.now().toIso8601String(),
+      id: id,
+      isSelected: id == selectedId,
+      // Verified country, else the remark's flag emoji, else unknown.
+      country: nodeCountries[uri] ?? countryFromRemarkFlag(remark),
+      serverIp:
+          readServerIp &&
+                  rawServerIp != null &&
+                  rawServerIp != 'N/A' &&
+                  rawServerIp != parser.address
+              ? rawServerIp
+              : null,
+      ping: int.tryParse((e['ping'] ?? '-1').toString()) ?? -1,
+    );
+  }
+
+  /// The map a node is saved as (see [configFromCacheMap]).
+  static Map<String, String> configToCacheMap(Config c) {
+    final model = ConfigModel(
+      configjson: c.configjson,
+      importedFrom: c.importedFrom,
+      remark: c.remark,
+      port: c.port,
+      address: c.address,
+      uri: c.uri,
+      dateAdded: c.dateAdded,
+      id: c.id,
+      isSelected: c.isSelected,
+      country: c.country,
+      serverIp: c.serverIp,
+      ping: c.ping,
+    );
+    return model.toMap(model);
   }
 
   /// Parses a list of raw V2Ray links into [ConfigModel] instances without

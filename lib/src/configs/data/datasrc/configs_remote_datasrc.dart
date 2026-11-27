@@ -11,11 +11,38 @@ import 'package:vendervpn/core/utils/app_log.dart';
 abstract class ConfigsRemoteDatasrc {
   const ConfigsRemoteDatasrc();
   Future<List<Config>> getConfigs();
+
+  /// Cloud nodes saved by the last successful [getConfigs].
+  Future<List<Config>> getCachedConfigs();
 }
 
 class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
   const ConfigsRemoteDatasrcImpl(this._client);
   final Client _client;
+
+  @override
+  Future<List<Config>> getCachedConfigs() async {
+    final cache = sl<CacheHelper>();
+    final selectedId = cache.id;
+    final nodeCountries = cache.nodeCountryMap;
+    final configs = <Config>[];
+    for (final e in cache.configs) {
+      try {
+        configs.add(
+          V2rayImportHelper.configFromCacheMap(
+            e,
+            selectedId: selectedId,
+            nodeCountries: nodeCountries,
+            defaultImportedFrom: 'cloud',
+            defaultDateAdded: '',
+          ),
+        );
+      } catch (err) {
+        appLog('Skipping corrupt cached cloud config: $err');
+      }
+    }
+    return configs;
+  }
 
   @override
   Future<List<Config>> getConfigs() async {

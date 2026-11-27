@@ -7,8 +7,8 @@ import 'package:vendervpn/core/common/app/riverpod/local_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
-import 'package:vendervpn/src/ip/data/datasrc/ip_remote_datasrc.dart';
 import 'package:vendervpn/src/ip/domain/entities/ip_info.dart';
+import 'package:vendervpn/src/ip/domain/usecase/get_ip_info.dart';
 import 'package:vendervpn/core/utils/app_log.dart';
 
 class IpSessionState {
@@ -43,7 +43,7 @@ final ipSessionProvider =
     NotifierProvider<IpSessionNotifier, IpSessionState>(IpSessionNotifier.new);
 
 class IpSessionNotifier extends Notifier<IpSessionState> {
-  final _datasrc = sl<IpRemoteDatasrc>();
+  final _getIpInfo = sl<GetIpInfo>();
   final _cacheHelper = sl<CacheHelper>();
 
   @override
@@ -62,15 +62,15 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
   /// Looks up the user's real IP and country BEFORE TUN is activated (or after disconnect).
   Future<void> lookupBeforeTun() async {
     state = state.copyWith(isLoading: true);
-    try {
-      final info = await _datasrc.fetchIpInfo(isTunnel: false);
-      if (!ref.mounted) return;
-      state = state.copyWith(beforeTun: info, isLoading: false);
-    } catch (e) {
-      appLog('lookupBeforeTun failed: $e');
-      if (!ref.mounted) return;
-      state = state.copyWith(isLoading: false);
-    }
+    final result = await _getIpInfo(const GetIpInfoParams.direct());
+    if (!ref.mounted) return;
+    result.fold(
+      (failure) {
+        appLog('lookupBeforeTun failed: ${failure.message}');
+        state = state.copyWith(isLoading: false);
+      },
+      (info) => state = state.copyWith(beforeTun: info, isLoading: false),
+    );
   }
 
   /// Looks up the connected tunnel exit IP and country AFTER TUN is activated.
@@ -83,19 +83,21 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
 
       IpInfo? info;
       for (var attempt = 0; attempt < 3; attempt++) {
-        try {
-          final candidate = await _datasrc.fetchIpInfo(
-            localHttpProxyPort: httpPort,
-            isTunnel: true,
+        final result = await _getIpInfo(
+          GetIpInfoParams(localHttpProxyPort: httpPort, isTunnel: true),
+        );
+        final candidate = result.fold((failure) {
+          appLog(
+            'lookupAfterTun attempt ${attempt + 1} failed: ${failure.message}',
           );
-          // The real IP means traffic isn't going through the tunnel (yet);
-          // never record it as the node's location.
-          if (state.beforeTun == null || candidate.ip != state.beforeTun!.ip) {
-            info = candidate;
-            break;
-          }
-        } catch (e) {
-          appLog('lookupAfterTun attempt ${attempt + 1} failed: $e');
+          return null;
+        }, (value) => value);
+        // The real IP means traffic isn't going through the tunnel (yet);
+        // never record it as the node's location.
+        if (candidate != null &&
+            (state.beforeTun == null || candidate.ip != state.beforeTun!.ip)) {
+          info = candidate;
+          break;
         }
         if (attempt < 2) {
           await Future<void>.delayed(const Duration(milliseconds: 1000));

@@ -1,9 +1,9 @@
-import 'package:installed_apps/installed_apps.dart';
+import 'package:vendervpn/core/common/entities/installed_app.dart';
 
 import '../../../../core/utils/typedefs.dart';
 
 abstract class PerAppProxyRepo {
-  ResultFuture<List<AppInfo>> getInstalledApps({
+  ResultFuture<List<InstalledApp>> getInstalledApps({
     required bool excludeSystemApps,
     required bool withIcon,
     required bool excludeNonLaunchableApps,

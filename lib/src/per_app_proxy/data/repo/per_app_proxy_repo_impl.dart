@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:installed_apps/app_info.dart';
+import 'package:vendervpn/core/common/entities/installed_app.dart';
 import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/src/per_app_proxy/data/datasrs/per_app_proxy_datasrc.dart';
 
@@ -31,7 +31,7 @@ class PerAppProxyRepoImpl implements PerAppProxyRepo {
   }
 
   @override
-  ResultFuture<List<AppInfo>> getInstalledApps({
+  ResultFuture<List<InstalledApp>> getInstalledApps({
     required bool excludeSystemApps,
     required bool withIcon,
     required bool excludeNonLaunchableApps,

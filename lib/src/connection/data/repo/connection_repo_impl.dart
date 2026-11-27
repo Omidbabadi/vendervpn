@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:vendervpn/core/common/entities/vpn_service_state.dart';
+import 'package:vendervpn/core/common/entities/vpn_status.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
@@ -69,7 +69,10 @@ class ConnectionRepoImpl implements ConnectionRepo {
   }
 
   @override
-  ValueNotifier<V2RayStatus> get connectionStatus => _datasrc.connectionStatus;
+  Stream<VpnStatus> get statusStream => _datasrc.statusStream;
+
+  @override
+  VpnStatus get currentStatus => _datasrc.currentStatus;
 
   @override
   Future<void> disconnect() async {
@@ -77,5 +80,5 @@ class ConnectionRepoImpl implements ConnectionRepo {
   }
 
   @override
-  Future<V2RayServiceState?> getServiceState() => _datasrc.getServiceState();
+  Future<VpnServiceState?> getServiceState() => _datasrc.getServiceState();
 }

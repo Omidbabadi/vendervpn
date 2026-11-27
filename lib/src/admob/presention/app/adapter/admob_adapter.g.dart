@@ -41,7 +41,7 @@ final class AdmobAdapterProvider
   }
 }
 
-String _$admobAdapterHash() => r'a475abd80adc61eb5d163a6ec70f75f99c48270f';
+String _$admobAdapterHash() => r'6cb2e12d05b6311bb490dd6c9a091711843f5ebd';
 
 abstract class _$AdmobAdapter extends $Notifier<AdmobState> {
   AdmobState build();

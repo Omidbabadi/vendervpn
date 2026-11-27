@@ -114,17 +114,16 @@ class AdmobAdapter extends _$AdmobAdapter {
     if (!ok || !_isV2rayStarted || !ref.mounted) return;
 
     final result = await _showBannerAd.call(width);
-    if (!ref.mounted || !_isV2rayStarted) return;
+    if (!ref.mounted || !_isV2rayStarted) {
+      result.fold((_) {}, (handle) => handle.dispose());
+      return;
+    }
     result.fold(
       (failure) {
         appLog(failure.message);
       },
-      (right) {
-        final bannerAd = Cache.instance.bannerAd;
-        if (bannerAd != null) {
-          ref.read(loadedBannerAdProvider.notifier).loadBannerAd(bannerAd);
-        }
-      },
+      (handle) =>
+          ref.read(loadedBannerAdProvider.notifier).loadBannerAd(handle),
     );
   }
 

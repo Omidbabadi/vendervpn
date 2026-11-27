@@ -19,4 +19,13 @@ class ConfigsRepoImpl implements ConfigsRepo {
       return Left(ServerFailure.fromException(e));
     }
   }
+
+  @override
+  ResultFuture<List<Config>> getCachedConfigs() async {
+    try {
+      return Right(await _datasrc.getCachedConfigs());
+    } catch (e) {
+      return Left(CacheFailure(message: e.toString()));
+    }
+  }
 }

@@ -18,7 +18,7 @@ final class ConnectionStateConnecting extends ConnectionState {
 final class ConnectionStateConnected extends ConnectionState {
   const ConnectionStateConnected(this.vpnState, this.config);
   final Config config;
-  final ValueNotifier<V2RayStatus> vpnState;
+  final ValueListenable<VpnStatus> vpnState;
 
   @override
   List<Object?> get props => [vpnState, config];

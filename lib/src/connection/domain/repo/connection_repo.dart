@@ -1,5 +1,5 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:vendervpn/core/common/entities/vpn_service_state.dart';
+import 'package:vendervpn/core/common/entities/vpn_status.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 
 abstract class ConnectionRepo {
@@ -14,9 +14,15 @@ abstract class ConnectionRepo {
   });
   Future disconnect();
   ResultFuture<int> ping(String config);
-  ValueNotifier<V2RayStatus> get connectionStatus;
   ResultFuture<bool> requestPermission();
 
+  /// Live session status. Events are delivered synchronously, in the order
+  /// the engine reports them.
+  Stream<VpnStatus> get statusStream;
+
+  /// The last status the engine reported.
+  VpnStatus get currentStatus;
+
   /// The real native service state, or null if it can't be asked.
-  Future<V2RayServiceState?> getServiceState();
+  Future<VpnServiceState?> getServiceState();
 }

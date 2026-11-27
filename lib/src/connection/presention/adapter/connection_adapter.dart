@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:vendervpn/core/common/entities/vpn_service_state.dart';
+import 'package:vendervpn/core/common/entities/vpn_status.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/singelton/core.dart';
@@ -21,7 +23,7 @@ import '../../../../core/services/injection_container.dart';
 import '../../../admob/domain/usecase/load_interstitial_ad.dart';
 import '../../domain/usecase/connect.dart';
 import '../../domain/usecase/disconnect.dart';
-import '../../domain/usecase/get_vpn_state.dart';
+import '../../domain/usecase/watch_vpn_status.dart';
 import '../../domain/usecase/initialize_v2ay.dart';
 import '../../domain/usecase/request_permission.dart';
 import 'package:vendervpn/core/utils/app_log.dart';
@@ -36,7 +38,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
   ConnectionState build() {
     _connect = sl<Connect>();
     _disconnect = sl<Disconnect>();
-    _state = sl<GetVpnState>();
+    final watchStatus = sl<WatchVpnStatus>();
     _cacheHelper = sl<CacheHelper>();
     _ping = sl<Ping>();
     _requestPermission = sl<RequestPermission>();
@@ -44,11 +46,18 @@ class ConnectionAdapter extends _$ConnectionAdapter
     _getServiceState = sl<GetServiceState>();
     _initializeV2ay.call();
 
+    // The stream is synchronous, so the listeners below see every update
+    // in the order the engine sent it.
+    _status = ValueNotifier<VpnStatus>(watchStatus.current);
+    final statusSub = watchStatus().listen((s) => _status.value = s);
+
     WidgetsBinding.instance.addObserver(this);
     status.addListener(_onServiceStatus);
     ref.onDispose(() {
       WidgetsBinding.instance.removeObserver(this);
       status.removeListener(_onServiceStatus);
+      statusSub.cancel();
+      _status.dispose();
     });
 
     return const ConnectionStateInitial();
@@ -60,7 +69,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
   late CacheHelper _cacheHelper;
   late Connect _connect;
   late Disconnect _disconnect;
-  late GetVpnState _state;
+  late ValueNotifier<VpnStatus> _status;
   late Ping _ping;
 
   bool _isWaitingForAdmob = false;
@@ -129,7 +138,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
   bool _isSettlingStop = false;
 
   /// Whether the plugin's service really runs. Null = can't tell.
-  Future<V2RayServiceState?> serviceState() => _getServiceState.call();
+  Future<VpnServiceState?> serviceState() => _getServiceState.call();
 
   Future<void> _syncOnResume() async {
     if (state is! ConnectionStateConnected || _isWaitingForAdmob) return;
@@ -146,13 +155,13 @@ class ConnectionAdapter extends _$ConnectionAdapter
     // Our own disconnect sets this before it resets the status.
     if (Cache.instance.isVpnDisconnected) return;
     final current = status.value;
-    if (current.state != 'DISCONNECTED') return;
+    if (current.state != VpnConnectionState.disconnected) return;
     if (current.isTrafficLimitReached && _isTrackingCloudUsage) return;
     unawaited(
       settleStoppedSession(
-        V2RayServiceState(
+        VpnServiceState(
           isRunning: false,
-          stopReason: current.stopReason,
+          isTrafficLimitReached: current.isTrafficLimitReached,
           upload: current.upload,
           download: current.download,
         ),
@@ -163,7 +172,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
   /// The tunnel already stopped on its own: count the cloud usage of that
   /// session, save the disconnected state and update the UI. Doesn't call the
   /// plugin's stop, since there is nothing left to stop.
-  Future<void> settleStoppedSession(V2RayServiceState service) async {
+  Future<void> settleStoppedSession(VpnServiceState service) async {
     if (_isSettlingStop) return;
     _isSettlingStop = true;
     try {
@@ -180,7 +189,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
       _isAdShowingFullScreen = false;
       _disconnectAdReady = false;
       Cache.instance.setVpnDisconnected(true);
-      status.value = V2RayStatus();
+      _status.value = const VpnStatus();
       state = const ConnectionStateDisconnected();
       await _cacheHelper.cacheVpnState('DISCONNECTED');
       if (!ref.mounted) return;
@@ -509,7 +518,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
     }
     // Ignore placeholder/disconnected updates (all zeros before the plugin
     // reports the running session), or they'd look like a counter restart.
-    if (current.state != 'CONNECTED') return;
+    if (current.state != VpnConnectionState.connected) return;
     final total = current.upload + current.download;
     if (total == 0 && (_lastTrafficTotal ?? 0) > 0) return;
 
@@ -657,5 +666,6 @@ class ConnectionAdapter extends _$ConnectionAdapter
     }
   }
 
-  ValueNotifier<V2RayStatus> get status => _state.call;
+  /// Live session status for the UI and the usage meter.
+  ValueListenable<VpnStatus> get status => _status;
 }

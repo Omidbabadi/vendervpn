@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:installed_apps/app_info.dart';
+import 'package:vendervpn/core/common/entities/installed_app.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/per_app_proxy/presention/app/adpter/per_app_proxy_adapter.dart';
@@ -474,7 +474,7 @@ class _AppSelectionTile extends StatelessWidget {
     required this.onTap,
   });
 
-  final AppInfo app;
+  final InstalledApp app;
   final bool isSelected;
   final bool isBypass;
   final Color textColor;

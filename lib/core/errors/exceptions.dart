@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class ServerException extends Equatable implements Exception {
   const ServerException({required this.message, required this.statusCode});
@@ -19,9 +18,12 @@ class CacheException extends Equatable implements Exception {
 }
 
 class AdmobException extends Equatable implements Exception {
-  const AdmobException(this.adError,{required this.message});
+  const AdmobException(this.cause, {required this.message});
   final String message;
-  final AdError? adError;
+
+  /// The ad SDK's own error object, kept for logging. Typed as [Object] so
+  /// core code does not depend on the ad SDK.
+  final Object? cause;
 
   @override
   List<Object?> get props => [message];

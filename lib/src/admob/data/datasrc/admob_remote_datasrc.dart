@@ -1,24 +1,23 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:vendervpn/core/config/app_config.dart';
-import 'package:vendervpn/core/common/singelton/core.dart';
+import 'package:vendervpn/core/common/entities/banner_ad_handle.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/app_log.dart';
 
 abstract class AdmobRemoteDatasrc {
   Future<void> init();
   Future<void> loadInterstitialAd(
-    VoidCallback onAdLoaded,
-    VoidCallback onAdFailed,
+    void Function() onAdLoaded,
+    void Function() onAdFailed,
   );
   Future<void> showInterstitialAd({
-    required VoidCallback onAdDismissedFullScreenContent,
-    required VoidCallback onAdFailedToShowFullScreenContent,
-    required VoidCallback onAdShowedFullScreenContent,
+    required void Function() onAdDismissedFullScreenContent,
+    required void Function() onAdFailedToShowFullScreenContent,
+    required void Function() onAdShowedFullScreenContent,
   });
-  Future<void> showBannerAd(double width);
+  Future<BannerAdHandle> showBannerAd(double width);
   Future<void> loadRewardedAd();
 
   /// Returns true if the user watched the ad to the end (earned the reward).
@@ -32,6 +31,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   static final AdRequest request = AdRequest(nonPersonalizedAds: false);
 
   InterstitialAd? _interstitialAd;
+  RewardedAd? _rewardedAd;
 
   int _numInterstitialLoadAttempts = 0;
 
@@ -49,8 +49,8 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
 
   @override
   Future<void> loadInterstitialAd(
-    VoidCallback onAdLoaded,
-    VoidCallback onAdFailed,
+    void Function() onAdLoaded,
+    void Function() onAdFailed,
   ) async {
     final completer = Completer<void>();
 
@@ -115,9 +115,9 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
 
   @override
   Future<void> showInterstitialAd({
-    required VoidCallback onAdDismissedFullScreenContent,
-    required VoidCallback onAdFailedToShowFullScreenContent,
-    required VoidCallback onAdShowedFullScreenContent,
+    required void Function() onAdDismissedFullScreenContent,
+    required void Function() onAdFailedToShowFullScreenContent,
+    required void Function() onAdShowedFullScreenContent,
   }) async {
     if (_interstitialAd == null) {
       onAdFailedToShowFullScreenContent();
@@ -161,7 +161,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   }
 
   @override
-  Future<void> showBannerAd(double width) async {
+  Future<BannerAdHandle> showBannerAd(double width) async {
     try {
       final size = await AdSize.getLargeAnchoredAdaptiveBannerAdSize(
         width.truncate(),
@@ -180,15 +180,16 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
           message: 'No banner ad unit configured',
         );
       }
-      final completer = Completer<void>();
+      final completer = Completer<BannerAd>();
       await BannerAd(
         size: size,
         adUnitId: adUnitId,
         listener: BannerAdListener(
           onAdLoaded: (ad) {
-            Cache.instance.setBannerAd(ad as BannerAd);
-            if (!completer.isCompleted) {
-              completer.complete();
+            if (completer.isCompleted) {
+              ad.dispose();
+            } else {
+              completer.complete(ad as BannerAd);
             }
           },
           onAdFailedToLoad: (ad, loadError) {
@@ -206,7 +207,13 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
         ),
         request: const AdRequest(),
       ).load();
-      await completer.future;
+      final banner = await completer.future;
+      return BannerAdHandle(
+        native: banner,
+        width: banner.size.width.toDouble(),
+        height: banner.size.height.toDouble(),
+        dispose: banner.dispose,
+      );
     } on AdmobException {
       rethrow;
     } catch (e, s) {
@@ -230,7 +237,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
       request: request,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
-          Cache.instance.setRewardedAd(ad);
+          _rewardedAd = ad;
           if (!completer.isCompleted) completer.complete();
         },
         onAdFailedToLoad: (error) {
@@ -256,12 +263,12 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
 
   @override
   Future<bool> showRewardedAd() async {
-    final ad = Cache.instance.rewardedAd;
+    final ad = _rewardedAd;
     if (ad == null) {
       throw const AdmobException(null, message: 'No rewarded ad is loaded');
     }
     // An ad can only be shown once, so forget it right away.
-    Cache.instance.resetRewardedAd();
+    _rewardedAd = null;
 
     final completer = Completer<bool>();
     var earnedReward = false;

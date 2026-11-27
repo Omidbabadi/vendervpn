@@ -56,6 +56,7 @@ Future<void> _perAppProxyInit() async {
 Future<void> _ipInit() async {
   sl
     ..registerLazySingleton(() => GetUserCountry(sl()))
+    ..registerLazySingleton(() => GetIpInfo(sl()))
     ..registerLazySingleton<IpRepo>(() => IpRepoImpl(sl()))
     ..registerLazySingleton<IpRemoteDatasrc>(() => const IpRemoteDatasrcImpl());
 }
@@ -89,6 +90,7 @@ Future<void> _configsInit() async {
 
   sl
     ..registerLazySingleton(() => GetConfigs(sl()))
+    ..registerLazySingleton(() => GetCachedConfigs(sl()))
     ..registerLazySingleton<ConfigsRepo>(() => ConfigsRepoImpl(sl()))
     ..registerLazySingleton<ConfigsRemoteDatasrc>(
       () => ConfigsRemoteDatasrcImpl(sl()),
@@ -109,7 +111,7 @@ Future<void> _v2rayInit() async {
     ..registerLazySingleton(() => Connect(sl()))
     ..registerLazySingleton(() => Disconnect(sl()))
     ..registerLazySingleton(() => InitializeV2ay(sl()))
-    ..registerLazySingleton(() => GetVpnState(sl()))
+    ..registerLazySingleton(() => WatchVpnStatus(sl()))
     ..registerLazySingleton(() => GetServiceState(sl()))
     ..registerLazySingleton(() => Ping(sl()))
     ..registerLazySingleton(() => RequestPermission(sl()))

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:vendervpn/core/common/entities/vpn_status.dart';
 import 'package:vendervpn/core/common/app/riverpod/banner_ad.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_configs_list.dart';
@@ -10,6 +9,7 @@ import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
+import 'package:vendervpn/src/admob/presention/widgets/banner_ad_view.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/connection_status.dart';
 
@@ -35,7 +35,7 @@ class HomeView extends ConsumerWidget {
     final totalNodes = cloudConfigs.length + localConfigs.length;
     final isConnected = connectionState is ConnectionStateConnected;
 
-    return ValueListenableBuilder<V2RayStatus>(
+    return ValueListenableBuilder<VpnStatus>(
       valueListenable: statusNotifier,
       builder: (context, status, _) {
         final ping = selectedConfig?.ping ?? -1;
@@ -114,11 +114,7 @@ class HomeView extends ConsumerWidget {
                     boxShadow: Colours.softCardShadow(context),
                   ),
                   alignment: Alignment.center,
-                  child: SizedBox(
-                    height: bannerAd.size.height.toDouble(),
-                    width: bannerAd.size.width.toDouble(),
-                    child: AdWidget(ad: bannerAd),
-                  ),
+                  child: BannerAdView(handle: bannerAd),
                 ),
               ],
             ],

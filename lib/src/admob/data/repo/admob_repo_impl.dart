@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:dartz/dartz.dart';
+import 'package:vendervpn/core/common/entities/banner_ad_handle.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
 import 'package:vendervpn/src/admob/domain/repo/admob_repo.dart';
@@ -25,8 +24,8 @@ class AdmobRepoImpl implements AdmobRepo {
 
   @override
   ResultFuture<void> loadInterstitialAd(
-    VoidCallback onAdLoaded,
-    VoidCallback onAdFailed,
+    void Function() onAdLoaded,
+    void Function() onAdFailed,
   ) async {
     try {
       await _remoteDatasrc.loadInterstitialAd(onAdLoaded, onAdFailed);
@@ -38,9 +37,9 @@ class AdmobRepoImpl implements AdmobRepo {
 
   @override
   ResultFuture<void> showInterstitialAd({
-    required VoidCallback onAdDismissedFullScreenContent,
-    required VoidCallback onAdFailedToShowFullScreenContent,
-    required VoidCallback onAdShowedFullScreenContent,
+    required void Function() onAdDismissedFullScreenContent,
+    required void Function() onAdFailedToShowFullScreenContent,
+    required void Function() onAdShowedFullScreenContent,
   }) async {
     try {
       await _remoteDatasrc.showInterstitialAd(
@@ -55,11 +54,10 @@ class AdmobRepoImpl implements AdmobRepo {
   }
 
   @override
-  ResultFuture<void> showBannerAd(double width) async {
+  ResultFuture<BannerAdHandle> showBannerAd(double width) async {
     try {
-      await _remoteDatasrc.showBannerAd(width);
-
-      return Right(null);
+      final handle = await _remoteDatasrc.showBannerAd(width);
+      return Right(handle);
     } on AdmobException catch (e) {
       return Left(AdmobFailure.fromException(e));
     }

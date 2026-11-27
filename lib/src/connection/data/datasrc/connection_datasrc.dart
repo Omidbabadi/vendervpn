@@ -1,8 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:vendervpn/core/common/entities/vpn_service_state.dart';
+import 'package:vendervpn/core/common/entities/vpn_status.dart';
 import 'package:vendervpn/core/common/singelton/core.dart';
+import 'package:vendervpn/src/connection/data/models/vpn_status_mapper.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/utils/consts.dart';
@@ -22,20 +25,42 @@ abstract class ConnectionDatasrc {
   });
   Future<void> disconnect();
   Future<int> ping(String config);
-  ValueNotifier<V2RayStatus> get connectionStatus;
   Future<bool> requestPermission();
+
+  /// Every status update from the plugin, mapped to [VpnStatus] and
+  /// delivered synchronously.
+  Stream<VpnStatus> get statusStream;
+
+  /// The last status the plugin reported.
+  VpnStatus get currentStatus;
 
   /// Whether the native service is really running, or null if that can't be
   /// asked (older plugin build, unsupported platform).
-  Future<V2RayServiceState?> getServiceState();
+  Future<VpnServiceState?> getServiceState();
 }
 
 class ConnectionDatasrcImpl implements ConnectionDatasrc {
-  ConnectionDatasrcImpl(this._v2ray, this._status);
+  /// [status] is fed by the plugin's `onStatusChanged` callback (see the DI
+  /// setup); this class turns it into a stream of domain entities.
+  ConnectionDatasrcImpl(this._v2ray, this._status) {
+    _status.addListener(_forward);
+  }
 
   final V2ray _v2ray;
   final ValueNotifier<V2RayStatus> _status;
   bool _isInitialized = false;
+
+  // Sync so listeners see every update in order, exactly as the plugin sent
+  // them (the cloud usage meter counts deltas between updates).
+  final _controller = StreamController<VpnStatus>.broadcast(sync: true);
+
+  void _forward() => _controller.add(_status.value.toEntity());
+
+  @override
+  Stream<VpnStatus> get statusStream => _controller.stream;
+
+  @override
+  VpnStatus get currentStatus => _status.value.toEntity();
 
   @override
   Future<bool> requestPermission() async {
@@ -149,14 +174,10 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
   }
 
   @override
-  ValueNotifier<V2RayStatus> get connectionStatus {
-    return _status;
-  }
-
-  @override
-  Future<V2RayServiceState?> getServiceState() async {
+  Future<VpnServiceState?> getServiceState() async {
     try {
-      return await _v2ray.getServiceState();
+      final state = await _v2ray.getServiceState();
+      return state.toEntity();
     } catch (e, s) {
       appLogStack(stackTrace: s, label: 'getServiceState failed: $e');
       return null;

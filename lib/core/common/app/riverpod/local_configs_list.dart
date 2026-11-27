@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
-import 'package:vendervpn/src/configs/data/models/config_model.dart';
 import 'package:vendervpn/core/utils/app_log.dart';
 
 class SubscriptionItem {
@@ -195,38 +193,15 @@ class LocalConfigsList extends Notifier<List<Config>> {
     final List<Config> loaded = [];
 
     for (final e in rawList) {
+      if ((e['uri'] as String? ?? '').isEmpty) continue;
       try {
-        final uri = e['uri'] as String? ?? '';
-        if (uri.isEmpty) continue;
-        final parser = V2ray.parseFromURL(uri);
-        final fullJson =
-            V2rayImportHelper.buildFullConfigurationWithHttpInbound(parser);
-        final id = e['id'] as String? ?? 'local_${uri.hashCode.abs()}';
         loaded.add(
-          Config(
-            configjson: fullJson,
-            importedFrom: e['importedFrom'] as String? ?? 'local',
-            remark: e['remark'] as String? ?? parser.remark,
-            port: int.tryParse((e['port'] ?? '0').toString()) ?? parser.port,
-            address: e['address'] as String? ?? parser.address,
-            uri: uri,
-            dateAdded:
-                e['dateAdded'] as String? ?? DateTime.now().toIso8601String(),
-            id: id,
-            isSelected: id == selectedId,
-            // Verified country, else the remark's flag emoji, else unknown.
-            country:
-                nodeCountries[uri.trim()] ??
-                V2rayImportHelper.countryFromRemarkFlag(
-                  e['remark'] as String? ?? parser.remark,
-                ),
-            serverIp:
-                (e['serverIp'] as String?) != null &&
-                        e['serverIp'] != 'N/A' &&
-                        e['serverIp'] != parser.address
-                    ? e['serverIp'] as String
-                    : null,
-            ping: int.tryParse((e['ping'] ?? '-1').toString()) ?? -1,
+          V2rayImportHelper.configFromCacheMap(
+            e,
+            selectedId: selectedId,
+            nodeCountries: nodeCountries,
+            defaultImportedFrom: 'local',
+            readServerIp: true,
           ),
         );
       } catch (err) {
@@ -377,7 +352,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
 
   Future<void> _replaceSubscriptionNodesAndPersist({
     required String sourceTag,
-    required List<ConfigModel> newModels,
+    required List<Config> newModels,
   }) async {
     // Keep nodes from other sources; replace nodes belonging to this subscription.
     // Keyed by id (scoped per source), so a link shared with another
@@ -417,7 +392,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
     }
   }
 
-  Future<void> _mergeAndPersist(List<ConfigModel> newModels) async {
+  Future<void> _mergeAndPersist(List<Config> newModels) async {
     final existingById = <String, Config>{for (final c in state) c.id: c};
     for (final model in newModels) {
       existingById[model.id] = model;
@@ -480,25 +455,9 @@ class LocalConfigsList extends Notifier<List<Config>> {
   }
 
   Future<void> _persistState(List<Config> list) async {
-    final maps =
-        list.map((c) {
-          final model = ConfigModel(
-            configjson: c.configjson,
-            importedFrom: c.importedFrom,
-            remark: c.remark,
-            port: c.port,
-            address: c.address,
-            uri: c.uri,
-            dateAdded: c.dateAdded,
-            id: c.id,
-            isSelected: c.isSelected,
-            country: c.country,
-            serverIp: c.serverIp,
-            ping: c.ping,
-          );
-          return model.toMap(model);
-        }).toList();
-    await _cacheHelper.cacheLocalConfigs(maps);
+    await _cacheHelper.cacheLocalConfigs(
+      list.map(V2rayImportHelper.configToCacheMap).toList(),
+    );
   }
 }
 

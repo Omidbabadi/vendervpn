@@ -13,7 +13,7 @@ part of 'banner_ad.dart';
 final loadedBannerAdProvider = LoadedBannerAdProvider._();
 
 final class LoadedBannerAdProvider
-    extends $NotifierProvider<LoadedBannerAd, BannerAd?> {
+    extends $NotifierProvider<LoadedBannerAd, BannerAdHandle?> {
   LoadedBannerAdProvider._()
     : super(
         from: null,
@@ -33,27 +33,27 @@ final class LoadedBannerAdProvider
   LoadedBannerAd create() => LoadedBannerAd();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(BannerAd? value) {
+  Override overrideWithValue(BannerAdHandle? value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<BannerAd?>(value),
+      providerOverride: $SyncValueProvider<BannerAdHandle?>(value),
     );
   }
 }
 
-String _$loadedBannerAdHash() => r'a5928d1f99e75bd0097595aca83546af93fe4063';
+String _$loadedBannerAdHash() => r'8403b5bc25b0f21c1ffb1ecfa24e5e46c7e02299';
 
-abstract class _$LoadedBannerAd extends $Notifier<BannerAd?> {
-  BannerAd? build();
+abstract class _$LoadedBannerAd extends $Notifier<BannerAdHandle?> {
+  BannerAdHandle? build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref = this.ref as $Ref<BannerAd?, BannerAd?>;
+    final ref = this.ref as $Ref<BannerAdHandle?, BannerAdHandle?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<BannerAd?, BannerAd?>,
-              BannerAd?,
+              AnyNotifier<BannerAdHandle?, BannerAdHandle?>,
+              BannerAdHandle?,
               Object?,
               Object?
             >;

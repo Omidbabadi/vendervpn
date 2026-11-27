@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_v2ray_client/flutter_v2ray.dart';
+import 'package:vendervpn/core/common/entities/vpn_status.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
@@ -53,7 +53,7 @@ class ConnectionStatus extends ConsumerWidget {
     final textColor = Colours.classicAdabtiveTextColor(context);
     final isConnected = connectionState is ConnectionStateConnected;
 
-    return ValueListenableBuilder<V2RayStatus>(
+    return ValueListenableBuilder<VpnStatus>(
       valueListenable: statusNotifier,
       builder: (context, status, _) {
         final activeIp = ipSession.activeInfo(isConnected);
