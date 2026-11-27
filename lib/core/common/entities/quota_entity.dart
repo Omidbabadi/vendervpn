@@ -5,8 +5,8 @@ import 'package:equatable/equatable.dart';
 /// The server owns the numbers and the day boundary (midnight Asia/Tehran).
 /// [pendingBytes] is traffic this device has counted but not reported yet, so
 /// the meter and the connection cutoff stay live between reports.
-class UsageQuota extends Equatable {
-  const UsageQuota({
+class QuotaEntity extends Equatable {
+  const QuotaEntity({
     required this.day,
     required this.usedBytes,
     required this.bonusBytes,
@@ -22,7 +22,7 @@ class UsageQuota extends Equatable {
 
   /// Nothing has been loaded from the server yet. All amounts are zero: the
   /// app has no built-in limits, only the server's.
-  const UsageQuota.unknown()
+  const QuotaEntity.unknown()
     : day = '',
       usedBytes = 0,
       bonusBytes = 0,
@@ -72,11 +72,11 @@ class UsageQuota extends Equatable {
 
   int get totalUsedBytes => usedBytes + pendingBytes;
 
-  int get limitBytes => freeBytes + bonusBytes;
+  int get totalBytes => freeBytes + bonusBytes;
 
-  int get remainingBytes => (limitBytes - totalUsedBytes).clamp(0, limitBytes);
+  int get remainingBytes => (totalBytes - totalUsedBytes).clamp(0, totalBytes);
 
-  bool get isExceeded => isKnown && totalUsedBytes >= limitBytes;
+  bool get isExhausted => isKnown && totalUsedBytes >= totalBytes;
 
   /// Server clock minus device clock, so a wrong device clock doesn't matter.
   Duration get _clockSkew {
@@ -106,7 +106,7 @@ class UsageQuota extends Equatable {
   /// [resetsAt] on the device clock.
   DateTime? get localResetsAt => resetsAt?.subtract(_clockSkew);
 
-  UsageQuota withPending(int bytes) => _copy(pendingBytes: bytes);
+  QuotaEntity withPending(int bytes) => _copy(pendingBytes: bytes);
 
   /// A rewarded ad would still add data today, per the server's numbers.
   bool get canEarnBonus =>
@@ -114,7 +114,7 @@ class UsageQuota extends Equatable {
 
   /// Estimate after one rewarded ad, using the server's per-ad amount (the
   /// server confirms the real number). Unchanged when no bonus is left.
-  UsageQuota withRewardBonus() {
+  QuotaEntity withRewardBonus() {
     if (!canEarnBonus) return this;
     return _copy(
       bonusBytes: bonusBytes + bonusPerAdBytes,
@@ -122,12 +122,12 @@ class UsageQuota extends Equatable {
     );
   }
 
-  UsageQuota _copy({
+  QuotaEntity _copy({
     int? bonusBytes,
     int? bonusesLeftToday,
     int? pendingBytes,
   }) {
-    return UsageQuota(
+    return QuotaEntity(
       day: day,
       usedBytes: usedBytes,
       bonusBytes: bonusBytes ?? this.bonusBytes,

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/core/utils/typedefs.dart';
-import 'package:vendervpn/src/usage_quota/domain/entities/usage_quota.dart';
+import 'package:vendervpn/core/common/entities/quota_entity.dart';
 import 'package:vendervpn/src/usage_quota/domain/usecase/add_cloud_usage.dart';
 import 'package:vendervpn/src/usage_quota/domain/usecase/add_reward_bonus.dart';
 import 'package:vendervpn/src/usage_quota/domain/usecase/flush_cloud_usage.dart';
@@ -20,12 +20,12 @@ const bool kFakeRewardedAds = true;
 /// Whether a cloud node may connect right now.
 enum QuotaGate { allowed, exceeded, unavailable }
 
-final usageQuotaProvider = NotifierProvider<UsageQuotaAdapter, UsageQuota>(
+final usageQuotaProvider = NotifierProvider<UsageQuotaAdapter, QuotaEntity>(
   UsageQuotaAdapter.new,
 );
 
 /// Holds today's cloud-node quota for the UI and the connection flow.
-class UsageQuotaAdapter extends Notifier<UsageQuota> {
+class UsageQuotaAdapter extends Notifier<QuotaEntity> {
   /// Usage is reported at most this long after it was counted...
   static const _reportDelay = Duration(seconds: 60);
 
@@ -46,7 +46,7 @@ class UsageQuotaAdapter extends Notifier<UsageQuota> {
   Timer? _rolloverTimer;
 
   @override
-  UsageQuota build() {
+  QuotaEntity build() {
     ref.onDispose(() {
       _reportTimer?.cancel();
       _rolloverTimer?.cancel();
@@ -73,7 +73,7 @@ class UsageQuotaAdapter extends Notifier<UsageQuota> {
       if (!ref.mounted) return QuotaGate.unavailable;
       if (!loaded && !state.isCurrent()) return QuotaGate.unavailable;
     }
-    return state.isExceeded ? QuotaGate.exceeded : QuotaGate.allowed;
+    return state.isExhausted ? QuotaGate.exceeded : QuotaGate.allowed;
   }
 
   /// Counts cloud traffic. It's reported to the server in batches.
@@ -122,7 +122,7 @@ class UsageQuotaAdapter extends Notifier<UsageQuota> {
     };
   }
 
-  bool _apply(Result<UsageQuota> result) {
+  bool _apply(Result<QuotaEntity> result) {
     return result.fold(
       (failure) {
         appLog('Usage quota error: ${failure.errorMessage}');
@@ -135,7 +135,7 @@ class UsageQuotaAdapter extends Notifier<UsageQuota> {
     );
   }
 
-  void _set(UsageQuota quota) {
+  void _set(QuotaEntity quota) {
     if (!ref.mounted) return;
     final newDay = quota.resetsAt != state.resetsAt;
     state = quota;
@@ -143,7 +143,7 @@ class UsageQuotaAdapter extends Notifier<UsageQuota> {
   }
 
   /// Reloads just after the server's midnight so the meter resets.
-  void _scheduleRollover(UsageQuota quota) {
+  void _scheduleRollover(QuotaEntity quota) {
     _rolloverTimer?.cancel();
     final resetsAt = quota.localResetsAt;
     if (resetsAt == null) return;

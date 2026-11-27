@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
+import 'package:vendervpn/core/widgets/quota_progress_bar.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/cloud_quota_sheet.dart';
 import 'package:vendervpn/src/usage_quota/presention/adapter/usage_quota_adapter.dart';
 
@@ -20,18 +21,18 @@ class CloudQuotaMeter extends ConsumerWidget {
     final ratio =
         !quota.isKnown
             ? 0.0
-            : quota.limitBytes == 0
+            : quota.totalBytes == 0
             ? 1.0
-            : (quota.usedBytes / quota.limitBytes).clamp(0.0, 1.0);
+            : (quota.usedBytes / quota.totalBytes).clamp(0.0, 1.0);
     final barColor =
-        quota.isExceeded
+        quota.isExhausted
             ? Colours.orbCoral
             : ratio >= 0.8
             ? Colours.pastelAmberFg
             : Colours.orbViolet;
 
     final used = SubscriptionUserInfo.formatBytes(quota.usedBytes);
-    final limit = SubscriptionUserInfo.formatBytes(quota.limitBytes);
+    final limit = SubscriptionUserInfo.formatBytes(quota.totalBytes);
     final left = SubscriptionUserInfo.formatBytes(quota.remainingBytes);
     final reward = SubscriptionUserInfo.formatBytes(quota.bonusPerAdBytes);
     final hasBonus = quota.bonusBytes > 0;
@@ -69,21 +70,17 @@ class CloudQuotaMeter extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 7),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: ratio,
-              minHeight: 5,
-              backgroundColor: Colours.subtleBorder(context),
-              valueColor: AlwaysStoppedAnimation<Color>(barColor),
-            ),
+          QuotaProgressBar(
+            value: ratio,
+            color: barColor,
+            backgroundColor: Colours.subtleBorder(context),
           ),
           const SizedBox(height: 6),
           Row(
             children: [
               Expanded(
                 child: Text(
-                  quota.isExceeded
+                  quota.isExhausted
                       ? 'Used up for today'
                       : '$left left today${hasBonus ? ' · incl. ad bonus' : ''}',
                   maxLines: 1,
@@ -92,13 +89,13 @@ class CloudQuotaMeter extends ConsumerWidget {
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color:
-                        quota.isExceeded
+                        quota.isExhausted
                             ? Colours.orbCoral
                             : Colours.subtitleGrey,
                   ),
                 ),
               ),
-              if (quota.isExceeded && quota.canEarnBonus)
+              if (quota.isExhausted && quota.canEarnBonus)
                 GestureDetector(
                   onTap: () => CloudQuotaSheet.show(context),
                   child: Text(

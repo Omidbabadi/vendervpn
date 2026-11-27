@@ -1,8 +1,8 @@
 import 'package:vendervpn/core/utils/typedefs.dart';
-import 'package:vendervpn/src/usage_quota/domain/entities/usage_quota.dart';
+import 'package:vendervpn/core/common/entities/quota_entity.dart';
 
 /// A quota snapshot from the server (never includes pending local usage).
-class UsageQuotaModel extends UsageQuota {
+class UsageQuotaModel extends QuotaEntity {
   const UsageQuotaModel({
     required super.day,
     required super.usedBytes,

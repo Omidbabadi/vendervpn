@@ -31,8 +31,8 @@ Future<void> _usageQuotaInit() async {
     ..registerLazySingleton(() => AddRewardBonus(sl()))
     ..registerLazySingleton(() => FlushCloudUsage(sl()))
     ..registerLazySingleton(() => GetCachedUsageQuota(sl()))
-    ..registerLazySingleton<UsageQuotaRepo>(
-      () => UsageQuotaRepoImpl(sl(), sl()),
+    ..registerLazySingleton<QuotaRepository>(
+      () => QuotaRepositoryImpl(sl(), sl()),
     )
     ..registerLazySingleton<UsageQuotaRemoteDatasrc>(
       () => UsageQuotaRemoteDatasrcImpl(sl<Client>(), sl(), sl()),

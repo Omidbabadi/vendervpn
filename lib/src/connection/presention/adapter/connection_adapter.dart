@@ -208,7 +208,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
       if (!ref.mounted) return;
       unawaited(quota.flush());
       if (service.isTrafficLimitReached ||
-          ref.read(usageQuotaProvider).isExceeded) {
+          ref.read(usageQuotaProvider).isExhausted) {
         state = ConnectionStateQuotaExceeded(DateTime.now());
       }
     } finally {
@@ -536,7 +536,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
     await ref.read(usageQuotaProvider.notifier).addUsage(bytes);
     if (!ref.mounted || !_isTrackingCloudUsage) return;
 
-    if (ref.read(usageQuotaProvider).isExceeded) {
+    if (ref.read(usageQuotaProvider).isExhausted) {
       _stopCloudUsageTracking();
       await stopConnection();
       state = ConnectionStateQuotaExceeded(DateTime.now());

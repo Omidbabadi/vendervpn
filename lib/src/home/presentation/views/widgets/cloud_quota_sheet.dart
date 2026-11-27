@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
+import 'package:vendervpn/core/widgets/quota_progress_bar.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/usage_quota/presention/adapter/usage_quota_adapter.dart';
@@ -31,11 +32,11 @@ class CloudQuotaSheet extends ConsumerWidget {
     final textColor = Colours.classicAdabtiveTextColor(context);
 
     final used = SubscriptionUserInfo.formatBytes(quota.usedBytes);
-    final limit = SubscriptionUserInfo.formatBytes(quota.limitBytes);
+    final limit = SubscriptionUserInfo.formatBytes(quota.totalBytes);
     final reward = SubscriptionUserInfo.formatBytes(quota.bonusPerAdBytes);
     final canEarn = quota.canEarnBonus;
     final progress =
-        quota.limitBytes == 0 ? 1.0 : quota.usedBytes / quota.limitBytes;
+        quota.totalBytes == 0 ? 1.0 : quota.usedBytes / quota.totalBytes;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -62,14 +63,11 @@ class CloudQuotaSheet extends ConsumerWidget {
               style: const TextStyle(fontSize: 14, color: Colours.subtitleGrey),
             ),
             const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: LinearProgressIndicator(
-                value: progress.clamp(0.0, 1.0),
-                minHeight: 8,
-                color: Colours.orbCoral,
-                backgroundColor: Colours.softChipBg(context),
-              ),
+            QuotaProgressBar(
+              value: progress,
+              minHeight: 8,
+              color: Colours.orbCoral,
+              backgroundColor: Colours.softChipBg(context),
             ),
             const SizedBox(height: 16),
             Text(
