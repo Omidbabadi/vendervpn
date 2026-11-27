@@ -24,6 +24,7 @@ import '../../domain/usecase/disconnect.dart';
 import '../../domain/usecase/get_vpn_state.dart';
 import '../../domain/usecase/initialize_v2ay.dart';
 import '../../domain/usecase/request_permission.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 part 'connection_adapter.g.dart';
 part 'connection_state.dart';
@@ -91,7 +92,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
             state == AppLifecycleState.hidden);
 
     if (userClosedApp || userSwitchedAppBeforeAd) {
-      debugPrint(
+      appLog(
         'Connection aborted because user left/closed app during AdMob step ($state)',
       );
       _abortedByUserLeavingApp = true;
@@ -224,7 +225,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
   Future<void> startConnection({bool watchRewardedAd = false}) async {
     final config = ref.read(currentConfigProvider);
     if (config == null) {
-      debugPrint('Error: Config Not Found');
+      appLog('Error: Config Not Found');
       return;
     }
     final isCloudNode = _isCloudNode(config);
@@ -277,7 +278,7 @@ class ConnectionAdapter extends _$ConnectionAdapter
     if (!proxyOnly) {
       final per = await requestPermission();
       if (!per || !ref.mounted || attemptId != _activeAttemptId) {
-        debugPrint('Error: VPN Permission Denied');
+        appLog('Error: VPN Permission Denied');
         state = const ConnectionStateDisconnected();
         return;
       }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
@@ -11,6 +10,7 @@ import 'package:vendervpn/src/usage_quota/domain/usecase/add_reward_bonus.dart';
 import 'package:vendervpn/src/usage_quota/domain/usecase/flush_cloud_usage.dart';
 import 'package:vendervpn/src/usage_quota/domain/usecase/get_cached_usage_quota.dart';
 import 'package:vendervpn/src/usage_quota/domain/usecase/get_usage_quota.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 /// TEMPORARY (testing): rewarded ads are simulated and the bonus comes from
 /// the server's test endpoint without ad verification. Turn this off together
@@ -104,7 +104,7 @@ class UsageQuotaAdapter extends Notifier<UsageQuota> {
     final result = await _addRewardBonus.call();
     return result.fold(
       (failure) {
-        debugPrint('Reward bonus error: ${failure.errorMessage}');
+        appLog('Reward bonus error: ${failure.errorMessage}');
         return _bonusErrorMessage(failure);
       },
       (quota) {
@@ -125,7 +125,7 @@ class UsageQuotaAdapter extends Notifier<UsageQuota> {
   bool _apply(Result<UsageQuota> result) {
     return result.fold(
       (failure) {
-        debugPrint('Usage quota error: ${failure.errorMessage}');
+        appLog('Usage quota error: ${failure.errorMessage}');
         return false;
       },
       (quota) {

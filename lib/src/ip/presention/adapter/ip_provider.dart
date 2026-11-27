@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
@@ -10,6 +9,7 @@ import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
 import 'package:vendervpn/src/ip/data/datasrc/ip_remote_datasrc.dart';
 import 'package:vendervpn/src/ip/domain/entities/ip_info.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 class IpSessionState {
   const IpSessionState({
@@ -67,7 +67,7 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
       if (!ref.mounted) return;
       state = state.copyWith(beforeTun: info, isLoading: false);
     } catch (e) {
-      debugPrint('lookupBeforeTun failed: $e');
+      appLog('lookupBeforeTun failed: $e');
       if (!ref.mounted) return;
       state = state.copyWith(isLoading: false);
     }
@@ -95,7 +95,7 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
             break;
           }
         } catch (e) {
-          debugPrint('lookupAfterTun attempt ${attempt + 1} failed: $e');
+          appLog('lookupAfterTun attempt ${attempt + 1} failed: $e');
         }
         if (attempt < 2) {
           await Future<void>.delayed(const Duration(milliseconds: 1000));
@@ -154,7 +154,7 @@ class IpSessionNotifier extends Notifier<IpSessionState> {
 
       state = state.copyWith(afterTun: info, isLoading: false);
     } catch (e) {
-      debugPrint('lookupAfterTun failed: $e');
+      appLog('lookupAfterTun failed: $e');
       if (!ref.mounted) return;
       state = state.copyWith(isLoading: false);
     }

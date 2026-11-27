@@ -7,19 +7,11 @@ abstract class Constants {
   static const iOSInterstialAdUnitId =
       'ca-app-pub-3940256099942544/4411468910'; // Fixed: iOS Interstitial
 
-  // --- Interstitial Video Test IDs ---
-  static const androidInterstitialVideoAdTest =
-      'ca-app-pub-3940256099942544/8691691433';
-  static const iosInterstitialVideoAdTest =
-      'ca-app-pub-3940256099942544/5135589807';
-
   // --- Banner Test IDs ---
   static const androidBannerAdIdTest =
       'ca-app-pub-3940256099942544/9214589741'; // Adaptive Banner
   static const iosBannerAdIdTest =
       'ca-app-pub-3940256099942544/2934735716'; // Fixed-size Banner
-  static const iosAdaptiveBannerAdIdTest =
-      'ca-app-pub-3940256099942544/2435281174'; // Adaptive Banner
 
   // --- Rewarded Test IDs ---
   static const androidRewardedAdTest = 'ca-app-pub-3940256099942544/5224354917';
@@ -38,12 +30,6 @@ abstract class Constants {
   // --- Native Advanced Test IDs ---
   static const androidNativeAdTest = 'ca-app-pub-3940256099942544/2247696110';
   static const iosNativeAdTest = 'ca-app-pub-3940256099942544/3986624511';
-
-  // Kept for backward compatibility if referenced elsewhere in your project
-  static const linuxInterstialAdUnitId =
-      'ca-app-pub-3940256099942544/1033173712';
-  static const windowsInterstialAdUnitId =
-      'ca-app-pub-3940256099942544/1033173712';
 
   static const List<String> subnets = [
     "0.0.0.0/5",

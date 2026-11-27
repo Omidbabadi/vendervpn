@@ -10,7 +10,6 @@ import 'package:vendervpn/core/common/app/riverpod/theme/current_theme.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/core/widgets/dot_matrix_text.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
-import 'package:vendervpn/src/admob/presention/app/adapter/admob_adapter.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/connection_status.dart';
 

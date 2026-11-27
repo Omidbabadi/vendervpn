@@ -48,3 +48,13 @@ app.*.map.json
 # Local-only: graphify output and local plugin override
 graphify-out/
 pubspec_overrides.yaml
+
+# Local-only: crash logs, screenshots, IDE/tooling output
+ctashlog*.txt
+*crash*log*.txt
+flutter_*.png
+.VSCodeCounter/
+.idx/
+
+# Local build-time config (see dart_defines.example.json)
+dart_defines.json

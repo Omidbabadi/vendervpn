@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vendervpn/core/common/app/riverpod/banner_ad.dart';
 import 'package:vendervpn/core/common/singelton/core.dart';
@@ -11,6 +10,7 @@ import 'package:vendervpn/src/admob/domain/usecase/show_rewarded_ad.dart';
 
 import '../../../../../core/services/injection_container.dart';
 import '../../../domain/usecase/init.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 part 'admob_adapter.g.dart';
 part 'admob_state.dart';
@@ -43,7 +43,7 @@ class AdmobAdapter extends _$AdmobAdapter {
 
   Future<bool> init() async {
     if (!_isV2rayStarted) {
-      debugPrint('Blocked AdMob init: V2Ray TUN has not started yet.');
+      appLog('Blocked AdMob init: V2Ray TUN has not started yet.');
       return false;
     }
     if (_isInitialized) return true;
@@ -53,12 +53,12 @@ class AdmobAdapter extends _$AdmobAdapter {
     return result.fold(
       (left) {
         state = AdmobError(left.message);
-        debugPrint(left.message);
+        appLog(left.message);
         return false;
       },
       (right) {
         _isInitialized = true;
-        debugPrint('Admob initialized successfully over V2Ray TUN');
+        appLog('Admob initialized successfully over V2Ray TUN');
         state = const AdmobInitialzed();
         return true;
       },
@@ -67,7 +67,7 @@ class AdmobAdapter extends _$AdmobAdapter {
 
   Future<void> loadInterstitialAd(LoadInterstitialAdParams params) async {
     if (!_isV2rayStarted) {
-      debugPrint('Blocked InterstitialAd load: V2Ray TUN has not started yet.');
+      appLog('Blocked InterstitialAd load: V2Ray TUN has not started yet.');
       params.onAdFailed();
       return;
     }
@@ -107,7 +107,7 @@ class AdmobAdapter extends _$AdmobAdapter {
 
   Future<void> showBannerAd(double width) async {
     if (!_isV2rayStarted) {
-      debugPrint('Blocked BannerAd load: V2Ray TUN has not started yet.');
+      appLog('Blocked BannerAd load: V2Ray TUN has not started yet.');
       return;
     }
     final ok = await init();
@@ -117,7 +117,7 @@ class AdmobAdapter extends _$AdmobAdapter {
     if (!ref.mounted || !_isV2rayStarted) return;
     result.fold(
       (failure) {
-        debugPrint(failure.message);
+        appLog(failure.message);
       },
       (right) {
         final bannerAd = Cache.instance.bannerAd;
@@ -131,7 +131,7 @@ class AdmobAdapter extends _$AdmobAdapter {
   /// Returns true when a rewarded ad is loaded and ready to show.
   Future<bool> loadRewardedAd() async {
     if (!_isV2rayStarted) {
-      debugPrint('Blocked RewardedAd load: V2Ray TUN has not started yet.');
+      appLog('Blocked RewardedAd load: V2Ray TUN has not started yet.');
       return false;
     }
     final ok = await init();

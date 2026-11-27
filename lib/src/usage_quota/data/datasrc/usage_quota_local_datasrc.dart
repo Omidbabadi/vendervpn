@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/src/usage_quota/data/models/usage_outbox.dart';
 import 'package:vendervpn/src/usage_quota/data/models/usage_quota_model.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 /// On-device state for the cloud quota: the last server snapshot (so the UI
 /// can render at once) and the usage not yet reported to the server.
@@ -27,7 +27,7 @@ class UsageQuotaLocalDatasrcImpl implements UsageQuotaLocalDatasrc {
       return map == null ? null : UsageQuotaModel.fromMap(map);
     } catch (e) {
       // A corrupt snapshot is only a cache; the server has the real numbers.
-      debugPrint('Ignoring cached quota snapshot: $e');
+      appLog('Ignoring cached quota snapshot: $e');
       return null;
     }
   }
@@ -47,7 +47,7 @@ class UsageQuotaLocalDatasrcImpl implements UsageQuotaLocalDatasrc {
       final map = _cacheHelper.cloudUsageOutbox;
       return map == null ? const UsageOutbox() : UsageOutbox.fromMap(map);
     } catch (e) {
-      debugPrint('Ignoring unreadable usage outbox: $e');
+      appLog('Ignoring unreadable usage outbox: $e');
       return const UsageOutbox();
     }
   }

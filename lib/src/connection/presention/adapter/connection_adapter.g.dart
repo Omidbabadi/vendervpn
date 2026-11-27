@@ -41,7 +41,7 @@ final class ConnectionAdapterProvider
   }
 }
 
-String _$connectionAdapterHash() => r'eed9dcaae76d79e16376ac785b17b7d7a294d542';
+String _$connectionAdapterHash() => r'1e9ff41d042a422ebdbfe451a3c53152165bbcb8';
 
 abstract class _$ConnectionAdapter extends $Notifier<ConnectionState> {
   ConnectionState build();

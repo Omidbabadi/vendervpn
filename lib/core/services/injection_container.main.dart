@@ -77,7 +77,7 @@ Future<void> _adMobInit() async {
     ..registerLazySingleton(() => ShowRewardedAd(sl()))
     ..registerLazySingleton<AdmobRepo>(() => AdmobRepoImpl(sl()))
     ..registerLazySingleton<AdmobRemoteDatasrc>(
-      () => AdmobRemoteDatasrcImpl(null),
+      () => AdmobRemoteDatasrcImpl(),
     );
 }
 

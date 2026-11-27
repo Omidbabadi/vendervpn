@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 class SubscriptionUserInfo {
   const SubscriptionUserInfo({
@@ -347,7 +347,7 @@ class V2rayImportHelper {
 
       return (method: method, password: password, normalizedUri: normalizedUri);
     } catch (e) {
-      debugPrint('Failed to parse ss:// credentials: $e');
+      appLog('Failed to parse ss:// credentials: $e');
       return null;
     }
   }
@@ -433,7 +433,7 @@ class V2rayImportHelper {
       await getRes.drain<void>();
       return _extractUserInfoFromHeaders(getRes.headers);
     } catch (e) {
-      debugPrint('Failed to fetch subscription userinfo: $e');
+      appLog('Failed to fetch subscription userinfo: $e');
       return null;
     } finally {
       client.close();
@@ -607,7 +607,7 @@ class V2rayImportHelper {
           ),
         );
       } catch (e) {
-        debugPrint('Skipping invalid V2Ray link: $e');
+        appLog('Skipping invalid V2Ray link: $e');
       }
     }
 

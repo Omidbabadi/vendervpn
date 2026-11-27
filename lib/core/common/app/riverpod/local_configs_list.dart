@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_v2ray_client/flutter_v2ray.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
@@ -9,6 +8,7 @@ import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 class SubscriptionItem {
   const SubscriptionItem({
@@ -230,7 +230,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
           ),
         );
       } catch (err) {
-        debugPrint('Skipping corrupt cached local config: $err');
+        appLog('Skipping corrupt cached local config: $err');
       }
     }
 
@@ -267,7 +267,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
             final count = await refreshSubscription(sub);
             totalUpdated += count;
           } catch (e) {
-            debugPrint('Auto-sync failed for subscription "${sub.name}": $e');
+            appLog('Auto-sync failed for subscription "${sub.name}": $e');
           }
         } else if (sub.userInfo == null) {
           try {
@@ -278,7 +278,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
               await subsNotifier.updateUserInfo(sub.id, info);
             }
           } catch (e) {
-            debugPrint(
+            appLog(
               'Userinfo fetch failed for subscription "${sub.name}": $e',
             );
           }

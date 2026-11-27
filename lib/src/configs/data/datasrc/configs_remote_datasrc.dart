@@ -1,5 +1,4 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:flutter/foundation.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
@@ -7,6 +6,7 @@ import 'package:vendervpn/src/configs/data/models/config_model.dart';
 
 import '../../../../core/common/entities/config.dart';
 import '../../../../core/services/injection_container.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 abstract class ConfigsRemoteDatasrc {
   const ConfigsRemoteDatasrc();
@@ -90,7 +90,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
     } on ServerException {
       rethrow;
     } catch (e) {
-      debugPrint('ConfigsRemoteDatasrcImpl error: $e');
+      appLog('ConfigsRemoteDatasrcImpl error: $e');
       throw const ServerException(
         message: 'Getting Configs From Server Failed',
         statusCode: 500,

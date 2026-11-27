@@ -54,7 +54,8 @@ Legend: 🔴 blocker (Play will reject or the build is unsafe) · 🟠 high risk
 - [ ] Set up `app-ads.txt` on the developer website.
 
 ### Appwrite / auth 🟢
-- [ ] Register the Android platform `com.vender.vendervpn` in the Appwrite project. Check that the OAuth callback scheme `appwrite-callback-68cfc3210015c46501bd` works in a **release** build.
+- [ ] Register the Android platform `com.vender.vendervpn` in the live Appwrite project (`6b07171100033f5027f4`). The app uses anonymous sessions only, so the stale OAuth callback scheme (`appwrite-callback-68cfc3…`, an old project) is being removed from the manifest and `Info.plist`.
+- [ ] Quota function: set `TEST_BONUS_ENABLED` to `false` in the Appwrite console (created as `true` by `functions/quota/tool/provision.mjs`).
 - [ ] Check that the production Appwrite endpoint/project are used, with no dev servers or debug keys in the code.
 
 ### Release build hygiene 🟢

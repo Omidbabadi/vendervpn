@@ -6,6 +6,7 @@ import 'package:vendervpn/core/common/singelton/core.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
 import 'package:vendervpn/core/utils/consts.dart';
 import 'package:vendervpn/core/utils/core_utils.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 abstract class AdmobRemoteDatasrc {
   Future<void> init();
@@ -26,7 +27,7 @@ abstract class AdmobRemoteDatasrc {
 }
 
 class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
-  AdmobRemoteDatasrcImpl(this._interstitialAd);
+  AdmobRemoteDatasrcImpl();
   static final _mobileAds = MobileAds.instance;
 
   static final AdRequest request = AdRequest(nonPersonalizedAds: false);
@@ -41,7 +42,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
   Future<void> init() async {
     try {
       await _mobileAds.initialize();
-      debugPrint('Ad mob Initialized ');
+      appLog('Ad mob Initialized ');
     } catch (e) {
       throw AdmobException(null, message: 'Admob initialization failed');
     }
@@ -73,14 +74,13 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
             onAdFailedToLoad: (LoadAdError error) {
               _numInterstitialLoadAttempts += 1;
               _interstitialAd = null;
-              Cache.instance.setInterstitialAd(null);
 
               if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
                 attemptLoad();
                 return;
               }
               _numInterstitialLoadAttempts = 0;
-              debugPrint(error.message);
+              appLog(error.message);
               onAdFailed();
 
               if (!completer.isCompleted) {
@@ -139,7 +139,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
           }
         },
         onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-          debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
+          appLog('$ad onAdFailedToShowFullScreenContent: $error');
           ad.dispose();
           _interstitialAd = null;
           onAdFailedToShowFullScreenContent();
@@ -186,12 +186,9 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
               completer.complete();
             }
           },
-          onAdClicked: (ad) {
-            debugPrint('Ad Clicked');
-          },
           onAdFailedToLoad: (ad, loadError) {
             ad.dispose();
-            debugPrint('Banner Ad Failed To Load: ${loadError.message}');
+            appLog('Banner Ad Failed To Load: ${loadError.message}');
             if (!completer.isCompleted) {
               completer.completeError(
                 AdmobException(
@@ -208,7 +205,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
     } on AdmobException {
       rethrow;
     } catch (e, s) {
-      debugPrintStack(stackTrace: s);
+      appLogStack(stackTrace: s);
       throw AdmobException(null, message: e.toString());
     }
   }
@@ -225,7 +222,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
           if (!completer.isCompleted) completer.complete();
         },
         onAdFailedToLoad: (error) {
-          debugPrint('Rewarded ad failed to load: ${error.message}');
+          appLog('Rewarded ad failed to load: ${error.message}');
           if (!completer.isCompleted) {
             completer.completeError(
               AdmobException(error, message: error.message),
@@ -263,7 +260,7 @@ class AdmobRemoteDatasrcImpl implements AdmobRemoteDatasrc {
         if (!completer.isCompleted) completer.complete(earnedReward);
       },
       onAdFailedToShowFullScreenContent: (failedAd, error) {
-        debugPrint('Rewarded ad failed to show: $error');
+        appLog('Rewarded ad failed to show: $error');
         failedAd.dispose();
         if (!completer.isCompleted) {
           completer.completeError(

@@ -6,30 +6,14 @@ class Cache {
 
   static final instance = Cache._internal();
 
-  String? _url;
   final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
   BannerAd? _bannerAd;
-  InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
   bool _isVpnDisconnected = true;
-
-  void cacheVpnState(String state) {}
 
   bool get isVpnDisconnected => _isVpnDisconnected;
   void setVpnDisconnected(bool value) {
     _isVpnDisconnected = value;
-  }
-
-  Map<String, String> _map = {};
-  Map<String, String> get map => _map;
-
-  InterstitialAd? get interstitialAd => _interstitialAd;
-  void setInterstitialAd(InterstitialAd? ad) {
-    _interstitialAd = ad;
-  }
-
-  void resetInterstitialAd() {
-    _interstitialAd = null;
   }
 
   // rewarded ad
@@ -47,21 +31,7 @@ class Cache {
     _bannerAd = null;
   }
 
-  void setMap(Map<String, String> map) {
-    _map = map;
-  }
-
-  String? get url => _url;
-
   void setThemeMode(ThemeMode theme) {
     themeModeNotifier.value = theme;
-  }
-
-  void setUrl(String? id) {
-    _url = id;
-  }
-
-  void reset() {
-    setUrl(null);
   }
 }

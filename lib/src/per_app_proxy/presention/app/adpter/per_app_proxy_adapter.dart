@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/installed_apps.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
 import 'package:vendervpn/src/per_app_proxy/domain/repo/per_app_proxy_repo.dart';
 import 'package:vendervpn/src/per_app_proxy/domain/usecases/get_installed_app.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 enum PerAppProxyMode {
   /// Tunnel ONLY the selected apps (all other installed apps are disallowed).
@@ -198,7 +198,7 @@ class PerAppProxyAdapter extends Notifier<PerAppProxyState> {
       );
       result.fold(
         (failure) {
-          debugPrint('Failed to load installed apps: ${failure.message}');
+          appLog('Failed to load installed apps: ${failure.message}');
         },
         (apps) {
           final cleaned =
@@ -254,7 +254,7 @@ class PerAppProxyAdapter extends Notifier<PerAppProxyState> {
       }
       return blocked;
     } catch (e) {
-      debugPrint('Failed to resolve per-app proxy package list: $e');
+      appLog('Failed to resolve per-app proxy package list: $e');
       return const <String>[];
     }
   }

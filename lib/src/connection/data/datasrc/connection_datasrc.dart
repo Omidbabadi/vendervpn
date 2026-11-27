@@ -6,6 +6,7 @@ import 'package:vendervpn/core/common/singelton/core.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/utils/consts.dart';
+import 'package:vendervpn/core/utils/app_log.dart';
 
 abstract class ConnectionDatasrc {
   const ConnectionDatasrc();
@@ -48,7 +49,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     } on ConnectionException {
       rethrow;
     } catch (e, s) {
-      debugPrintStack(stackTrace: s);
+      appLogStack(stackTrace: s);
 
       throw ConnectionException(message: 'Error: ${e.toString()}', ping: -1);
     }
@@ -66,7 +67,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     } on ConnectionException {
       rethrow;
     } catch (e, s) {
-      debugPrintStack(stackTrace: s);
+      appLogStack(stackTrace: s);
 
       throw const ConnectionException(
         message: 'There Was An Error While Connecting',
@@ -88,7 +89,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
       }
       return ping;
     } catch (e, s) {
-      debugPrintStack(stackTrace: s);
+      appLogStack(stackTrace: s);
 
       throw const ConnectionException(
         message: 'There Was An Error While Connecting',
@@ -130,7 +131,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     } on ConnectionException {
       rethrow;
     } catch (e, s) {
-      debugPrintStack(stackTrace: s);
+      appLogStack(stackTrace: s);
 
       throw const ConnectionException(
         message: 'There Was An Error While Connecting',
@@ -157,7 +158,7 @@ class ConnectionDatasrcImpl implements ConnectionDatasrc {
     try {
       return await _v2ray.getServiceState();
     } catch (e, s) {
-      debugPrintStack(stackTrace: s, label: 'getServiceState failed: $e');
+      appLogStack(stackTrace: s, label: 'getServiceState failed: $e');
       return null;
     }
   }

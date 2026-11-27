@@ -41,7 +41,7 @@ final class ConfigsAdapterProvider
   }
 }
 
-String _$configsAdapterHash() => r'9ed12f658047fbda34505777db92253f52d17302';
+String _$configsAdapterHash() => r'3e5074eeb347df65f57614421579d366a7fdbc6b';
 
 abstract class _$ConfigsAdapter extends $Notifier<ConfigsState> {
   ConfigsState build();

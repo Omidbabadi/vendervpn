@@ -42,7 +42,7 @@ final class CurrentConfigsListProvider
 }
 
 String _$currentConfigsListHash() =>
-    r'059ae75a5cca702d2a9d2c0c653d5a0b9e14b73c';
+    r'cae1cc6c30b3f59761f6f2b36ce45aa30aed3150';
 
 abstract class _$CurrentConfigsList extends $Notifier<List<Config>> {
   List<Config> build();

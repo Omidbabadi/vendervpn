@@ -50,7 +50,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     _bannerRequested = true;
     final width = MediaQuery.sizeOf(context).width;
     ref.read(admobAdapterProvider.notifier).showBannerAd(width);
-    debugPrint('banner ad in dashboard screen');
   }
 
   @override

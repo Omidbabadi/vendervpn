@@ -185,7 +185,6 @@ class CacheHelper {
 
   Future<void> cacheId(String id) async {
     await _pref.setString(_urlKey, id);
-    Cache.instance.setUrl(id);
   }
 
   Future<void> cacheIsFirstTimer(bool firstTime) async {
