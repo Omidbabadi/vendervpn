@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vendervpn/core/common/app/riverpod/local_configs_list.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
+import 'package:vendervpn/core/common/entities/subscription_item.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/config_tile.dart';

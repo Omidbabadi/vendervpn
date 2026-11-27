@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
+import 'package:vendervpn/core/common/entities/subscription_item.dart';
+import 'package:vendervpn/core/common/entities/subscription_user_info.dart';
+import 'package:vendervpn/core/utils/byte_format.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 
 import '../../../../../core/common/app/riverpod/local_configs_list.dart';
@@ -343,13 +345,13 @@ class _SubscriptionUserInfoBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final usedStr = SubscriptionUserInfo.formatBytes(userInfo.used);
+    final usedStr = formatBytes(userInfo.used);
     final totalStr =
         userInfo.isUnlimitedTraffic
             ? '∞ ${l10n.unlimited}'
-            : SubscriptionUserInfo.formatBytes(userInfo.total);
-    final upStr = SubscriptionUserInfo.formatBytes(userInfo.upload);
-    final downStr = SubscriptionUserInfo.formatBytes(userInfo.download);
+            : formatBytes(userInfo.total);
+    final upStr = formatBytes(userInfo.upload);
+    final downStr = formatBytes(userInfo.download);
     final ratio = userInfo.usageRatio;
     final isExpired = userInfo.isExpired;
     final isHighUsage = ratio != null && ratio >= 0.85;

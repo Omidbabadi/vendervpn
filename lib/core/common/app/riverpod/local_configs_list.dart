@@ -1,87 +1,29 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vendervpn/core/common/app/cache_helper.dart';
 import 'package:vendervpn/core/common/app/riverpod/current_config.dart';
 import 'package:vendervpn/core/common/entities/config.dart';
+import 'package:vendervpn/core/common/entities/subscription_item.dart';
+import 'package:vendervpn/core/common/entities/subscription_user_info.dart';
+import 'package:vendervpn/core/errors/failures.dart';
 import 'package:vendervpn/core/services/injection_container.dart';
-import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
 import 'package:vendervpn/core/utils/app_log.dart';
+import 'package:vendervpn/src/configs/domain/usecases/extract_node_links.dart';
+import 'package:vendervpn/src/configs/domain/usecases/fetch_subscription.dart';
+import 'package:vendervpn/src/configs/domain/usecases/fetch_subscription_info.dart';
+import 'package:vendervpn/src/configs/domain/usecases/get_local_nodes.dart';
+import 'package:vendervpn/src/configs/domain/usecases/get_subscriptions.dart';
+import 'package:vendervpn/src/configs/domain/usecases/parse_node_links.dart';
+import 'package:vendervpn/src/configs/domain/usecases/save_local_nodes.dart';
+import 'package:vendervpn/src/configs/domain/usecases/save_subscriptions.dart';
 
-class SubscriptionItem {
-  const SubscriptionItem({
-    required this.id,
-    required this.name,
-    required this.url,
-    required this.intervalHours,
-    required this.lastUpdated,
-    this.userInfo,
-  });
+/// An import step failed; [toString] is the message shown to the user.
+class NodeImportException implements Exception {
+  const NodeImportException(this.message);
+  final String message;
 
-  final String id;
-  final String name;
-  final String url;
-  final int intervalHours;
-  final DateTime lastUpdated;
-  final SubscriptionUserInfo? userInfo;
-
-  bool get isDueForUpdate {
-    if (intervalHours <= 0) return false;
-    return DateTime.now().difference(lastUpdated) >=
-        Duration(hours: intervalHours);
-  }
-
-  SubscriptionItem copyWith({
-    String? id,
-    String? name,
-    String? url,
-    int? intervalHours,
-    DateTime? lastUpdated,
-    SubscriptionUserInfo? userInfo,
-  }) {
-    return SubscriptionItem(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      url: url ?? this.url,
-      intervalHours: intervalHours ?? this.intervalHours,
-      lastUpdated: lastUpdated ?? this.lastUpdated,
-      userInfo: userInfo ?? this.userInfo,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'id': id,
-    'name': name,
-    'url': url,
-    'intervalHours': intervalHours,
-    'lastUpdated': lastUpdated.toIso8601String(),
-    if (userInfo != null) 'userInfo': userInfo!.toMap(),
-  };
-
-  factory SubscriptionItem.fromMap(Map<String, dynamic> map) {
-    final url = (map['url'] as String? ?? '').trim();
-    final uri = Uri.tryParse(url);
-    final fallbackName =
-        (uri != null && uri.host.isNotEmpty) ? uri.host : 'Subscription';
-    final rawName = (map['name'] as String? ?? '').trim();
-    final rawUserInfo = map['userInfo'];
-    return SubscriptionItem(
-      id: map['id'] as String? ?? 'sub_${url.hashCode.abs()}',
-      name: rawName.isNotEmpty ? rawName : fallbackName,
-      url: url,
-      intervalHours:
-          int.tryParse((map['intervalHours'] ?? '6').toString()) ?? 6,
-      lastUpdated:
-          DateTime.tryParse(map['lastUpdated'] as String? ?? '') ??
-          DateTime.now(),
-      userInfo:
-          rawUserInfo is Map
-              ? SubscriptionUserInfo.fromMap(
-                Map<String, dynamic>.from(rawUserInfo),
-              )
-              : null,
-    );
-  }
+  @override
+  String toString() => message;
 }
 
 final subscriptionsListProvider =
@@ -90,15 +32,11 @@ final subscriptionsListProvider =
     );
 
 class SubscriptionsList extends Notifier<List<SubscriptionItem>> {
-  final _cacheHelper = sl<CacheHelper>();
+  final _getSubscriptions = sl<GetSubscriptions>();
+  final _saveSubscriptions = sl<SaveSubscriptions>();
 
   @override
-  List<SubscriptionItem> build() {
-    return _cacheHelper.subscriptions
-        .map(SubscriptionItem.fromMap)
-        .where((s) => s.url.isNotEmpty)
-        .toList();
-  }
+  List<SubscriptionItem> build() => _getSubscriptions();
 
   Future<SubscriptionItem> upsertSubscription({
     required String name,
@@ -169,11 +107,15 @@ class SubscriptionsList extends Notifier<List<SubscriptionItem>> {
 
   Future<void> clearAll() async {
     state = [];
-    await _cacheHelper.cacheSubscriptions([]);
+    await _persist(const []);
   }
 
   Future<void> _persist(List<SubscriptionItem> items) async {
-    await _cacheHelper.cacheSubscriptions(items.map((e) => e.toMap()).toList());
+    final result = await _saveSubscriptions(items);
+    result.fold(
+      (failure) => appLog('Saving subscriptions failed: ${failure.message}'),
+      (_) {},
+    );
   }
 }
 
@@ -181,34 +123,18 @@ final localConfigsListProvider =
     NotifierProvider<LocalConfigsList, List<Config>>(LocalConfigsList.new);
 
 class LocalConfigsList extends Notifier<List<Config>> {
-  final _cacheHelper = sl<CacheHelper>();
+  final _getLocalNodes = sl<GetLocalNodes>();
+  final _saveLocalNodes = sl<SaveLocalNodes>();
+  final _parseNodeLinks = sl<ParseNodeLinks>();
+  final _extractNodeLinks = sl<ExtractNodeLinks>();
+  final _fetchSubscription = sl<FetchSubscription>();
+  final _fetchSubscriptionInfo = sl<FetchSubscriptionInfo>();
   Timer? _autoSyncTimer;
   bool _isCheckingAutoSync = false;
 
   @override
   List<Config> build() {
-    final rawList = _cacheHelper.localConfigs;
-    final selectedId = _cacheHelper.id;
-    final nodeCountries = _cacheHelper.nodeCountryMap;
-    final List<Config> loaded = [];
-
-    for (final e in rawList) {
-      if ((e['uri'] as String? ?? '').isEmpty) continue;
-      try {
-        loaded.add(
-          V2rayImportHelper.configFromCacheMap(
-            e,
-            selectedId: selectedId,
-            nodeCountries: nodeCountries,
-            defaultImportedFrom: 'local',
-            readServerIp: true,
-          ),
-        );
-      } catch (err) {
-        appLog('Skipping corrupt cached local config: $err');
-      }
-    }
-
+    final loaded = _getLocalNodes();
     _scheduleAutoUpdateCheck();
     return loaded;
   }
@@ -245,18 +171,16 @@ class LocalConfigsList extends Notifier<List<Config>> {
             appLog('Auto-sync failed for subscription "${sub.name}": $e');
           }
         } else if (sub.userInfo == null) {
-          try {
-            final info = await V2rayImportHelper.fetchSubscriptionUserInfo(
-              sub.url,
-            );
-            if (info != null) {
-              await subsNotifier.updateUserInfo(sub.id, info);
-            }
-          } catch (e) {
-            appLog(
-              'Userinfo fetch failed for subscription "${sub.name}": $e',
-            );
-          }
+          final result = await _fetchSubscriptionInfo(sub.url);
+          await result.fold(
+            (failure) async => appLog(
+              'Userinfo fetch failed for subscription "${sub.name}": '
+              '${failure.message}',
+            ),
+            (info) async {
+              if (info != null) await subsNotifier.updateUserInfo(sub.id, info);
+            },
+          );
         }
       }
     } finally {
@@ -276,13 +200,10 @@ class LocalConfigsList extends Notifier<List<Config>> {
       return importSubscriptionUrl(trimmed);
     }
 
-    final links = V2rayImportHelper.extractLinksFromPayload(trimmed);
+    final links = _extractNodeLinks(trimmed);
     if (links.isEmpty) return 0;
 
-    final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
-      links: links,
-      importedFrom: source,
-    );
+    final parsedModels = await _parse(links: links, importedFrom: source);
     if (parsedModels.isEmpty) return 0;
 
     await _mergeAndPersist(parsedModels);
@@ -296,7 +217,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
   }) async {
     final cleanUrl = subUrl.trim();
     final subsNotifier = ref.read(subscriptionsListProvider.notifier);
-    final fetched = await V2rayImportHelper.fetchSubscription(cleanUrl);
+    final fetched = await _fetch(cleanUrl);
     if (fetched.links.isEmpty) return 0;
 
     final subItem = await subsNotifier.upsertSubscription(
@@ -307,7 +228,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
     );
 
     final sourceTag = 'sub:${subItem.name}';
-    final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
+    final parsedModels = await _parse(
       links: fetched.links,
       importedFrom: sourceTag,
       idScope: sourceTag,
@@ -323,11 +244,11 @@ class LocalConfigsList extends Notifier<List<Config>> {
 
   Future<int> refreshSubscription(SubscriptionItem sub) async {
     final subsNotifier = ref.read(subscriptionsListProvider.notifier);
-    final fetched = await V2rayImportHelper.fetchSubscription(sub.url);
+    final fetched = await _fetch(sub.url);
     if (fetched.links.isEmpty) return 0;
 
     final sourceTag = 'sub:${sub.name}';
-    final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
+    final parsedModels = await _parse(
       links: fetched.links,
       importedFrom: sourceTag,
       idScope: sourceTag,
@@ -349,6 +270,31 @@ class LocalConfigsList extends Notifier<List<Config>> {
     state = remaining;
     await _persistState(remaining);
   }
+
+  /// Throws [NodeImportException] when the download fails.
+  Future<SubscriptionFetch> _fetch(String url) async {
+    final result = await _fetchSubscription(url);
+    return result.fold(_throw, (fetched) => fetched);
+  }
+
+  /// Throws [NodeImportException] when the links can't be read.
+  Future<List<Config>> _parse({
+    required List<String> links,
+    required String importedFrom,
+    String? idScope,
+  }) async {
+    final result = await _parseNodeLinks(
+      ParseNodeLinksParams(
+        links: links,
+        importedFrom: importedFrom,
+        idScope: idScope,
+      ),
+    );
+    return result.fold(_throw, (nodes) => nodes);
+  }
+
+  static Never _throw(Failure failure) =>
+      throw NodeImportException(failure.message);
 
   Future<void> _replaceSubscriptionNodesAndPersist({
     required String sourceTag,
@@ -416,7 +362,7 @@ class LocalConfigsList extends Notifier<List<Config>> {
 
   Future<void> clearAll() async {
     state = [];
-    await _cacheHelper.cacheLocalConfigs([]);
+    await _persistState(const []);
     await ref.read(subscriptionsListProvider.notifier).clearAll();
   }
 
@@ -455,8 +401,10 @@ class LocalConfigsList extends Notifier<List<Config>> {
   }
 
   Future<void> _persistState(List<Config> list) async {
-    await _cacheHelper.cacheLocalConfigs(
-      list.map(V2rayImportHelper.configToCacheMap).toList(),
+    final result = await _saveLocalNodes(list);
+    result.fold(
+      (failure) => appLog('Saving local nodes failed: ${failure.message}'),
+      (_) {},
     );
   }
 }

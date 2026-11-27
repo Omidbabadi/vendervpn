@@ -9,6 +9,7 @@ import 'package:vendervpn/src/config_editor/data/datasrc/config_editor_local_dat
 import 'package:vendervpn/src/config_editor/data/models/share_link_codec.dart';
 import 'package:vendervpn/src/config_editor/domain/entities/editable_node.dart';
 import 'package:vendervpn/src/config_editor/domain/repo/config_editor_repo.dart';
+import 'package:vendervpn/src/configs/data/datasrc/node_link_converter.dart';
 import 'package:vendervpn/src/configs/data/models/config_model.dart';
 
 class ConfigEditorRepoImpl implements ConfigEditorRepo {
@@ -43,7 +44,7 @@ class ConfigEditorRepoImpl implements ConfigEditorRepo {
       // Parse the new link exactly like the node list does on start-up, so a
       // link that saves is a link that loads and connects.
       final parser = V2ray.parseFromURL(link);
-      final configJson = V2rayImportHelper.buildFullConfigurationWithHttpInbound(
+      final configJson = NodeLinkConverter.buildFullConfigurationWithHttpInbound(
         parser,
       );
 

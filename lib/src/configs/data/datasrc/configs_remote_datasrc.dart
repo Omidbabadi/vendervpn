@@ -1,13 +1,12 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:vendervpn/core/common/app/cache_helper.dart';
+import 'package:vendervpn/core/common/entities/config.dart';
 import 'package:vendervpn/core/common/entities/node_source.dart';
 import 'package:vendervpn/core/errors/exceptions.dart';
-import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
-import 'package:vendervpn/src/configs/data/models/config_model.dart';
-
-import '../../../../core/common/entities/config.dart';
-import '../../../../core/services/injection_container.dart';
 import 'package:vendervpn/core/utils/app_log.dart';
+import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
+import 'package:vendervpn/src/configs/data/datasrc/node_link_converter.dart';
+import 'package:vendervpn/src/configs/data/models/config_model.dart';
 
 abstract class ConfigsRemoteDatasrc {
   const ConfigsRemoteDatasrc();
@@ -18,19 +17,20 @@ abstract class ConfigsRemoteDatasrc {
 }
 
 class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
-  const ConfigsRemoteDatasrcImpl(this._client);
+  const ConfigsRemoteDatasrcImpl(this._client, this._cache, this._converter);
   final Client _client;
+  final CacheHelper _cache;
+  final NodeLinkConverter _converter;
 
   @override
   Future<List<Config>> getCachedConfigs() async {
-    final cache = sl<CacheHelper>();
-    final selectedId = cache.id;
-    final nodeCountries = cache.nodeCountryMap;
+    final selectedId = _cache.id;
+    final nodeCountries = _cache.nodeCountryMap;
     final configs = <Config>[];
-    for (final e in cache.configs) {
+    for (final e in _cache.configs) {
       try {
         configs.add(
-          V2rayImportHelper.configFromCacheMap(
+          NodeLinkConverter.configFromCacheMap(
             e,
             selectedId: selectedId,
             nodeCountries: nodeCountries,
@@ -93,7 +93,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
                     row.$createdAt)
                 .toString();
 
-        final parsedModels = await V2rayImportHelper.parseLinksToConfigs(
+        final parsedModels = await _converter.parseLinksToConfigs(
           links: extractedLinks,
           importedFrom: NodeSource.cloudTag,
           forcedIdPrefix: row.$id,
@@ -113,7 +113,7 @@ class ConfigsRemoteDatasrcImpl implements ConfigsRemoteDatasrc {
         );
       }
 
-      await sl<CacheHelper>().cacheConfigs(cacheConfig);
+      await _cache.cacheConfigs(cacheConfig);
       return allConfigs.cast<Config>();
     } on ServerException {
       rethrow;

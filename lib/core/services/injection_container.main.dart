@@ -96,9 +96,28 @@ Future<void> _configsInit() async {
     ..registerLazySingleton(() => GetCachedConfigs(sl()))
     ..registerLazySingleton<ConfigsRepo>(() => ConfigsRepoImpl(sl()))
     ..registerLazySingleton<ConfigsRemoteDatasrc>(
-      () => ConfigsRemoteDatasrcImpl(sl()),
+      () => ConfigsRemoteDatasrcImpl(sl(), sl(), sl()),
     )
-    ..registerLazySingleton(() => client);
+    ..registerLazySingleton(() => client)
+    // Local (user-imported) nodes and subscriptions.
+    ..registerLazySingleton(() => GetLocalNodes(sl()))
+    ..registerLazySingleton(() => SaveLocalNodes(sl()))
+    ..registerLazySingleton(() => GetSubscriptions(sl()))
+    ..registerLazySingleton(() => SaveSubscriptions(sl()))
+    ..registerLazySingleton(() => FetchSubscription(sl()))
+    ..registerLazySingleton(() => FetchSubscriptionInfo(sl()))
+    ..registerLazySingleton(() => ParseNodeLinks(sl()))
+    ..registerLazySingleton(() => ExtractNodeLinks(sl()))
+    ..registerLazySingleton<LocalNodesRepo>(
+      () => LocalNodesRepoImpl(sl(), sl(), sl()),
+    )
+    ..registerLazySingleton<LocalNodesLocalDatasrc>(
+      () => LocalNodesLocalDatasrcImpl(sl()),
+    )
+    ..registerLazySingleton<SubscriptionRemoteDatasrc>(
+      () => const SubscriptionRemoteDatasrcImpl(),
+    )
+    ..registerLazySingleton(() => NodeLinkConverter(sl()));
 }
 
 Future<void> _v2rayInit() async {

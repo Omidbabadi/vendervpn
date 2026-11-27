@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
-import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
+import 'package:vendervpn/core/utils/byte_format.dart';
 import 'package:vendervpn/core/widgets/quota_progress_bar.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/connection/presention/adapter/connection_adapter.dart';
@@ -31,9 +31,9 @@ class CloudQuotaSheet extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final textColor = Colours.classicAdabtiveTextColor(context);
 
-    final used = SubscriptionUserInfo.formatBytes(quota.totalUsedBytes);
-    final limit = SubscriptionUserInfo.formatBytes(quota.totalBytes);
-    final reward = SubscriptionUserInfo.formatBytes(quota.bonusPerAdBytes);
+    final used = formatBytes(quota.totalUsedBytes);
+    final limit = formatBytes(quota.totalBytes);
+    final reward = formatBytes(quota.bonusPerAdBytes);
     final canEarn = quota.canEarnBonus;
     final progress =
         quota.totalBytes == 0 ? 1.0 : quota.totalUsedBytes / quota.totalBytes;

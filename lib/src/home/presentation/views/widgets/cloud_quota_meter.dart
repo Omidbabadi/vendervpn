@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vendervpn/core/res/styles/colors.dart';
-import 'package:vendervpn/core/utils/v2ray_import_helper.dart';
+import 'package:vendervpn/core/utils/byte_format.dart';
 import 'package:vendervpn/core/widgets/quota_progress_bar.dart';
 import 'package:vendervpn/l10n/app_localizations.dart';
 import 'package:vendervpn/src/home/presentation/views/widgets/cloud_quota_sheet.dart';
@@ -33,10 +33,10 @@ class CloudQuotaMeter extends ConsumerWidget {
             ? Colours.pastelAmberFg
             : Colours.orbViolet;
 
-    final used = SubscriptionUserInfo.formatBytes(quota.totalUsedBytes);
-    final limit = SubscriptionUserInfo.formatBytes(quota.totalBytes);
-    final left = SubscriptionUserInfo.formatBytes(quota.remainingBytes);
-    final reward = SubscriptionUserInfo.formatBytes(quota.bonusPerAdBytes);
+    final used = formatBytes(quota.totalUsedBytes);
+    final limit = formatBytes(quota.totalBytes);
+    final left = formatBytes(quota.remainingBytes);
+    final reward = formatBytes(quota.bonusPerAdBytes);
     final hasBonus = quota.bonusBytes > 0;
 
     return Container(
