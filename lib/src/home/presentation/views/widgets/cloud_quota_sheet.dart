@@ -31,12 +31,12 @@ class CloudQuotaSheet extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final textColor = Colours.classicAdabtiveTextColor(context);
 
-    final used = SubscriptionUserInfo.formatBytes(quota.usedBytes);
+    final used = SubscriptionUserInfo.formatBytes(quota.totalUsedBytes);
     final limit = SubscriptionUserInfo.formatBytes(quota.totalBytes);
     final reward = SubscriptionUserInfo.formatBytes(quota.bonusPerAdBytes);
     final canEarn = quota.canEarnBonus;
     final progress =
-        quota.totalBytes == 0 ? 1.0 : quota.usedBytes / quota.totalBytes;
+        quota.totalBytes == 0 ? 1.0 : quota.totalUsedBytes / quota.totalBytes;
 
     return SafeArea(
       child: SingleChildScrollView(

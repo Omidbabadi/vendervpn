@@ -23,7 +23,7 @@ class CloudQuotaMeter extends ConsumerWidget {
             ? 0.0
             : quota.totalBytes == 0
             ? 1.0
-            : (quota.usedBytes / quota.totalBytes).clamp(0.0, 1.0);
+            : (quota.totalUsedBytes / quota.totalBytes).clamp(0.0, 1.0);
     final barColor =
         quota.isExhausted
             ? Colours.orbCoral
@@ -31,7 +31,7 @@ class CloudQuotaMeter extends ConsumerWidget {
             ? Colours.pastelAmberFg
             : Colours.orbViolet;
 
-    final used = SubscriptionUserInfo.formatBytes(quota.usedBytes);
+    final used = SubscriptionUserInfo.formatBytes(quota.totalUsedBytes);
     final limit = SubscriptionUserInfo.formatBytes(quota.totalBytes);
     final left = SubscriptionUserInfo.formatBytes(quota.remainingBytes);
     final reward = SubscriptionUserInfo.formatBytes(quota.bonusPerAdBytes);

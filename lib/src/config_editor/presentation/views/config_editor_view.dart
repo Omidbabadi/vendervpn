@@ -27,52 +27,6 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
   EditableNode? _draft;
   bool _showSecret = false;
 
-  static const _networks = ['tcp', 'ws', 'grpc', 'h2', 'xhttp', 'kcp', 'quic'];
-  static const _tcpHeaders = ['none', 'http'];
-  static const _udpHeaders = [
-    'none',
-    'srtp',
-    'utp',
-    'wechat-video',
-    'dtls',
-    'wireguard',
-  ];
-  static const _grpcModes = ['gun', 'multi'];
-  static const _xhttpModes = ['auto', 'packet-up', 'stream-up', 'stream-one'];
-  static const _fingerprints = [
-    '',
-    'chrome',
-    'firefox',
-    'safari',
-    'ios',
-    'android',
-    'edge',
-    '360',
-    'qq',
-    'random',
-    'randomized',
-  ];
-  static const _ssMethods = [
-    'aes-128-gcm',
-    'aes-256-gcm',
-    'chacha20-poly1305',
-    'chacha20-ietf-poly1305',
-    'xchacha20-poly1305',
-    'xchacha20-ietf-poly1305',
-    '2022-blake3-aes-128-gcm',
-    '2022-blake3-aes-256-gcm',
-    '2022-blake3-chacha20-poly1305',
-    'none',
-  ];
-  static const _vmessCiphers = [
-    'auto',
-    'aes-128-gcm',
-    'chacha20-poly1305',
-    'none',
-    'zero',
-  ];
-  static const _flows = ['', 'xtls-rprx-vision', 'xtls-rprx-vision-udp443'];
-
   bool get _isDirty => _draft != null && _draft != _initial;
 
   @override
@@ -99,12 +53,7 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
     final error = await ref.read(configEditorProvider.notifier).save(draft);
     if (!mounted) return;
     if (error != null) {
-      CoreUtils.showSnackBar(
-        context,
-        true,
-        title: 'Not saved',
-        message: error,
-      );
+      CoreUtils.showSnackBar(context, true, title: 'Not saved', message: error);
       return;
     }
     setState(() => _initial = draft);
@@ -310,13 +259,49 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
               ),
           ],
         ),
-        body: SafeArea(child: _buildBody(state, draft)),
+        body: SafeArea(
+          child: _EditorBody(
+            hasConfig: widget.config != null,
+            state: state,
+            draft: draft,
+            showSecret: _showSecret,
+            onToggleSecret: () => setState(() => _showSecret = !_showSecret),
+            onUpdate: _update,
+          ),
+        ),
       ),
     );
   }
+}
 
-  Widget _buildBody(ConfigEditorState state, EditableNode? draft) {
-    if (widget.config == null) {
+/// Applies a change to the draft node.
+typedef _NodeUpdate =
+    void Function(EditableNode Function(EditableNode node) change);
+
+/// The editor body: guards for a missing or failed node, then the form.
+class _EditorBody extends StatelessWidget {
+  const _EditorBody({
+    required this.hasConfig,
+    required this.state,
+    required this.draft,
+    required this.showSecret,
+    required this.onToggleSecret,
+    required this.onUpdate,
+  });
+
+  final bool hasConfig;
+  final ConfigEditorState state;
+  final EditableNode? draft;
+  final bool showSecret;
+  final VoidCallback onToggleSecret;
+  final _NodeUpdate onUpdate;
+
+  @override
+  Widget build(BuildContext context) {
+    // Locals, so the type checks below promote.
+    final state = this.state;
+    final draft = this.draft;
+    if (!hasConfig) {
       return const EditorMessage(
         icon: Icons.error_outline_rounded,
         message: 'No node was selected for editing.',
@@ -349,7 +334,7 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
                 fieldKey: 'remark',
                 label: 'Name',
                 initialValue: draft.remark,
-                onChanged: (v) => _update((n) => n.copyWith(remark: v)),
+                onChanged: (v) => onUpdate((n) => n.copyWith(remark: v)),
               ),
               EditorTextField(
                 fieldKey: 'address',
@@ -357,7 +342,8 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
                 hint: 'example.com or 1.2.3.4',
                 initialValue: draft.address,
                 keyboardType: TextInputType.url,
-                onChanged: (v) => _update((n) => n.copyWith(address: v.trim())),
+                onChanged:
+                    (v) => onUpdate((n) => n.copyWith(address: v.trim())),
               ),
               EditorTextField(
                 fieldKey: 'port',
@@ -366,7 +352,8 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 onChanged:
-                    (v) => _update((n) => n.copyWith(port: int.tryParse(v) ?? 0)),
+                    (v) =>
+                        onUpdate((n) => n.copyWith(port: int.tryParse(v) ?? 0)),
               ),
             ],
           ),
@@ -379,7 +366,7 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
                   label: 'UUID',
                   initialValue: draft.userId,
                   onChanged:
-                      (v) => _update((n) => n.copyWith(userId: v.trim())),
+                      (v) => onUpdate((n) => n.copyWith(userId: v.trim())),
                 ),
               if (p.usesAlterId)
                 EditorTextField(
@@ -389,7 +376,7 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   onChanged:
-                      (v) => _update(
+                      (v) => onUpdate(
                         (n) => n.copyWith(alterId: int.tryParse(v) ?? 0),
                       ),
                 ),
@@ -398,14 +385,14 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
                   label: 'Security',
                   value: draft.cipher,
                   options: _vmessCiphers,
-                  onChanged: (v) => _update((n) => n.copyWith(cipher: v)),
+                  onChanged: (v) => onUpdate((n) => n.copyWith(cipher: v)),
                 ),
               if (p.usesFlow)
                 EditorDropdown(
                   label: 'Flow',
                   value: draft.flow,
                   options: _flows,
-                  onChanged: (v) => _update((n) => n.copyWith(flow: v)),
+                  onChanged: (v) => onUpdate((n) => n.copyWith(flow: v)),
                 ),
               if (p.usesFlow)
                 EditorTextField(
@@ -413,21 +400,21 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
                   label: 'Encryption',
                   initialValue: draft.encryption,
                   onChanged:
-                      (v) => _update((n) => n.copyWith(encryption: v.trim())),
+                      (v) => onUpdate((n) => n.copyWith(encryption: v.trim())),
                 ),
               if (p.usesMethod)
                 EditorDropdown(
                   label: 'Method',
                   value: draft.method,
                   options: _ssMethods,
-                  onChanged: (v) => _update((n) => n.copyWith(method: v)),
+                  onChanged: (v) => onUpdate((n) => n.copyWith(method: v)),
                 ),
               if (p.usesUsername)
                 EditorTextField(
                   fieldKey: 'username',
                   label: 'Username (optional)',
                   initialValue: draft.username,
-                  onChanged: (v) => _update((n) => n.copyWith(username: v)),
+                  onChanged: (v) => onUpdate((n) => n.copyWith(username: v)),
                 ),
               if (p.usesSecret)
                 EditorTextField(
@@ -439,29 +426,40 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
                           ? 'Password (optional)'
                           : 'Password',
                   initialValue: draft.secret,
-                  obscureText: !_showSecret,
+                  obscureText: !showSecret,
                   suffix: IconButton(
                     icon: Icon(
-                      _showSecret
+                      showSecret
                           ? Icons.visibility_off_rounded
                           : Icons.visibility_rounded,
                       size: 18,
                       color: Colours.subtitleGrey,
                     ),
-                    onPressed: () => setState(() => _showSecret = !_showSecret),
+                    onPressed: onToggleSecret,
                   ),
-                  onChanged: (v) => _update((n) => n.copyWith(secret: v)),
+                  onChanged: (v) => onUpdate((n) => n.copyWith(secret: v)),
                 ),
             ],
           ),
-          if (p.hasTransport) _transportSection(draft),
-          if (p.hasTransport || p.isHysteria) _tlsSection(draft),
+          if (p.hasTransport)
+            _TransportSection(draft: draft, onUpdate: onUpdate),
+          if (p.hasTransport || p.isHysteria)
+            _TlsSection(draft: draft, onUpdate: onUpdate),
         ],
       ),
     );
   }
+}
 
-  Widget _transportSection(EditableNode draft) {
+/// Network, header type, mode, host and path.
+class _TransportSection extends StatelessWidget {
+  const _TransportSection({required this.draft, required this.onUpdate});
+
+  final EditableNode draft;
+  final _NodeUpdate onUpdate;
+
+  @override
+  Widget build(BuildContext context) {
     final network = draft.network;
     final showHost = network != 'kcp' && network != 'quic';
     final showPath =
@@ -477,7 +475,7 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
           value: network,
           options: _networks,
           onChanged:
-              (v) => _update(
+              (v) => onUpdate(
                 (n) => n.copyWith(
                   network: v,
                   headerType: 'none',
@@ -490,27 +488,28 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
             label: 'Header type',
             value: draft.headerType,
             options: _tcpHeaders,
-            onChanged: (v) => _update((n) => n.copyWith(headerType: v)),
+            onChanged: (v) => onUpdate((n) => n.copyWith(headerType: v)),
           ),
         if (network == 'kcp' || network == 'quic')
           EditorDropdown(
             label: 'Header type',
             value: draft.headerType,
             options: _udpHeaders,
-            onChanged: (v) => _update((n) => n.copyWith(headerType: v)),
+            onChanged: (v) => onUpdate((n) => n.copyWith(headerType: v)),
           ),
         if (network == 'grpc') ...[
           EditorTextField(
             fieldKey: 'serviceName',
             label: 'Service name',
             initialValue: draft.serviceName,
-            onChanged: (v) => _update((n) => n.copyWith(serviceName: v.trim())),
+            onChanged:
+                (v) => onUpdate((n) => n.copyWith(serviceName: v.trim())),
           ),
           EditorDropdown(
             label: 'Mode',
             value: draft.transportMode.isEmpty ? 'gun' : draft.transportMode,
             options: _grpcModes,
-            onChanged: (v) => _update((n) => n.copyWith(transportMode: v)),
+            onChanged: (v) => onUpdate((n) => n.copyWith(transportMode: v)),
           ),
         ],
         if (network == 'xhttp')
@@ -518,14 +517,14 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
             label: 'Mode',
             value: draft.transportMode.isEmpty ? 'auto' : draft.transportMode,
             options: _xhttpModes,
-            onChanged: (v) => _update((n) => n.copyWith(transportMode: v)),
+            onChanged: (v) => onUpdate((n) => n.copyWith(transportMode: v)),
           ),
         if (showHost)
           EditorTextField(
             fieldKey: 'host-$network',
             label: 'Host',
             initialValue: draft.host,
-            onChanged: (v) => _update((n) => n.copyWith(host: v.trim())),
+            onChanged: (v) => onUpdate((n) => n.copyWith(host: v.trim())),
           ),
         if (showPath)
           EditorTextField(
@@ -533,13 +532,22 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
             label: 'Path',
             hint: '/',
             initialValue: draft.path,
-            onChanged: (v) => _update((n) => n.copyWith(path: v.trim())),
+            onChanged: (v) => onUpdate((n) => n.copyWith(path: v.trim())),
           ),
       ],
     );
   }
+}
 
-  Widget _tlsSection(EditableNode draft) {
+/// TLS / REALITY settings.
+class _TlsSection extends StatelessWidget {
+  const _TlsSection({required this.draft, required this.onUpdate});
+
+  final EditableNode draft;
+  final _NodeUpdate onUpdate;
+
+  @override
+  Widget build(BuildContext context) {
     final p = draft.protocol;
     final securityOptions = [
       if (!p.isHysteria) 'none',
@@ -555,20 +563,20 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
           label: 'TLS',
           value: security,
           options: securityOptions,
-          onChanged: (v) => _update((n) => n.copyWith(security: v)),
+          onChanged: (v) => onUpdate((n) => n.copyWith(security: v)),
         ),
         if (secured) ...[
           EditorTextField(
             fieldKey: 'sni',
             label: 'SNI',
             initialValue: draft.sni,
-            onChanged: (v) => _update((n) => n.copyWith(sni: v.trim())),
+            onChanged: (v) => onUpdate((n) => n.copyWith(sni: v.trim())),
           ),
           EditorDropdown(
             label: 'Fingerprint',
             value: draft.fingerprint,
             options: _fingerprints,
-            onChanged: (v) => _update((n) => n.copyWith(fingerprint: v)),
+            onChanged: (v) => onUpdate((n) => n.copyWith(fingerprint: v)),
           ),
         ],
         if (security == 'tls' && !p.isHysteria)
@@ -577,29 +585,75 @@ class _ConfigEditorViewState extends ConsumerState<ConfigEditorView> {
             label: 'ALPN',
             hint: 'h2,http/1.1',
             initialValue: draft.alpn,
-            onChanged: (v) => _update((n) => n.copyWith(alpn: v.trim())),
+            onChanged: (v) => onUpdate((n) => n.copyWith(alpn: v.trim())),
           ),
         if (security == 'reality') ...[
           EditorTextField(
             fieldKey: 'publicKey',
             label: 'Public key',
             initialValue: draft.publicKey,
-            onChanged: (v) => _update((n) => n.copyWith(publicKey: v.trim())),
+            onChanged: (v) => onUpdate((n) => n.copyWith(publicKey: v.trim())),
           ),
           EditorTextField(
             fieldKey: 'shortId',
             label: 'Short ID',
             initialValue: draft.shortId,
-            onChanged: (v) => _update((n) => n.copyWith(shortId: v.trim())),
+            onChanged: (v) => onUpdate((n) => n.copyWith(shortId: v.trim())),
           ),
           EditorTextField(
             fieldKey: 'spiderX',
             label: 'SpiderX',
             initialValue: draft.spiderX,
-            onChanged: (v) => _update((n) => n.copyWith(spiderX: v.trim())),
+            onChanged: (v) => onUpdate((n) => n.copyWith(spiderX: v.trim())),
           ),
         ],
       ],
     );
   }
 }
+
+const _networks = ['tcp', 'ws', 'grpc', 'h2', 'xhttp', 'kcp', 'quic'];
+const _tcpHeaders = ['none', 'http'];
+const _udpHeaders = [
+  'none',
+  'srtp',
+  'utp',
+  'wechat-video',
+  'dtls',
+  'wireguard',
+];
+const _grpcModes = ['gun', 'multi'];
+const _xhttpModes = ['auto', 'packet-up', 'stream-up', 'stream-one'];
+const _fingerprints = [
+  '',
+  'chrome',
+  'firefox',
+  'safari',
+  'ios',
+  'android',
+  'edge',
+  '360',
+  'qq',
+  'random',
+  'randomized',
+];
+const _ssMethods = [
+  'aes-128-gcm',
+  'aes-256-gcm',
+  'chacha20-poly1305',
+  'chacha20-ietf-poly1305',
+  'xchacha20-poly1305',
+  'xchacha20-ietf-poly1305',
+  '2022-blake3-aes-128-gcm',
+  '2022-blake3-aes-256-gcm',
+  '2022-blake3-chacha20-poly1305',
+  'none',
+];
+const _vmessCiphers = [
+  'auto',
+  'aes-128-gcm',
+  'chacha20-poly1305',
+  'none',
+  'zero',
+];
+const _flows = ['', 'xtls-rprx-vision', 'xtls-rprx-vision-udp443'];

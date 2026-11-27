@@ -339,8 +339,10 @@ class OrbFaceWidgetState extends State<OrbFaceWidget>
     super.dispose();
   }
 
-  Widget _buildOrbContent(BuildContext context, bool isDark) {
-    return GestureDetector(
+  @override
+  Widget build(BuildContext context) {
+    final isDark = context.isDarkMode;
+    final content = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _handleTap,
       child: SizedBox(
@@ -512,12 +514,6 @@ class OrbFaceWidgetState extends State<OrbFaceWidget>
         ),
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = context.isDarkMode;
-    final content = _buildOrbContent(context, isDark);
 
     if (widget.heroTag == null) {
       return content;
